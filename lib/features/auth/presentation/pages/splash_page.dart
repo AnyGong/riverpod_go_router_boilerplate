@@ -1,32 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_decider.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_state.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
 
-class SplashPage extends ConsumerWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends ConsumerState<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       final authState = ref.read(authNotifierProvider);
 
-      final startupState = StartupState(
+      final signals = StartupSignals(
         isAuthenticated: authState.value != null,
-        onboardingCompleted: false, // TODO: load from storage
-        maintenanceEnabled: false, // TODO: remote config
-        onboardingFeatureEnabled: true, // TODO: feature flag
+        onboardingCompleted: false, // later: persistent storage
+        maintenanceEnabled: false, // later: remote config
+        onboardingEnabled: AppConfig.onboardingEnabled,
+        authEnabled: AppConfig.authEnabled,
       );
 
-      final route = StartupDecider.decide(policy: AppConfig.startupPolicy, state: startupState);
+      final startupState = StartupStateResolver.resolve(signals);
 
-      context.go(route);
+      final route = StartupRouteMapper.map(startupState);
+
+      if (mounted) {
+        context.go(route);
+      }
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

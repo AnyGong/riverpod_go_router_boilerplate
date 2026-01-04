@@ -1,17 +1,6 @@
-enum StartupPolicy {
-  authRequired,
-  publicHome,
-  noAuth,
-
-  onboardingRequired,
-  maintenanceMode,
-  featureFlaggedStartup,
-}
-
+/// Static configuration for the app.
+/// Change once per project.
 class AppConfig {
-  /// Static, project-level policy
-  static const startupPolicy = StartupPolicy.maintenanceMode;
-
-  /// Feature flag keys (used only when featureFlaggedStartup)
-  static const onboardingFlagKey = 'onboarding_enabled';
+  static const bool authEnabled = true;
+  static const bool onboardingEnabled = false;
 }
