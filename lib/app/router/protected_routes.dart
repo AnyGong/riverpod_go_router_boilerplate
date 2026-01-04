@@ -6,4 +6,12 @@ final protectedRoutes = [
     path: '/',
     builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
   ),
+  GoRoute(
+    path: '/onboarding',
+    builder: (_, _) => const Scaffold(body: Center(child: Text('Onboarding'))),
+  ),
+  GoRoute(
+    path: '/maintenance',
+    builder: (_, _) => const Scaffold(body: Center(child: Text('Maintenance Mode'))),
+  ),
 ];
