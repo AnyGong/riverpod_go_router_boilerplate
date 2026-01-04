@@ -1,75 +1,67 @@
-# Flutter Riverpod Boilerplate (Opinionated)
+# 🚀 Flutter Riverpod Boilerplate (Opinionated)
 
-A **production-ready Flutter boilerplate** using:
+A **production-ready Flutter boilerplate** built for real apps — not experiments.
 
-- Riverpod (AsyncNotifier only)
-- GoRouter with ShellRoute
-- Clean Architecture (feature-first)
-- Strict linting & CI
+This repository is intentionally **opinionated**, highly structured, and optimized for **scalability, maintainability, and developer experience**.
 
-This repo is designed to be **cloned and shipped**, not customized endlessly.
+> **Clone → Build → Ship.**  
+> Not tweak endlessly.
 
 ---
 
-## What This Is
+## ✨ Tech Stack
 
-- A default architecture for real apps
-- Opinionated by design
-- Optimized for scalability and DX
-- Enforces best practices via structure
-
-## What This Is NOT
-
-- A tutorial
-- A showcase of multiple patterns
-- A flexible playground
+- **Flutter (stable)**
+- **Riverpod** – `AsyncNotifier` only
+- **GoRouter** with `ShellRoute`
+- **Clean Architecture** (feature-first)
+- **Strict linting**
+- **CI-ready**
 
 ---
 
-## Architectural Decisions (Non-Negotiable)
+## 🎯 Philosophy
 
-- AsyncNotifier only (`@riverpod`)
-- No StateNotifier / ChangeNotifier
-- Repositories return `Result<T>`
-- UI consumes `AsyncValue<T>`
-- GoRouter + ShellRoute required
-- Features are isolated
-- No Dio usage outside data layer
+This boilerplate exists to:
 
-> If you disagree with these decisions, **fork the repo**.
+- Enforce **one clear way** to build Flutter apps
+- Reduce architectural decision fatigue
+- Scale cleanly as the app grows
+- Catch mistakes early via structure and rules
+
+If you’re looking for flexibility, this repo is **not for you**.
 
 ---
 
-## Folder Structure
+## ❌ What This Is NOT
 
+- ❌ A tutorial  
+- ❌ A pattern comparison playground  
+- ❌ A “choose your own architecture” template  
+
+If you disagree with the decisions here, **fork the repo** and adjust it to your needs.
+
+---
+
+## 🧱 Core Architectural Rules (Non-Negotiable)
+
+- ✅ `AsyncNotifier` only (`@riverpod`)
+- ❌ No `StateNotifier`
+- ❌ No `ChangeNotifier`
+- ✅ Repositories return `Result<T>`
+- ✅ UI consumes `AsyncValue<T>`
+- ✅ `GoRouter` with `ShellRoute` is mandatory
+- ✅ Feature isolation is enforced
+- ❌ No `Dio` usage outside the data layer
+
+These rules are enforced by **structure, conventions, and reviews** — not documentation alone.
+
+---
+
+## 📁 Folder Structure
+
+```txt
 lib/
-├── app/ # App setup & routing
-├── core/ # Shared infrastructure
-├── features/ # Feature modules
-
----
-
-## How Auth Works
-
-- Session restored on app start
-- Router reacts to auth state
-- Protected routes live under ShellRoute
-- Logout clears storage and state
-
----
-
-## Adding a Feature
-
-1. Create `features/your_feature`
-2. Follow the existing auth feature structure
-3. Export routes from `presentation/routes`
-4. Register routes in `protected_routes.dart`
-
----
-
-## Scripts
-
-```bash
-./scripts/bootstrap.sh
-./scripts/clean.sh
-```
+├── app/        # App bootstrap, routing, providers
+├── core/       # Shared infrastructure & utilities
+└── features/   # Feature modules (isolated by design)
