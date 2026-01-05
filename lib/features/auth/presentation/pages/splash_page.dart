@@ -7,6 +7,8 @@ import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart'
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
 
+/// Splash page shown during app initialization.
+/// Determines the initial route based on startup signals.
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
@@ -15,35 +17,82 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  bool _hasNavigated = false;
+
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+  Future<void> _initializeApp() async {
+    // Wait for auth state to be resolved
+    await ref.read(authNotifierProvider.future);
 
-      final authState = ref.read(authNotifierProvider);
+    // Perform any additional initialization here
+    // e.g., load remote config, check for updates, etc.
 
-      final signals = StartupSignals(
-        isAuthenticated: authState.value != null,
-        onboardingCompleted: false, // later: persistent storage
-        maintenanceEnabled: false, // later: remote config
-        onboardingEnabled: AppConfig.onboardingEnabled,
-        authEnabled: AppConfig.authEnabled,
-      );
+    // Small delay for splash screen visibility
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
-      final startupState = StartupStateResolver.resolve(signals);
+    if (mounted) {
+      _navigateToInitialRoute();
+    }
+  }
 
-      final route = StartupRouteMapper.map(startupState);
+  void _navigateToInitialRoute() {
+    if (_hasNavigated) return;
+    _hasNavigated = true;
 
-      if (mounted) {
-        context.go(route);
-      }
-    });
+    final authState = ref.read(authNotifierProvider);
+
+    final signals = StartupSignals(
+      isAuthenticated: authState.value != null,
+      onboardingCompleted: false, // TODO: Read from secure storage
+      maintenanceEnabled: false, // TODO: Read from remote config
+      onboardingEnabled: AppConfig.onboardingEnabled,
+      authEnabled: AppConfig.authEnabled,
+    );
+
+    final startupState = StartupStateResolver.resolve(signals);
+    final route = StartupRouteMapper.map(startupState);
+
+    context.go(route);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // App logo placeholder
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Icon(Icons.flutter_dash, size: 64, color: theme.colorScheme.primary),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'Flutter Boilerplate',
+              style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 48),
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(strokeWidth: 3, color: theme.colorScheme.primary),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

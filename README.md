@@ -2,14 +2,14 @@
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter)
 ![Riverpod](https://img.shields.io/badge/Riverpod-3.x-blue?style=flat-square)
+![GoRouter](https://img.shields.io/badge/GoRouter-17.x-green?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-purple?style=flat-square)
-![Build](https://img.shields.io/badge/build-passing-green?style=flat-square)
 
 A **production-ready Flutter boilerplate** for building **scalable, maintainable, real-world applications**.
 
 This repository is intentionally **opinionated**, strictly structured, and optimized for **long-term growth**, not experimentation.
 
-> **Clone → Build → Ship.** > No architecture debates. No rewrites at scale.
+> **Clone → Build → Ship.** No architecture debates. No rewrites at scale.
 
 ---
 
@@ -27,13 +27,14 @@ If you value **clarity over flexibility**, this boilerplate is for you.
 
 ## ✨ Tech Stack
 
-- **Flutter (stable)**
-- **Riverpod** – `AsyncNotifier` / `AsyncValue` only
-- **GoRouter** with guarded routes
-- **Explicit Startup State Machine**
-- **Clean Architecture** (feature-first)
-- **Strict linting**
-- **CI-ready**
+| Package                    | Purpose                                 |
+| :------------------------- | :-------------------------------------- |
+| **Flutter 3.x**            | Cross-platform UI framework             |
+| **Riverpod 3.x**           | State management (`AsyncNotifier` only) |
+| **GoRouter 17.x**          | Declarative routing with guards         |
+| **Dio**                    | HTTP client with interceptors           |
+| **flutter_secure_storage** | Secure token storage                    |
+| **flutter_native_splash**  | Native splash screen                    |
 
 ---
 
@@ -41,10 +42,10 @@ If you value **clarity over flexibility**, this boilerplate is for you.
 
 This boilerplate exists to:
 
-1.  Enforce **one clear way** to build Flutter apps.
-2.  Prevent architectural drift as the app grows.
-3.  Scale cleanly from MVP → large production app.
-4.  Catch mistakes early through structure and conventions.
+1. Enforce **one clear way** to build Flutter apps.
+2. Prevent architectural drift as the app grows.
+3. Scale cleanly from MVP → large production app.
+4. Catch mistakes early through structure and conventions.
 
 Flexibility is intentionally limited.
 
@@ -62,14 +63,16 @@ If you disagree with these decisions, **fork the repo**.
 
 ## 🧱 Core Architectural Rules (Non-Negotiable)
 
-- ✅ `AsyncNotifier` only (`@riverpod`)
-- ❌ No `StateNotifier` or `ChangeNotifier`
-- ✅ Repositories return `Result<T>`
-- ✅ UI consumes `AsyncValue<T>`
-- ✅ Startup flow is handled by a **state machine**
-- ✅ `GoRouter` enforces access, not startup logic
-- ❌ No `Dio` usage outside the data layer
-- ❌ No business logic inside widgets
+| Rule                                                       | Status |
+| :--------------------------------------------------------- | :----: |
+| `AsyncNotifier` only (no `StateNotifier`/`ChangeNotifier`) |   ✅   |
+| Repositories return `Result<T>`                            |   ✅   |
+| UI consumes `AsyncValue<T>`                                |   ✅   |
+| Startup flow via **state machine**                         |   ✅   |
+| GoRouter enforces access, not startup logic                |   ✅   |
+| No `Dio` usage outside data layer                          |   ✅   |
+| No business logic inside widgets                           |   ✅   |
+| Dependency injection via Riverpod providers                |   ✅   |
 
 These rules are enforced by **structure**, not documentation alone.
 
@@ -77,54 +80,114 @@ These rules are enforced by **structure**, not documentation alone.
 
 ## 📁 Folder Structure
 
-This boilerplate follows a **feature-first, clean architecture** approach.  
-Every feature uses the **same internal structure**.
+This boilerplate follows a **feature-first, clean architecture** approach.
 
 ```text
 lib/
 ├── app/
-│   ├── app.dart
-│   ├── bootstrap.dart
-│   ├── app_config.dart
+│   ├── app.dart                    # Root MaterialApp
+│   ├── app_config.dart             # Static configuration
+│   ├── app_exports.dart            # Barrel file
+│   ├── bootstrap.dart              # App initialization
+│   ├── router/
+│   │   ├── app_router.dart         # GoRouter configuration
+│   │   ├── auth_routes.dart        # Public routes
+│   │   └── protected_routes.dart   # Authenticated routes
 │   └── startup/
-│       ├── startup_state_machine.dart   # Logic
-│       ├── startup_signals.dart         # Inputs
-│       ├── startup_state_resolver.dart  # Processor
-│       └── startup_route_mapper.dart    # Output
+│       ├── startup_state_machine.dart
+│       ├── startup_signals.dart
+│       ├── startup_state_resolver.dart
+│       └── startup_route_mapper.dart
+│
+├── config/
+│   └── env_config.dart             # Environment configuration
 │
 ├── core/
-│   ├── errors/
+│   ├── core.dart                   # Barrel file
 │   ├── network/
+│   │   ├── api_client.dart         # Type-safe API client
+│   │   └── dio_provider.dart       # Dio with interceptors
 │   ├── result/
+│   │   └── result.dart             # Result monad + exceptions
 │   ├── storage/
+│   │   └── secure_storage.dart     # Secure storage provider
+│   ├── theme/
+│   │   ├── app_colors.dart
+│   │   ├── app_theme.dart
+│   │   └── app_typography.dart
 │   └── widgets/
+│       ├── async_value_widget.dart # AsyncValue consumer
+│       └── spacing.dart            # Spacing utilities
 │
 ├── features/
-│   └── auth/                            # Example feature
-│       ├── data/
-│       ├── domain/
+│   ├── auth/
+│   │   ├── auth.dart               # Feature barrel file
+│   │   ├── data/
+│   │   │   └── repositories/
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   └── repositories/
+│   │   └── presentation/
+│   │       ├── pages/
+│   │       └── providers/
+│   └── home/
 │       └── presentation/
+│           └── pages/
 │
-└── main.dart
+└── main.dart                       # Entry point
 ```
-
-> **Note:** All features must follow the same internal structure as `auth`.
 
 ---
 
-## 🖼️ Splash Screen Strategy
+## 🔥 Key Features
 
-This boilerplate uses `flutter_native_splash` for the native launch experience.
+### Result Pattern
 
-The Flutter `SplashPage` is **not** a visual splash. It exists only to:
-1.  Collect startup signals
-2.  Resolve the startup state
-3.  Navigate to the correct route
+Type-safe error handling without exceptions:
 
-All visuals are handled natively to ensure:
-* Faster startup
-* No blank frames
-* No unnecessary Flutter UI work
+```dart
+final result = await repository.login(email, password);
+result.fold(
+  onSuccess: (user) => print(user.name),
+  onFailure: (error) => print(error.message),
+);
+```
+
+### Reactive Router
+
+GoRouter automatically reacts to auth state changes:
+
+```dart
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final authListenable = ref.watch(authStateListenableProvider);
+  return GoRouter(
+    refreshListenable: authListenable,
+    // Routes automatically refresh when auth changes
+  );
+});
+```
+
+### Environment Configuration
+
+Easily switch between dev/staging/prod:
+
+```dart
+// In main.dart
+await AppBootstrap.initialize(
+  environment: Environment.dev,  // or .staging, .prod
+);
+```
+
+### API Client with Result
+
+All network calls return `Result<T>`:
+
+```dart
+final result = await apiClient.get<User>(
+  '/users/me',
+  fromJson: User.fromJson,
+);
+```
 
 ---
 
@@ -132,75 +195,74 @@ All visuals are handled natively to ensure:
 
 Startup behavior is modeled as an **explicit state machine**, not router logic.
 
-### 1. Startup Signals (Inputs)
-Runtime facts collected at launch:
-* Authentication status
-* Onboarding completion
-* Maintenance flag
-* Feature availability
+### Startup States
 
-### 2. Startup States (Decisions)
-Valid startup states include: `MaintenanceState`, `OnboardingState`, `UnauthenticatedState`, `AuthenticatedState`, `PublicState`.
+| State                  | Description                              |
+| :--------------------- | :--------------------------------------- |
+| `MaintenanceState`     | App under maintenance (highest priority) |
+| `OnboardingState`      | User needs to complete onboarding        |
+| `UnauthenticatedState` | User needs to login                      |
+| `AuthenticatedState`   | User is logged in                        |
+| `PublicState`          | App doesn't require auth                 |
 
-### 3. Resolution Flow
+### Resolution Flow
 
-```mermaid
-graph TD
-    A[StartupSignals] -->|Fed into| B(StartupStateResolver)
-    B -->|Determines| C{StartupState}
-    C -->|Mapped by| D[StartupRouteMapper]
-    D -->|Executes| E[Navigation / GoRouter]
+```
+StartupSignals → StartupStateResolver → StartupState → StartupRouteMapper → Navigation
 ```
 
 This guarantees:
-* ✅ No invalid flows
-* ✅ No redirect loops
-* ✅ Fully testable startup logic
-* ✅ Clean separation of concerns
+
+- ✅ No invalid flows
+- ✅ No redirect loops
+- ✅ Fully testable startup logic
+- ✅ Clean separation of concerns
 
 ---
 
 ## ✅ Supported App Scenarios
 
-This boilerplate supports all common real-world flows. No architectural changes are required — only signal values change.
-
-| Scenario | Supported |
-| :--- | :---: |
-| Onboarding + Login required | ✅ |
-| Onboarding without login | ✅ |
-| Onboarding with optional login | ✅ |
-| Public home with protected features | ✅ |
-| Login without onboarding | ✅ |
-| No-auth apps | ✅ |
-| Maintenance mode | ✅ |
-| Feature-flagged startup | ✅ |
-
----
-
-## 🔐 Routing Responsibility
-
-* **SplashPage:** Decides where the app starts.
-* **Startup State Machine:** Decides what state the app is in.
-* **GoRouter:** Only enforces route access.
-
-Authentication is enforced **per-route**, not globally. This avoids startup logic in router redirects, onboarding/auth coupling, and fragile redirect chains.
+| Scenario                            | Supported |
+| :---------------------------------- | :-------: |
+| Onboarding + Login required         |    ✅     |
+| Onboarding without login            |    ✅     |
+| Onboarding with optional login      |    ✅     |
+| Public home with protected features |    ✅     |
+| Login without onboarding            |    ✅     |
+| No-auth apps                        |    ✅     |
+| Maintenance mode                    |    ✅     |
+| Feature-flagged startup             |    ✅     |
 
 ---
 
 ## ➕ Adding a New Feature
 
-1.  Create `features/your_feature/`
-2.  Follow the same `data` → `domain` → `presentation` structure
-3.  Export routes from `presentation/routes`
-4.  Register routes in the router
+1. Create `lib/features/your_feature/`
+2. Follow the `data` → `domain` → `presentation` structure
+3. Create a barrel file (`your_feature.dart`)
+4. Register routes in `app/router/`
 
-> If your feature doesn’t fit this structure, rethink the feature.
+Example structure:
+
+```text
+features/
+└── your_feature/
+    ├── your_feature.dart          # Barrel file
+    ├── data/
+    │   └── repositories/
+    │       └── your_repository_impl.dart
+    ├── domain/
+    │   ├── entities/
+    │   └── repositories/
+    │       └── your_repository.dart
+    └── presentation/
+        ├── pages/
+        └── providers/
+```
 
 ---
 
 ## 🛠️ Scripts
-
-Helpful scripts included:
 
 ```bash
 ./scripts/bootstrap.sh   # Initial setup
@@ -211,23 +273,33 @@ Helpful scripts included:
 
 ## 🚀 Getting Started
 
-**Prerequisites:** Flutter SDK installed (or FVM).
+**Prerequisites:** Flutter SDK 3.10+ installed.
 
-1.  **Clone:**
-    ```bash
-    git clone [https://github.com/your-username/your-repo.git](https://github.com/your-username/your-repo.git)
-    ```
+```bash
+# Clone
+git clone https://github.com/your-username/riverpod_go_router_boilerplate.git
 
-2.  **Setup:**
-    ```bash
-    flutter pub get
-    flutter pub run build_runner build --delete-conflicting-outputs
-    ```
+# Install dependencies
+flutter pub get
 
-3.  **Run:**
-    ```bash
-    flutter run
-    ```
+# Run
+flutter run
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+flutter test
+
+# Run specific test file
+flutter test test/startup_state_resolver_test.dart
+
+# Run with coverage
+flutter test --coverage
+```
 
 ---
 
@@ -237,4 +309,4 @@ MIT — use it, fork it, ship it.
 
 ---
 
-**This boilerplate is for developers who value correctness, clarity, and long-term maintainability over choice.** If that’s you — welcome aboard 🚀
+**This boilerplate is for developers who value correctness, clarity, and long-term maintainability over choice.** If that's you — welcome aboard 🚀
