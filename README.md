@@ -1,11 +1,11 @@
 # 🚀 Flutter Riverpod Boilerplate (Opinionated)
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter)
-![Riverpod](https://img.shields.io/badge/Riverpod-2.x-blue?style=flat-square)
+![Riverpod](https://img.shields.io/badge/Riverpod-3.x-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-purple?style=flat-square)
 ![Build](https://img.shields.io/badge/build-passing-green?style=flat-square)
 
-A **production-ready Flutter boilerplate** for building **scalable, maintainable, real-world apps**.
+A **production-ready Flutter boilerplate** for building **scalable, maintainable, real-world applications**.
 
 This repository is intentionally **opinionated**, strictly structured, and optimized for **long-term growth**, not experimentation.
 
@@ -15,21 +15,22 @@ This repository is intentionally **opinionated**, strictly structured, and optim
 
 ## ⭐ Why This Repo?
 
-- Built for **production**, not demos.
-- Enforces **clean architecture** by default.
-- Uses **modern Flutter + Riverpod best practices**.
-- Eliminates architectural decision fatigue.
-- Ideal for **teams and long-lived apps**.
+- Built for **production**, not demos
+- Enforces **clean architecture** by default
+- Uses **modern Flutter + Riverpod best practices**
+- Eliminates architectural decision fatigue
+- Designed for **teams and long-lived apps**
 
-If you value **clarity over flexibility**, this is for you.
+If you value **clarity over flexibility**, this boilerplate is for you.
 
 ---
 
 ## ✨ Tech Stack
 
 - **Flutter (stable)**
-- **Riverpod** – `AsyncNotifier` only
-- **GoRouter** with `ShellRoute`
+- **Riverpod** – `AsyncNotifier` / `AsyncValue` only
+- **GoRouter** with guarded routes
+- **Explicit Startup State Machine**
 - **Clean Architecture** (feature-first)
 - **Strict linting**
 - **CI-ready**
@@ -63,11 +64,12 @@ If you disagree with these decisions, **fork the repo**.
 
 - ✅ `AsyncNotifier` only (`@riverpod`)
 - ❌ No `StateNotifier` or `ChangeNotifier`
-- ✅ Repositories must return `Result<T>`
-- ✅ UI must consume `AsyncValue<T>`
-- ✅ `GoRouter` + `ShellRoute` is mandatory
-- ✅ Feature isolation is enforced
+- ✅ Repositories return `Result<T>`
+- ✅ UI consumes `AsyncValue<T>`
+- ✅ Startup flow is handled by a **state machine**
+- ✅ `GoRouter` enforces access, not startup logic
 - ❌ No `Dio` usage outside the data layer
+- ❌ No business logic inside widgets
 
 These rules are enforced by **structure**, not documentation alone.
 
@@ -81,14 +83,16 @@ Every feature uses the **same internal structure**.
 ```text
 lib/
 ├── app/
-│   ├── app.dart                 # Root widget
-│   ├── bootstrap.dart           # App initialization
-│   └── router/
-│       ├── app_router.dart      # GoRouter configuration
-│       ├── auth_routes.dart     # Public/auth routes
-│       └── protected_routes.dart
+│   ├── app.dart
+│   ├── bootstrap.dart
+│   ├── app_config.dart
+│   └── startup/
+│       ├── startup_state_machine.dart   # Logic
+│       ├── startup_signals.dart         # Inputs
+│       ├── startup_state_resolver.dart  # Processor
+│       └── startup_route_mapper.dart    # Output
 │
-├── core/                        # Shared logic (Theme, Network, Storage)
+├── core/
 │   ├── errors/
 │   ├── network/
 │   ├── result/
@@ -96,77 +100,99 @@ lib/
 │   └── widgets/
 │
 ├── features/
-│   └── auth/                    # Example feature
+│   └── auth/                            # Example feature
 │       ├── data/
-│       │   ├── datasources/
-│       │   ├── models/
-│       │   └── repositories/
-│       │
 │       ├── domain/
-│       │   ├── entities/
-│       │   ├── repositories/
-│       │   └── usecases/
-│       │
-│       ├── presentation/
-│       │   ├── pages/
-│       │   ├── providers/
-│       │   └── routes/
-│       │
-│       └── auth_feature.dart    # Feature barrel file
+│       └── presentation/
 │
 └── main.dart
 ```
+
+> **Note:** All features must follow the same internal structure as `auth`.
 
 ---
 
 ## 🖼️ Splash Screen Strategy
 
-This boilerplate uses `flutter_native_splash` for the launch experience.
+This boilerplate uses `flutter_native_splash` for the native launch experience.
 
-The Flutter `SplashPage` is **not** a visual splash. It exists only for:
-1.  **App initialization**
-2.  **Session restoration**
-3.  **Early dependency setup**
-4.  **Redirecting** to the correct route
+The Flutter `SplashPage` is **not** a visual splash. It exists only to:
+1.  Collect startup signals
+2.  Resolve the startup state
+3.  Navigate to the correct route
 
-All visual splash rendering is handled natively, ensuring:
+All visuals are handled natively to ensure:
 * Faster startup
 * No blank frames
 * No unnecessary Flutter UI work
 
 ---
 
-## 🔄 Startup Lifecycle
+## 🧠 Startup Architecture (State Machine)
 
-### High-Level Flow
+Startup behavior is modeled as an **explicit state machine**, not router logic.
+
+### 1. Startup Signals (Inputs)
+Runtime facts collected at launch:
+* Authentication status
+* Onboarding completion
+* Maintenance flag
+* Feature availability
+
+### 2. Startup States (Decisions)
+Valid startup states include: `MaintenanceState`, `OnboardingState`, `UnauthenticatedState`, `AuthenticatedState`, `PublicState`.
+
+### 3. Resolution Flow
 
 ```mermaid
 graph TD
-    A[App Launch] -->|Native Splash| B(bootstrap.dart)
-    B --> C{SplashPage Logic}
-    C -->|Restore Session| D[Auth State Resolution]
-    D -->|Authenticated| E[ShellRoute / Home]
-    D -->|Unauthenticated| F[Login Page]
+    A[StartupSignals] -->|Fed into| B(StartupStateResolver)
+    B -->|Determines| C{StartupState}
+    C -->|Mapped by| D[StartupRouteMapper]
+    D -->|Executes| E[Navigation / GoRouter]
 ```
 
-### Detailed Steps
+This guarantees:
+* ✅ No invalid flows
+* ✅ No redirect loops
+* ✅ Fully testable startup logic
+* ✅ Clean separation of concerns
 
-1.  **Native Splash:** Displayed immediately by the OS. No Flutter frame rendered yet.
-2.  **bootstrap.dart:** Initializes DI, Logging, Storage, and Environment configs.
-3.  **SplashPage:** Runs init logic (session restore) without rendering UI.
-4.  **Auth Resolution:** Provider checks storage to determine `authenticated` vs `unauthenticated`.
-5.  **Router Redirect:** `GoRouter` reacts to state and sends user to `ShellRoute` (Protected) or `Login`.
+---
 
-This flow ensures **no race conditions** and a clean separation of concerns.
+## ✅ Supported App Scenarios
+
+This boilerplate supports all common real-world flows. No architectural changes are required — only signal values change.
+
+| Scenario | Supported |
+| :--- | :---: |
+| Onboarding + Login required | ✅ |
+| Onboarding without login | ✅ |
+| Onboarding with optional login | ✅ |
+| Public home with protected features | ✅ |
+| Login without onboarding | ✅ |
+| No-auth apps | ✅ |
+| Maintenance mode | ✅ |
+| Feature-flagged startup | ✅ |
+
+---
+
+## 🔐 Routing Responsibility
+
+* **SplashPage:** Decides where the app starts.
+* **Startup State Machine:** Decides what state the app is in.
+* **GoRouter:** Only enforces route access.
+
+Authentication is enforced **per-route**, not globally. This avoids startup logic in router redirects, onboarding/auth coupling, and fragile redirect chains.
 
 ---
 
 ## ➕ Adding a New Feature
 
-1.  **Create folder:** `features/your_feature/`
-2.  **Mirror structure:** (data → domain → presentation)
-3.  **Export routes:** via `presentation/routes/`
-4.  **Register:** Add to `protected_routes.dart`
+1.  Create `features/your_feature/`
+2.  Follow the same `data` → `domain` → `presentation` structure
+3.  Export routes from `presentation/routes`
+4.  Register routes in the router
 
 > If your feature doesn’t fit this structure, rethink the feature.
 
@@ -174,25 +200,34 @@ This flow ensures **no race conditions** and a clean separation of concerns.
 
 ## 🛠️ Scripts
 
-Helpful scripts for development:
+Helpful scripts included:
 
 ```bash
 ./scripts/bootstrap.sh   # Initial setup
-./scripts/clean.sh       # Deep clean project (fvm flutter clean)
+./scripts/clean.sh       # Clean project
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-1.  **Prerequisites:** Flutter SDK installed (or FVM).
-2.  **Clone:** `git clone https://github.com/your-username/repo-name.git`
-3.  **Setup:**
+**Prerequisites:** Flutter SDK installed (or FVM).
+
+1.  **Clone:**
+    ```bash
+    git clone [https://github.com/your-username/your-repo.git](https://github.com/your-username/your-repo.git)
+    ```
+
+2.  **Setup:**
     ```bash
     flutter pub get
     flutter pub run build_runner build --delete-conflicting-outputs
     ```
-4.  **Run:** `flutter run`
+
+3.  **Run:**
+    ```bash
+    flutter run
+    ```
 
 ---
 
@@ -202,4 +237,4 @@ MIT — use it, fork it, ship it.
 
 ---
 
-**This boilerplate is for developers who value clarity over choice.** If that’s you — welcome aboard.
+**This boilerplate is for developers who value correctness, clarity, and long-term maintainability over choice.** If that’s you — welcome aboard 🚀
