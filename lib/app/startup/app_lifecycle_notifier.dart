@@ -1,57 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_events.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
+import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
-
-/// State for the AppLifecycle that tracks both current state and history.
-class AppLifecycleState {
-  const AppLifecycleState({
-    required this.currentState,
-    required this.lastEvent,
-    required this.isInitialized,
-    this.previousState,
-  });
-
-  const AppLifecycleState.initial()
-    : currentState = const PublicState(),
-      lastEvent = null,
-      previousState = null,
-      isInitialized = false;
-
-  final StartupState currentState;
-  final StartupEvent? lastEvent;
-  final StartupState? previousState;
-  final bool isInitialized;
-
-  AppLifecycleState copyWith({
-    StartupState? currentState,
-    StartupEvent? lastEvent,
-    StartupState? previousState,
-    bool? isInitialized,
-  }) {
-    return AppLifecycleState(
-      currentState: currentState ?? this.currentState,
-      lastEvent: lastEvent ?? this.lastEvent,
-      previousState: previousState ?? this.previousState,
-      isInitialized: isInitialized ?? this.isInitialized,
-    );
-  }
-
-  /// Check if we transitioned from one state type to another
-  bool transitionedFrom<T extends StartupState>() {
-    return previousState is T && currentState is! T;
-  }
-
-  @override
-  String toString() =>
-      'AppLifecycleState(current: $currentState, previous: $previousState, event: $lastEvent, initialized: $isInitialized)';
-}
 
 /// Notifier that manages the app lifecycle and state transitions.
 ///
@@ -183,8 +139,8 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
   }
 
   Future<bool> _checkMaintenance() async {
-    // Could be extended to check remote config
-    return false;
+    final remoteConfig = ref.read(remoteConfigServiceProvider);
+    return remoteConfig.currentConfig.isMaintenanceMode;
   }
 
   Future<bool> _checkOnboarding() async {

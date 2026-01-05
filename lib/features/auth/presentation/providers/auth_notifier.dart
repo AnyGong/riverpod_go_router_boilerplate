@@ -7,19 +7,6 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// Provider for the auth state notifier.
 final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, User?>(AuthNotifier.new);
 
-/// A [ChangeNotifier] that can be used with GoRouter's refreshListenable.
-/// Notifies listeners when auth state changes.
-final authStateListenableProvider = Provider<ValueNotifier<bool>>((ref) {
-  final notifier = ValueNotifier<bool>(false);
-
-  ref.listen(authNotifierProvider, (previous, next) {
-    // Toggle the value to trigger GoRouter refresh
-    notifier.value = !notifier.value;
-  });
-
-  return notifier;
-});
-
 /// Manages authentication state.
 ///
 /// Use this to:

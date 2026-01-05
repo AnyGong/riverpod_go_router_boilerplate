@@ -13,8 +13,5 @@ export 'router/auth_routes.dart';
 export 'router/protected_routes.dart';
 export 'router/splash_route.dart';
 
-// Startup
-export 'startup/startup_route_mapper.dart';
-export 'startup/startup_signals.dart';
-export 'startup/startup_state_machine.dart';
-export 'startup/startup_state_resolver.dart';
+// Startup (use startup.dart barrel for full exports)
+export 'startup/startup.dart';

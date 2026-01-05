@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
+echo "🚀 Bootstrapping Flutter project..."
+
+echo "📦 Getting dependencies..."
 flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
+
+echo "🔍 Running analyzer..."
 flutter analyze
+
+echo "🧪 Running tests..."
 flutter test
+
+echo "✅ Bootstrap complete!"

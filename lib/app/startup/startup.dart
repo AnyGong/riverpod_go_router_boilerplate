@@ -16,7 +16,8 @@
 ///    - isAuthenticated, hasCompletedOnboarding, isInMaintenance
 ///
 /// 3. **States** ([StartupState]) - "What mode is the app in?"
-///    - [MaintenanceState], [OnboardingState], [UnauthenticatedState], [AuthenticatedState], [PublicState]
+///    - [MaintenanceState], [OnboardingState], [UnauthenticatedState],
+///      [AuthenticatedState], [PublicState]
 ///
 /// 4. **Routes** - "Where should the user go?"
 ///    - Mapped by [StartupRouteMapper.map]
@@ -40,6 +41,8 @@
 library;
 
 export 'app_lifecycle_notifier.dart';
+export 'app_lifecycle_state.dart';
+export 'presentation/splash_page.dart';
 export 'startup_events.dart';
 export 'startup_route_mapper.dart';
 export 'startup_signals.dart';

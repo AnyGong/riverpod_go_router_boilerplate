@@ -87,44 +87,58 @@ lib/
 ├── app/
 │   ├── app.dart                    # Root MaterialApp
 │   ├── app_config.dart             # Static configuration
-│   ├── app_exports.dart            # Barrel file
+│   ├── app_exports.dart            # App layer barrel file
 │   ├── bootstrap.dart              # App initialization
 │   ├── router/
+│   │   ├── router.dart             # Router barrel file
 │   │   ├── app_router.dart         # GoRouter configuration
-│   │   ├── auth_routes.dart        # Public routes
-│   │   └── protected_routes.dart   # Authenticated routes
+│   │   ├── routes.dart             # Route path constants
+│   │   ├── auth_routes.dart        # Public auth routes
+│   │   ├── home_routes.dart        # Protected home routes
+│   │   ├── protected_routes.dart   # Auth-required routes
+│   │   └── splash_route.dart       # Splash screen route
 │   └── startup/
-│       ├── startup.dart            # Barrel file
-│       ├── app_lifecycle_notifier.dart  # Lifecycle management
-│       ├── startup_events.dart     # Lifecycle events
-│       ├── startup_state_machine.dart
-│       ├── startup_signals.dart
-│       ├── startup_state_resolver.dart
-│       └── startup_route_mapper.dart
+│       ├── startup.dart            # Startup barrel file
+│       ├── app_lifecycle_notifier.dart  # Event-driven lifecycle
+│       ├── app_lifecycle_state.dart     # Lifecycle state class
+│       ├── startup_events.dart     # Lifecycle event types
+│       ├── startup_signals.dart    # Async signal gathering
+│       ├── startup_state_machine.dart   # State definitions
+│       ├── startup_state_resolver.dart  # Signal→State resolution
+│       ├── startup_route_mapper.dart    # State→Route mapping
+│       └── presentation/
+│           └── splash_page.dart    # Splash UI
 │
 ├── config/
 │   └── env_config.dart             # Environment configuration
 │
 ├── core/
-│   ├── core.dart                   # Barrel file
+│   ├── core.dart                   # Core barrel file
 │   ├── config/
+│   │   ├── config.dart             # Config barrel file
 │   │   └── remote_config_service.dart  # Remote config abstraction
 │   ├── network/
+│   │   ├── network.dart            # Network barrel file
 │   │   ├── api_client.dart         # Type-safe API client
-│   │   └── dio_provider.dart       # Dio with interceptors
+│   │   ├── dio_provider.dart       # Dio with interceptors
+│   │   └── interceptors/
+│   │       ├── auth_interceptor.dart
+│   │       └── logging_interceptor.dart
 │   ├── result/
 │   │   └── result.dart             # Result monad + exceptions
 │   ├── session/
-│   │   ├── session.dart            # Barrel file
+│   │   ├── session.dart            # Session barrel file
 │   │   ├── session_service.dart    # Session management
 │   │   └── session_state.dart      # Session state sealed class
 │   ├── storage/
 │   │   └── secure_storage.dart     # Secure storage provider
 │   ├── theme/
+│   │   ├── theme.dart              # Theme barrel file
 │   │   ├── app_colors.dart
 │   │   ├── app_theme.dart
 │   │   └── app_typography.dart
 │   └── widgets/
+│       ├── widgets.dart            # Widgets barrel file
 │       ├── async_value_widget.dart # AsyncValue consumer
 │       └── spacing.dart            # Spacing utilities
 │
@@ -133,15 +147,22 @@ lib/
 │   │   ├── auth.dart               # Feature barrel file
 │   │   ├── data/
 │   │   │   └── repositories/
+│   │   │       └── auth_repository_impl.dart
 │   │   ├── domain/
 │   │   │   ├── entities/
+│   │   │   │   └── user.dart
 │   │   │   └── repositories/
+│   │   │       └── auth_repository.dart
 │   │   └── presentation/
 │   │       ├── pages/
+│   │       │   └── login_page.dart
 │   │       └── providers/
+│   │           └── auth_notifier.dart
 │   └── home/
+│       ├── home.dart               # Feature barrel file
 │       └── presentation/
 │           └── pages/
+│               └── home_page.dart
 │
 └── main.dart                       # Entry point
 ```
@@ -164,14 +185,14 @@ result.fold(
 
 ### Reactive Router
 
-GoRouter automatically reacts to auth state changes:
+GoRouter automatically reacts to lifecycle state changes:
 
 ```dart
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authListenable = ref.watch(authStateListenableProvider);
+  final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
   return GoRouter(
-    refreshListenable: authListenable,
-    // Routes automatically refresh when auth changes
+    refreshListenable: lifecycleListenable,
+    // Routes automatically refresh when auth/lifecycle changes
   );
 });
 ```

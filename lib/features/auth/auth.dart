@@ -10,5 +10,4 @@ export 'data/repositories/auth_repository_impl.dart';
 
 // Presentation
 export 'presentation/pages/login_page.dart';
-export 'presentation/pages/splash_page.dart';
 export 'presentation/providers/auth_notifier.dart';
