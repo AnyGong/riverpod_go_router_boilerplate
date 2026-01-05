@@ -25,17 +25,17 @@ class StartupStateResolver {
   /// Resolve the startup state from the given signals.
   static StartupState resolve(StartupSignals signals) {
     // 1️⃣ Maintenance ALWAYS wins
-    if (signals.maintenanceEnabled) {
+    if (signals.isInMaintenance) {
       return const MaintenanceState();
     }
 
     // 2️⃣ Onboarding BEFORE auth
-    if (signals.onboardingEnabled && !signals.onboardingCompleted) {
+    if (signals.isOnboardingEnabled && !signals.hasCompletedOnboarding) {
       return const OnboardingState();
     }
 
     // 3️⃣ No-auth apps
-    if (!signals.authEnabled) {
+    if (!signals.isAuthEnabled) {
       return const PublicState();
     }
 

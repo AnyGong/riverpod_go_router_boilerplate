@@ -94,6 +94,9 @@ lib/
 │   │   ├── auth_routes.dart        # Public routes
 │   │   └── protected_routes.dart   # Authenticated routes
 │   └── startup/
+│       ├── startup.dart            # Barrel file
+│       ├── app_lifecycle_notifier.dart  # Lifecycle management
+│       ├── startup_events.dart     # Lifecycle events
 │       ├── startup_state_machine.dart
 │       ├── startup_signals.dart
 │       ├── startup_state_resolver.dart
@@ -104,11 +107,17 @@ lib/
 │
 ├── core/
 │   ├── core.dart                   # Barrel file
+│   ├── config/
+│   │   └── remote_config_service.dart  # Remote config abstraction
 │   ├── network/
 │   │   ├── api_client.dart         # Type-safe API client
 │   │   └── dio_provider.dart       # Dio with interceptors
 │   ├── result/
 │   │   └── result.dart             # Result monad + exceptions
+│   ├── session/
+│   │   ├── session.dart            # Barrel file
+│   │   ├── session_service.dart    # Session management
+│   │   └── session_state.dart      # Session state sealed class
 │   ├── storage/
 │   │   └── secure_storage.dart     # Secure storage provider
 │   ├── theme/
@@ -191,9 +200,33 @@ final result = await apiClient.get<User>(
 
 ---
 
-## 🧠 Startup Architecture (State Machine)
+## 🧠 Startup Architecture (State Machine + Lifecycle)
 
-Startup behavior is modeled as an **explicit state machine**, not router logic.
+This boilerplate uses an **event-driven lifecycle management** system that answers not just "where do I go?" but "why am I here, and what must happen next?"
+
+### Architecture Layers
+
+```
+Events → Signals → Resolver → State → Route
+  ↑                              ↓
+  └──── Lifecycle Notifier ←─────┘
+```
+
+### Startup Events
+
+Events represent "why we need to re-evaluate the current state":
+
+| Event                 | Description                       |
+| :-------------------- | :-------------------------------- |
+| `AppLaunched`         | App just started                  |
+| `UserAuthenticated`   | User logged in                    |
+| `UserLoggedOut`       | User logged out                   |
+| `SessionExpiredEvent` | Session expired (token invalid)   |
+| `OnboardingCompleted` | User completed onboarding         |
+| `MaintenanceEnabled`  | Remote config enabled maintenance |
+| `MaintenanceDisabled` | Maintenance mode ended            |
+| `RemoteConfigUpdated` | Feature flags changed             |
+| `DeepLinkReceived`    | Deep link requires handling       |
 
 ### Startup States
 
@@ -204,6 +237,41 @@ Startup behavior is modeled as an **explicit state machine**, not router logic.
 | `UnauthenticatedState` | User needs to login                      |
 | `AuthenticatedState`   | User is logged in                        |
 | `PublicState`          | App doesn't require auth                 |
+
+### Session Abstraction
+
+The `SessionService` and `SessionState` decouple auth from the rest of the app:
+
+```dart
+// Check session state
+final sessionState = ref.watch(sessionStateProvider);
+if (sessionState.isAuthenticated) {
+  // User has active session
+}
+
+// End session (logout)
+final sessionService = ref.read(sessionServiceProvider);
+await sessionService.endSession();
+```
+
+### Lifecycle Notifier
+
+The `AppLifecycleNotifier` manages state transitions with full history:
+
+```dart
+// Initialize on app launch (from SplashPage)
+final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
+await lifecycleNotifier.initialize();
+
+// Handle user login
+await lifecycleNotifier.onUserLoggedIn(userId);
+
+// Handle logout
+await lifecycleNotifier.onUserLoggedOut();
+
+// Trigger re-evaluation when conditions change
+await lifecycleNotifier.reevaluate();
+```
 
 ### Resolution Flow
 
@@ -217,6 +285,8 @@ This guarantees:
 - ✅ No redirect loops
 - ✅ Fully testable startup logic
 - ✅ Clean separation of concerns
+- ✅ Re-evaluation on state changes (logout, expiry, config updates)
+- ✅ Transition history tracking
 
 ---
 

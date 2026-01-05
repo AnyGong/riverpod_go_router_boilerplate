@@ -9,10 +9,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: true,
-          onboardingCompleted: true,
-          maintenanceEnabled: true, // Maintenance enabled
-          onboardingEnabled: true,
-          authEnabled: true,
+          hasCompletedOnboarding: true,
+          isInMaintenance: true, // Maintenance enabled
+          isOnboardingEnabled: true,
+          isAuthEnabled: true,
         ),
       );
 
@@ -23,10 +23,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: false,
-          onboardingCompleted: false, // Not completed
-          maintenanceEnabled: false,
-          onboardingEnabled: true, // Enabled
-          authEnabled: true,
+          hasCompletedOnboarding: false, // Not completed
+          isInMaintenance: false,
+          isOnboardingEnabled: true, // Enabled
+          isAuthEnabled: true,
         ),
       );
 
@@ -37,10 +37,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: false,
-          onboardingCompleted: true, // Completed
-          maintenanceEnabled: false,
-          onboardingEnabled: true,
-          authEnabled: true,
+          hasCompletedOnboarding: true, // Completed
+          isInMaintenance: false,
+          isOnboardingEnabled: true,
+          isAuthEnabled: true,
         ),
       );
 
@@ -51,10 +51,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: false,
-          onboardingCompleted: false,
-          maintenanceEnabled: false,
-          onboardingEnabled: false, // Disabled
-          authEnabled: true,
+          hasCompletedOnboarding: false,
+          isInMaintenance: false,
+          isOnboardingEnabled: false, // Disabled
+          isAuthEnabled: true,
         ),
       );
 
@@ -65,10 +65,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: false,
-          onboardingCompleted: true,
-          maintenanceEnabled: false,
-          onboardingEnabled: false,
-          authEnabled: false, // Auth disabled
+          hasCompletedOnboarding: true,
+          isInMaintenance: false,
+          isOnboardingEnabled: false,
+          isAuthEnabled: false, // Auth disabled
         ),
       );
 
@@ -79,10 +79,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: false, // Not authenticated
-          onboardingCompleted: true,
-          maintenanceEnabled: false,
-          onboardingEnabled: false,
-          authEnabled: true,
+          hasCompletedOnboarding: true,
+          isInMaintenance: false,
+          isOnboardingEnabled: false,
+          isAuthEnabled: true,
         ),
       );
 
@@ -93,10 +93,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: true, // Authenticated
-          onboardingCompleted: true,
-          maintenanceEnabled: false,
-          onboardingEnabled: false,
-          authEnabled: true,
+          hasCompletedOnboarding: true,
+          isInMaintenance: false,
+          isOnboardingEnabled: false,
+          isAuthEnabled: true,
         ),
       );
 
@@ -107,10 +107,10 @@ void main() {
       final state = StartupStateResolver.resolve(
         const StartupSignals(
           isAuthenticated: true,
-          onboardingCompleted: true,
-          maintenanceEnabled: false,
-          onboardingEnabled: true,
-          authEnabled: true,
+          hasCompletedOnboarding: true,
+          isInMaintenance: false,
+          isOnboardingEnabled: true,
+          isAuthEnabled: true,
         ),
       );
 
@@ -122,18 +122,18 @@ void main() {
     test('equality works correctly', () {
       const signals1 = StartupSignals(
         isAuthenticated: true,
-        onboardingCompleted: true,
-        maintenanceEnabled: false,
-        onboardingEnabled: true,
-        authEnabled: true,
+        hasCompletedOnboarding: true,
+        isInMaintenance: false,
+        isOnboardingEnabled: true,
+        isAuthEnabled: true,
       );
 
       const signals2 = StartupSignals(
         isAuthenticated: true,
-        onboardingCompleted: true,
-        maintenanceEnabled: false,
-        onboardingEnabled: true,
-        authEnabled: true,
+        hasCompletedOnboarding: true,
+        isInMaintenance: false,
+        isOnboardingEnabled: true,
+        isAuthEnabled: true,
       );
 
       expect(signals1, equals(signals2));
@@ -143,18 +143,18 @@ void main() {
     test('toString includes all fields', () {
       const signals = StartupSignals(
         isAuthenticated: true,
-        onboardingCompleted: false,
-        maintenanceEnabled: false,
-        onboardingEnabled: true,
-        authEnabled: true,
+        hasCompletedOnboarding: false,
+        isInMaintenance: false,
+        isOnboardingEnabled: true,
+        isAuthEnabled: true,
       );
 
       final str = signals.toString();
       expect(str, contains('isAuthenticated: true'));
-      expect(str, contains('onboardingCompleted: false'));
-      expect(str, contains('maintenanceEnabled: false'));
-      expect(str, contains('onboardingEnabled: true'));
-      expect(str, contains('authEnabled: true'));
+      expect(str, contains('hasCompletedOnboarding: false'));
+      expect(str, contains('isInMaintenance: false'));
+      expect(str, contains('isOnboardingEnabled: true'));
+      expect(str, contains('isAuthEnabled: true'));
     });
   });
 }

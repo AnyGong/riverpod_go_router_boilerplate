@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
@@ -22,27 +23,37 @@ abstract class AppRoutes {
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Provider for the app router.
-/// Listens to auth state changes and redirects accordingly.
+///
+/// Uses [appLifecycleListenableProvider] to refresh when lifecycle state changes.
+/// This enables reactive routing based on session state, maintenance mode, etc.
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authListenable = ref.watch(authStateListenableProvider);
+  // Use lifecycle listenable for refresh - this triggers re-evaluation
+  // when session state changes, maintenance mode toggles, etc.
+  final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
-    refreshListenable: authListenable,
+    refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
     redirect: (context, state) {
       final path = state.uri.path;
-      final authState = ref.read(authNotifierProvider);
-      final isLoading = authState.isLoading;
+      final lifecycleState = ref.read(appLifecycleNotifierProvider);
+      final sessionState = ref.read(sessionStateProvider);
+      final isLoading = sessionState.isLoading;
 
-      // Don't redirect while auth state is loading (except from splash)
+      // Don't redirect while loading (except from splash)
       if (isLoading && path != AppRoutes.splash) {
         return null;
       }
 
-      // Maintenance hard stop
+      // Don't redirect until lifecycle is initialized
+      if (!lifecycleState.isInitialized && path == AppRoutes.splash) {
+        return null;
+      }
+
+      // Maintenance hard stop - always allow access
       if (path == AppRoutes.maintenance) {
         return null;
       }
@@ -52,8 +63,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // Check if user is logged in
-      final isLoggedIn = authState.value != null;
+      // Check session state for auth-based redirects
+      final isLoggedIn = sessionState.isAuthenticated;
 
       // Define protected routes
       const protectedPaths = [AppRoutes.home, AppRoutes.profile, AppRoutes.settings];

@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
-import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
 
 /// Splash page shown during app initialization.
-/// Determines the initial route based on startup signals.
+///
+/// This page:
+/// 1. Triggers the app lifecycle initialization
+/// 2. Waits for the startup state to be resolved
+/// 3. Navigates to the appropriate route based on lifecycle state
+///
+/// The lifecycle notifier handles:
+/// - Session restoration
+/// - Maintenance checks
+/// - Onboarding state
+/// - Auth state resolution
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
@@ -26,11 +33,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   Future<void> _initializeApp() async {
-    // Wait for auth state to be resolved
-    await ref.read(authNotifierProvider.future);
-
-    // Perform any additional initialization here
-    // e.g., load remote config, check for updates, etc.
+    // Initialize the app lifecycle (resolves startup state)
+    final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
+    await lifecycleNotifier.initialize();
 
     // Small delay for splash screen visibility
     await Future<void>.delayed(const Duration(milliseconds: 500));
@@ -44,18 +49,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     if (_hasNavigated) return;
     _hasNavigated = true;
 
-    final authState = ref.read(authNotifierProvider);
-
-    final signals = StartupSignals(
-      isAuthenticated: authState.value != null,
-      onboardingCompleted: false, // TODO: Read from secure storage
-      maintenanceEnabled: false, // TODO: Read from remote config
-      onboardingEnabled: AppConfig.onboardingEnabled,
-      authEnabled: AppConfig.authEnabled,
-    );
-
-    final startupState = StartupStateResolver.resolve(signals);
-    final route = StartupRouteMapper.map(startupState);
+    final lifecycleState = ref.read(appLifecycleNotifierProvider);
+    final route = StartupRouteMapper.map(lifecycleState.currentState);
 
     context.go(route);
   }

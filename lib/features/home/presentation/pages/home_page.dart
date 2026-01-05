@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
@@ -114,7 +116,7 @@ class HomePage extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
-          FilledButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Sign Out'),
           ),
@@ -123,7 +125,13 @@ class HomePage extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await ref.read(authNotifierProvider.notifier).logout();
+      // Use session service to end session
+      final sessionService = ref.read(sessionServiceProvider);
+      await sessionService.endSession();
+
+      // Notify lifecycle of logout event for proper state transition
+      final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
+      await lifecycleNotifier.onUserLoggedOut();
     }
   }
 }

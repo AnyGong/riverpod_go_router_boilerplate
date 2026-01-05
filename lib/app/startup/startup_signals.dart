@@ -8,21 +8,21 @@ import 'package:flutter/foundation.dart';
 /// Example:
 /// ```dart
 /// final signals = StartupSignals(
-///   isAuthenticated: authState.value != null,
-///   onboardingCompleted: await storage.read(key: 'onboarding_completed') == 'true',
-///   maintenanceEnabled: remoteConfig.getBool('maintenance_enabled'),
-///   onboardingEnabled: AppConfig.onboardingEnabled,
-///   authEnabled: AppConfig.authEnabled,
+///   isAuthenticated: sessionState.isAuthenticated,
+///   hasCompletedOnboarding: await storage.read(key: 'onboarding_completed') == 'true',
+///   isInMaintenance: remoteConfig.getBool('maintenance_enabled'),
+///   isOnboardingEnabled: AppConfig.onboardingEnabled,
+///   isAuthEnabled: AppConfig.authEnabled,
 /// );
 /// ```
 @immutable
 class StartupSignals {
   const StartupSignals({
     required this.isAuthenticated,
-    required this.onboardingCompleted,
-    required this.maintenanceEnabled,
-    required this.onboardingEnabled,
-    required this.authEnabled,
+    required this.hasCompletedOnboarding,
+    required this.isInMaintenance,
+    required this.isOnboardingEnabled,
+    required this.isAuthEnabled,
   });
 
   /// Whether the user is currently authenticated.
@@ -31,19 +31,19 @@ class StartupSignals {
 
   /// Whether the user has completed the onboarding flow.
   /// Read from persistent storage.
-  final bool onboardingCompleted;
+  final bool hasCompletedOnboarding;
 
   /// Whether the app is in maintenance mode.
   /// Usually controlled by remote config/feature flags.
-  final bool maintenanceEnabled;
+  final bool isInMaintenance;
 
   /// Whether onboarding is enabled for this app.
   /// Static configuration from [AppConfig].
-  final bool onboardingEnabled;
+  final bool isOnboardingEnabled;
 
   /// Whether authentication is required for this app.
   /// Static configuration from [AppConfig].
-  final bool authEnabled;
+  final bool isAuthEnabled;
 
   @override
   bool operator ==(Object other) =>
@@ -51,26 +51,26 @@ class StartupSignals {
       other is StartupSignals &&
           runtimeType == other.runtimeType &&
           isAuthenticated == other.isAuthenticated &&
-          onboardingCompleted == other.onboardingCompleted &&
-          maintenanceEnabled == other.maintenanceEnabled &&
-          onboardingEnabled == other.onboardingEnabled &&
-          authEnabled == other.authEnabled;
+          hasCompletedOnboarding == other.hasCompletedOnboarding &&
+          isInMaintenance == other.isInMaintenance &&
+          isOnboardingEnabled == other.isOnboardingEnabled &&
+          isAuthEnabled == other.isAuthEnabled;
 
   @override
   int get hashCode => Object.hash(
     isAuthenticated,
-    onboardingCompleted,
-    maintenanceEnabled,
-    onboardingEnabled,
-    authEnabled,
+    hasCompletedOnboarding,
+    isInMaintenance,
+    isOnboardingEnabled,
+    isAuthEnabled,
   );
 
   @override
   String toString() =>
       'StartupSignals('
       'isAuthenticated: $isAuthenticated, '
-      'onboardingCompleted: $onboardingCompleted, '
-      'maintenanceEnabled: $maintenanceEnabled, '
-      'onboardingEnabled: $onboardingEnabled, '
-      'authEnabled: $authEnabled)';
+      'hasCompletedOnboarding: $hasCompletedOnboarding, '
+      'isInMaintenance: $isInMaintenance, '
+      'isOnboardingEnabled: $isOnboardingEnabled, '
+      'isAuthEnabled: $isAuthEnabled)';
 }
