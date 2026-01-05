@@ -112,13 +112,11 @@ class HomePage extends ConsumerWidget {
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
+          const SizedBox(height: 8),
+          ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sign Out'),
+            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            child: Text('Sign Out', style: TextStyle(color: Theme.of(context).colorScheme.onError)),
           ),
         ],
       ),
