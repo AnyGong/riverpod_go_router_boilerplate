@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
+import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
 /// Provider for the Dio HTTP client.
 final dioProvider = Provider<Dio>((ref) {
@@ -16,19 +17,22 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  // Add interceptors
+  // Add interceptors in order
   dio.interceptors.addAll([
     AuthInterceptor(ref),
-    if (EnvConfig.enableLogging) LoggingInterceptor(),
+    RetryInterceptor(dio),
+    if (EnvConfig.enableLogging) LoggingInterceptor(ref),
   ]);
 
   return dio;
 });
 
-/// Interceptor for adding authentication headers.
-class AuthInterceptor extends Interceptor {
+/// Interceptor for adding authentication headers and handling token refresh.
+class AuthInterceptor extends QueuedInterceptor {
   AuthInterceptor(this._ref);
   final Ref _ref;
+
+  bool _isRefreshing = false;
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
@@ -43,23 +47,125 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == 401) {
-      // Token expired - could trigger refresh or logout here
-      // For now, just pass the error through
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 401 && !_isRefreshing) {
+      _isRefreshing = true;
+
+      try {
+        final refreshed = await _refreshToken();
+        if (refreshed) {
+          // Retry the original request with new token
+          final response = await _retryRequest(err.requestOptions);
+          _isRefreshing = false;
+          return handler.resolve(response);
+        }
+      } catch (e) {
+        // Refresh failed - clear tokens and let error propagate
+        await _clearTokens();
+      }
+
+      _isRefreshing = false;
     }
+
     handler.next(err);
+  }
+
+  Future<bool> _refreshToken() async {
+    final storage = _ref.read(secureStorageProvider);
+    final refreshToken = await storage.read(key: StorageKeys.refreshToken);
+
+    if (refreshToken == null) return false;
+
+    try {
+      // TODO: Implement actual refresh token API call
+      // final response = await Dio().post(
+      //   '${EnvConfig.baseUrl}/auth/refresh',
+      //   data: {'refresh_token': refreshToken},
+      // );
+      // await storage.write(key: StorageKeys.accessToken, value: response.data['access_token']);
+      // await storage.write(key: StorageKeys.refreshToken, value: response.data['refresh_token']);
+      return false; // Mock: refresh not implemented
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<Response<dynamic>> _retryRequest(RequestOptions options) async {
+    final storage = _ref.read(secureStorageProvider);
+    final token = await storage.read(key: StorageKeys.accessToken);
+    options.headers['Authorization'] = 'Bearer $token';
+    return Dio().fetch(options);
+  }
+
+  Future<void> _clearTokens() async {
+    final storage = _ref.read(secureStorageProvider);
+    await storage.delete(key: StorageKeys.accessToken);
+    await storage.delete(key: StorageKeys.refreshToken);
+  }
+}
+
+/// Interceptor for retrying failed requests.
+class RetryInterceptor extends Interceptor {
+  RetryInterceptor(this._dio, {this.maxRetries = 3, this.retryDelays});
+
+  final Dio _dio;
+  final int maxRetries;
+  final List<Duration>? retryDelays;
+
+  static const _retryKey = 'retry_count';
+
+  List<Duration> get _delays =>
+      retryDelays ?? const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
+
+  @override
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    final shouldRetry = _shouldRetry(err);
+    if (!shouldRetry) {
+      return handler.next(err);
+    }
+
+    final retryCount = err.requestOptions.extra[_retryKey] as int? ?? 0;
+    if (retryCount >= maxRetries) {
+      return handler.next(err);
+    }
+
+    // Wait before retrying
+    final delay = _delays[retryCount.clamp(0, _delays.length - 1)];
+    await Future<void>.delayed(delay);
+
+    // Retry the request
+    try {
+      err.requestOptions.extra[_retryKey] = retryCount + 1;
+      final response = await _dio.fetch(err.requestOptions);
+      return handler.resolve(response);
+    } on DioException catch (e) {
+      return handler.next(e);
+    }
+  }
+
+  bool _shouldRetry(DioException err) {
+    // Only retry on network errors or 5xx server errors
+    return err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.sendTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.connectionError ||
+        (err.response?.statusCode != null && err.response!.statusCode! >= 500);
   }
 }
 
 /// Interceptor for logging requests and responses.
 class LoggingInterceptor extends Interceptor {
+  LoggingInterceptor(this._ref);
+  final Ref _ref;
+
+  AppLogger get _logger => _ref.read(loggerProvider);
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
-      debugPrint('→ ${options.method} ${options.uri}');
+      _logger.d('→ ${options.method} ${options.uri}');
       if (options.data != null) {
-        debugPrint('   Body: ${options.data}');
+        _logger.d('   Body: ${options.data}');
       }
     }
     handler.next(options);
@@ -68,7 +174,7 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      debugPrint('← ${response.statusCode} ${response.requestOptions.uri}');
+      _logger.d('← ${response.statusCode} ${response.requestOptions.uri}');
     }
     handler.next(response);
   }
@@ -76,8 +182,10 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
-      debugPrint('✖ ${err.response?.statusCode ?? 'NETWORK'} ${err.requestOptions.uri}');
-      debugPrint('   Error: ${err.message}');
+      _logger.e(
+        '✖ ${err.response?.statusCode ?? 'NETWORK'} ${err.requestOptions.uri}',
+        error: err.message,
+      );
     }
     handler.next(err);
   }

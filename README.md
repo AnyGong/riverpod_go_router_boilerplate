@@ -27,14 +27,17 @@ If you value **clarity over flexibility**, this boilerplate is for you.
 
 ## ✨ Tech Stack
 
-| Package                    | Purpose                                 |
-| :------------------------- | :-------------------------------------- |
-| **Flutter 3.x**            | Cross-platform UI framework             |
-| **Riverpod 3.x**           | State management (`AsyncNotifier` only) |
-| **GoRouter 17.x**          | Declarative routing with guards         |
-| **Dio**                    | HTTP client with interceptors           |
-| **flutter_secure_storage** | Secure token storage                    |
-| **flutter_native_splash**  | Native splash screen                    |
+| Category                   | Packages                                                                       |
+| :------------------------- | :----------------------------------------------------------------------------- |
+| **State Management**       | `flutter_riverpod`, `riverpod_annotation`, `flutter_hooks`, `hooks_riverpod`   |
+| **Navigation**             | `go_router`                                                                    |
+| **Networking**             | `dio`, `connectivity_plus`, `retry`                                            |
+| **Models & Serialization** | `freezed_annotation`, `json_annotation`, `equatable`                           |
+| **Storage**                | `flutter_secure_storage`, `shared_preferences`                                 |
+| **UI Components**          | `flutter_svg`, `cached_network_image`, `shimmer`, `gap`, `flutter_animate`     |
+| **Utilities**              | `logger`, `uuid`, `intl`, `url_launcher`, `package_info_plus`, `path_provider` |
+| **Code Generation**        | `build_runner`, `riverpod_generator`, `freezed`, `json_serializable`           |
+| **Testing**                | `mocktail`, `flutter_test`                                                     |
 
 ---
 
@@ -51,13 +54,65 @@ Flexibility is intentionally limited.
 
 ---
 
-## ❌ What This Is NOT
+## 🚀 Quick Start
 
-- ❌ A tutorial
-- ❌ A pattern comparison repo
-- ❌ A flexible playground
+```bash
+# Clone the repository
+git clone https://github.com/your-username/riverpod_go_router_boilerplate.git
 
-If you disagree with these decisions, **fork the repo**.
+# Install dependencies
+flutter pub get
+
+# Generate code (freezed, json_serializable, riverpod_generator)
+dart run build_runner build --delete-conflicting-outputs
+
+# Run the app
+flutter run
+```
+
+---
+
+## 📁 Folder Structure
+
+```
+lib/
+├── main.dart                 # App entry point
+├── app/
+│   ├── app.dart              # MaterialApp configuration
+│   ├── app_config.dart       # Static app configuration
+│   ├── bootstrap.dart        # Initialization & error handling
+│   ├── router/               # GoRouter configuration
+│   │   ├── app_router.dart   # Main router with guards
+│   │   ├── auth_routes.dart  # Public routes
+│   │   ├── protected_routes.dart # Authenticated routes
+│   │   └── splash_route.dart
+│   └── startup/              # Startup state machine
+│       ├── startup.dart      # Barrel file
+│       ├── startup_events.dart
+│       ├── startup_signals.dart
+│       ├── startup_state_machine.dart
+│       ├── startup_state_resolver.dart
+│       └── presentation/
+├── config/
+│   └── env_config.dart       # Environment configuration
+├── core/
+│   ├── core.dart             # Barrel file for all core exports
+│   ├── config/               # Remote configuration
+│   ├── constants/            # App-wide constants
+│   ├── extensions/           # Dart extensions (String, DateTime, BuildContext)
+│   ├── hooks/                # Custom Flutter hooks
+│   ├── network/              # Dio client & interceptors
+│   ├── result/               # Result monad for error handling
+│   ├── session/              # Session state management
+│   ├── storage/              # Secure storage
+│   ├── theme/                # Theme configuration & notifier
+│   ├── utils/                # Logger, validators, connectivity
+│   └── widgets/              # Reusable widgets
+└── features/
+    ├── auth/                 # Authentication feature
+    ├── home/                 # Home screen
+    └── onboarding/           # Onboarding flow
+```
 
 ---
 
@@ -74,11 +129,101 @@ If you disagree with these decisions, **fork the repo**.
 | No business logic inside widgets                           |   ✅   |
 | Dependency injection via Riverpod providers                |   ✅   |
 
-These rules are enforced by **structure**, not documentation alone.
+---
+
+## 🔧 Key Features
+
+### 📡 Network Layer
+
+- **Dio client** with automatic token injection
+- **Token refresh** interceptor with queue management
+- **Retry interceptor** with exponential backoff
+- **Structured logging** with Logger package
+- **Result monad** for type-safe error handling
+
+### 🎨 Theme System
+
+- Material 3 design tokens
+- **Dynamic theme switching** with persistence
+- Light/Dark/System modes
+- Centralized color palette & typography
+
+### 🚦 Startup State Machine
+
+- Event-driven state transitions
+- Maintenance mode support
+- Onboarding flow integration
+- Session restoration
+
+### 🧩 Included Widgets
+
+- `AsyncValueWidget` - Handle loading/error/data states
+- `ShimmerLoading` - Skeleton loading placeholders
+- `AppCachedImage` - Cached network images
+- `ResponsiveBuilder` - Adaptive layouts
+- `AppButton` - Consistent button variants
+
+### 🪝 Custom Hooks
+
+- `useAsyncState` - Async operation management
+- `useDebouncedValue` - Input debouncing
+- `useToggle` - Boolean state toggle
+- `useCountdown` - Timer countdown
+- And more...
 
 ---
 
-## 📁 Folder Structure
+## 📝 Code Generation
+
+This project uses code generation for:
+
+- **Freezed** - Immutable models
+- **JSON Serializable** - JSON parsing
+- **Riverpod Generator** - Provider generation
+
+```bash
+# One-time build
+dart run build_runner build --delete-conflicting-outputs
+
+# Watch mode (during development)
+dart run build_runner watch --delete-conflicting-outputs
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+flutter test
+
+# Run with coverage
+flutter test --coverage
+```
+
+---
+
+## 📏 Code Style Guidelines
+
+| File Type               | Target Lines | Max Lines |
+| :---------------------- | :----------: | :-------: |
+| Models / Entities       |    20–80     |    120    |
+| Providers / Notifiers   |    50–120    |    180    |
+| Services / Repositories |    50–150    |    200    |
+| UI Widgets              |    60–200    |    250    |
+| Test files              |    40–200    |    300    |
+
+**Method length**: < 40 lines (ideal < 20)
+
+---
+
+## ❌ What This Is NOT
+
+- ❌ A tutorial
+- ❌ A pattern comparison repo
+- ❌ A flexible playground
+
+If you disagree with these decisions, **fork the repo**.
 
 This boilerplate follows a **feature-first, clean architecture** approach.
 

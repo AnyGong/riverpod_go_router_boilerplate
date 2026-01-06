@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/features/home/presentation/pages/home_page.dart';
+import 'package:riverpod_go_router_boilerplate/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/pages/settings_page.dart';
 
 /// Routes that require authentication.
 final protectedRoutes = [
@@ -14,12 +16,12 @@ final protectedRoutes = [
   GoRoute(
     path: AppRoutes.settings,
     name: 'settings',
-    builder: (context, state) => const _PlaceholderPage(title: 'Settings'),
+    builder: (context, state) => const SettingsPage(),
   ),
   GoRoute(
     path: AppRoutes.onboarding,
     name: 'onboarding',
-    builder: (context, state) => const _PlaceholderPage(title: 'Onboarding'),
+    builder: (context, state) => const OnboardingPage(),
   ),
   GoRoute(
     path: AppRoutes.maintenance,

@@ -112,17 +112,20 @@ class HomePage extends ConsumerWidget {
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
-          const SizedBox(height: 8),
-          ElevatedButton(
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text('Sign Out', style: TextStyle(color: Theme.of(context).colorScheme.onError)),
           ),
         ],
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       // Use session service to end session
       final sessionService = ref.read(sessionServiceProvider);
       await sessionService.endSession();

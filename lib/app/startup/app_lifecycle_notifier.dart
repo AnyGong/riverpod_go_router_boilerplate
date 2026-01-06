@@ -8,54 +8,35 @@ import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
 import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
+import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Notifier that manages the app lifecycle and state transitions.
-///
-/// This provides explicit lifecycle management with:
-/// - Event-driven state changes (not just "where do I go?" but "why am I here?")
-/// - State transition tracking
-/// - Re-evaluation capability when conditions change
-/// - ChangeNotifier for GoRouter integration
 class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifier {
   @override
-  AppLifecycleState build() {
-    return const AppLifecycleState.initial();
-  }
+  AppLifecycleState build() => const AppLifecycleState.initial();
 
   /// Initialize the app lifecycle by processing the launch event.
-  ///
-  /// Call this from SplashPage to trigger initial state resolution.
   Future<void> initialize() async {
     if (state.isInitialized) return;
 
     await processEvent(const AppLaunched());
-
     state = state.copyWith(isInitialized: true);
     notifyListeners();
   }
 
   /// Process a startup event and potentially transition to a new state.
-  ///
-  /// This is the main entry point for lifecycle transitions.
-  /// Events describe "why" we need to re-evaluate, and the
-  /// resolver determines "where" we should go.
   Future<void> processEvent(StartupEvent event) async {
     final signals = await _collectSignals(event);
     final newState = StartupStateResolver.resolve(signals);
 
-    // Only transition if state actually changed
     if (newState.runtimeType != state.currentState.runtimeType) {
       _transitionTo(newState, event);
     } else {
-      // Update event even if state didn't change
       state = state.copyWith(lastEvent: event);
     }
   }
 
   /// Manually trigger re-evaluation of the current state.
-  ///
-  /// Useful when external conditions might have changed
-  /// (remote config, feature flags, etc.)
   Future<void> reevaluate() async {
     final signals = await _collectCurrentSignals();
     final newState = StartupStateResolver.resolve(signals);
@@ -65,74 +46,53 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
     }
   }
 
-  /// Collect signals based on the triggering event.
-  ///
-  /// Different events may short-circuit certain signals.
   Future<StartupSignals> _collectSignals(StartupEvent event) async {
-    switch (event) {
-      case AppLaunched():
-        return _collectCurrentSignals();
-
-      case UserAuthenticated():
-        // User just logged in, skip auth check
-        return StartupSignals(
-          isInMaintenance: await _checkMaintenance(),
-          hasCompletedOnboarding: await _checkOnboarding(),
-          isAuthenticated: true,
-          isAuthEnabled: AppConfig.authEnabled,
-          isOnboardingEnabled: AppConfig.onboardingEnabled,
-        );
-
-      case UserLoggedOut():
-      case SessionExpiredEvent():
-        // Session ended, we know auth state
-        return StartupSignals(
-          isInMaintenance: await _checkMaintenance(),
-          hasCompletedOnboarding: await _checkOnboarding(),
-          isAuthenticated: false,
-          isAuthEnabled: AppConfig.authEnabled,
-          isOnboardingEnabled: AppConfig.onboardingEnabled,
-        );
-
-      case OnboardingCompleted():
-        // Onboarding just finished
-        return StartupSignals(
-          isInMaintenance: await _checkMaintenance(),
-          hasCompletedOnboarding: true,
-          isAuthenticated: await _checkAuth(),
-          isAuthEnabled: AppConfig.authEnabled,
-          isOnboardingEnabled: AppConfig.onboardingEnabled,
-        );
-
-      case MaintenanceEnabled():
-        return StartupSignals(
-          isInMaintenance: true,
-          hasCompletedOnboarding: await _checkOnboarding(),
-          isAuthenticated: await _checkAuth(),
-          isAuthEnabled: AppConfig.authEnabled,
-          isOnboardingEnabled: AppConfig.onboardingEnabled,
-        );
-
-      case MaintenanceDisabled():
-        return StartupSignals(
-          isInMaintenance: false,
-          hasCompletedOnboarding: await _checkOnboarding(),
-          isAuthenticated: await _checkAuth(),
-          isAuthEnabled: AppConfig.authEnabled,
-          isOnboardingEnabled: AppConfig.onboardingEnabled,
-        );
-
-      default:
-        return _collectCurrentSignals();
-    }
+    return switch (event) {
+      AppLaunched() => _collectCurrentSignals(),
+      UserAuthenticated() => StartupSignals(
+        isInMaintenance: await _checkMaintenance(),
+        hasCompletedOnboarding: _checkOnboarding(),
+        isAuthenticated: true,
+        isAuthEnabled: AppConfig.authEnabled,
+        isOnboardingEnabled: AppConfig.onboardingEnabled,
+      ),
+      UserLoggedOut() || SessionExpiredEvent() => StartupSignals(
+        isInMaintenance: await _checkMaintenance(),
+        hasCompletedOnboarding: _checkOnboarding(),
+        isAuthenticated: false,
+        isAuthEnabled: AppConfig.authEnabled,
+        isOnboardingEnabled: AppConfig.onboardingEnabled,
+      ),
+      OnboardingCompleted() => StartupSignals(
+        isInMaintenance: await _checkMaintenance(),
+        hasCompletedOnboarding: true,
+        isAuthenticated: _checkAuth(),
+        isAuthEnabled: AppConfig.authEnabled,
+        isOnboardingEnabled: AppConfig.onboardingEnabled,
+      ),
+      MaintenanceEnabled() => StartupSignals(
+        isInMaintenance: true,
+        hasCompletedOnboarding: _checkOnboarding(),
+        isAuthenticated: _checkAuth(),
+        isAuthEnabled: AppConfig.authEnabled,
+        isOnboardingEnabled: AppConfig.onboardingEnabled,
+      ),
+      MaintenanceDisabled() => StartupSignals(
+        isInMaintenance: false,
+        hasCompletedOnboarding: _checkOnboarding(),
+        isAuthenticated: _checkAuth(),
+        isAuthEnabled: AppConfig.authEnabled,
+        isOnboardingEnabled: AppConfig.onboardingEnabled,
+      ),
+      _ => _collectCurrentSignals(),
+    };
   }
 
-  /// Collect all current signals by checking actual state.
   Future<StartupSignals> _collectCurrentSignals() async {
     return StartupSignals(
       isInMaintenance: await _checkMaintenance(),
-      hasCompletedOnboarding: await _checkOnboarding(),
-      isAuthenticated: await _checkAuth(),
+      hasCompletedOnboarding: _checkOnboarding(),
+      isAuthenticated: _checkAuth(),
       isAuthEnabled: AppConfig.authEnabled,
       isOnboardingEnabled: AppConfig.onboardingEnabled,
     );
@@ -143,12 +103,16 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
     return remoteConfig.currentConfig.isMaintenanceMode;
   }
 
-  Future<bool> _checkOnboarding() async {
-    // Could check shared preferences or a dedicated service
-    return true; // Default to completed
+  bool _checkOnboarding() {
+    try {
+      final onboardingService = ref.read(onboardingServiceProvider);
+      return onboardingService.isCompleted;
+    } catch (_) {
+      return true; // Default to completed if service not available
+    }
   }
 
-  Future<bool> _checkAuth() async {
+  bool _checkAuth() {
     final sessionState = ref.read(sessionStateProvider);
     return sessionState.isAuthenticated;
   }
@@ -163,36 +127,19 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
     notifyListeners();
   }
 
-  // --- Convenience methods for common events ---
+  // --- Convenience methods ---
+  Future<void> onUserLoggedIn(String userId) async =>
+      processEvent(UserAuthenticated(userId: userId));
 
-  /// Call when user successfully logs in
-  Future<void> onUserLoggedIn(String userId) async {
-    await processEvent(UserAuthenticated(userId: userId));
-  }
+  Future<void> onUserLoggedOut() async => processEvent(const UserLoggedOut());
 
-  /// Call when user logs out
-  Future<void> onUserLoggedOut() async {
-    await processEvent(const UserLoggedOut());
-  }
+  Future<void> onSessionExpired({String? reason}) async =>
+      processEvent(SessionExpiredEvent(reason: reason));
 
-  /// Call when session expires
-  Future<void> onSessionExpired({String? reason}) async {
-    await processEvent(SessionExpiredEvent(reason: reason));
-  }
+  Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
 
-  /// Call when onboarding is completed
-  Future<void> onOnboardingCompleted() async {
-    await processEvent(const OnboardingCompleted());
-  }
-
-  /// Call when maintenance mode changes
-  Future<void> onMaintenanceModeChanged({required bool isEnabled}) async {
-    if (isEnabled) {
-      await processEvent(const MaintenanceEnabled());
-    } else {
-      await processEvent(const MaintenanceDisabled());
-    }
-  }
+  Future<void> onMaintenanceModeChanged({required bool isEnabled}) async =>
+      processEvent(isEnabled ? const MaintenanceEnabled() : const MaintenanceDisabled());
 }
 
 /// Provider for the AppLifecycleNotifier.
@@ -201,11 +148,8 @@ final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppL
 );
 
 /// Listenable for GoRouter refresh.
-///
-/// This is what connects the lifecycle to router navigation.
 final appLifecycleListenableProvider = Provider<Listenable>((ref) {
-  final notifier = ref.watch(appLifecycleNotifierProvider.notifier);
-  return notifier;
+  return ref.watch(appLifecycleNotifierProvider.notifier);
 });
 
 /// Current startup state for convenience.

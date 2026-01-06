@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Provider for shared preferences instance
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError('Initialize SharedPreferences in main.dart');
+});
+
+/// Theme mode notifier for managing app theme
+class ThemeNotifier extends Notifier<ThemeMode> {
+  static const _themeKey = 'theme_mode';
+
+  @override
+  ThemeMode build() {
+    _loadTheme();
+    return ThemeMode.system;
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final themeIndex = prefs.getInt(_themeKey);
+    if (themeIndex != null) {
+      state = ThemeMode.values[themeIndex];
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = mode;
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setInt(_themeKey, mode.index);
+  }
+
+  void toggleTheme() {
+    final newMode = switch (state) {
+      ThemeMode.light => ThemeMode.dark,
+      ThemeMode.dark => ThemeMode.system,
+      ThemeMode.system => ThemeMode.light,
+    };
+    setThemeMode(newMode);
+  }
+
+  void setLight() => setThemeMode(ThemeMode.light);
+  void setDark() => setThemeMode(ThemeMode.dark);
+  void setSystem() => setThemeMode(ThemeMode.system);
+}
+
+/// Provider for the theme notifier
+final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
+
+/// Provider that returns true if dark mode is active
+final isDarkModeProvider = Provider<bool>((ref) {
+  final themeMode = ref.watch(themeNotifierProvider);
+  if (themeMode == ThemeMode.system) {
+    // This will need to be updated based on actual platform brightness
+    // In the widget tree, use context.isDarkMode instead
+    return false;
+  }
+  return themeMode == ThemeMode.dark;
+});
