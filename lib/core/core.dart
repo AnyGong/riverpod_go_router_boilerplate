@@ -17,6 +17,7 @@ export 'result/result.dart';
 // Network
 export 'network/api_client.dart';
 export 'network/dio_provider.dart';
+export 'network/error_converter.dart';
 
 // Session
 export 'session/session.dart';

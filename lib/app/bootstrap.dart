@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_go_router_boilerplate/app/app.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
+import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
 /// Bootstrap the application.
 /// Handles initialization, error handling, and app startup.
@@ -19,6 +20,7 @@ class AppBootstrap extends StatelessWidget {
 
     // Initialize environment configuration
     EnvConfig.initialize(environment: environment);
+    AppLogger.instance.i('Environment initialized: ${environment.name}');
 
     // Set preferred orientations
     await SystemChrome.setPreferredOrientations([
@@ -38,6 +40,8 @@ class AppBootstrap extends StatelessWidget {
     // Set up error handling
     _setupErrorHandling();
 
+    AppLogger.instance.i('App bootstrap completed');
+
     // Add any other initialization here:
     // - Firebase.initializeApp()
     // - Initialize analytics
@@ -50,20 +54,21 @@ class AppBootstrap extends StatelessWidget {
     // Handle Flutter errors
     FlutterError.onError = (details) {
       FlutterError.presentError(details);
+      AppLogger.instance.e(
+        'Flutter error: ${details.exceptionAsString()}',
+        error: details.exception,
+        stackTrace: details.stack,
+      );
       if (kReleaseMode) {
-        // Log to crash reporting service
-        _logError(details.exception, details.stack);
+        _logToCrashReporting(details.exception, details.stack);
       }
     };
 
     // Handle async errors
     PlatformDispatcher.instance.onError = (error, stack) {
-      if (kDebugMode) {
-        debugPrint('Async error: $error');
-        debugPrint('$stack');
-      }
+      AppLogger.instance.e('Async error', error: error, stackTrace: stack);
       if (kReleaseMode) {
-        _logError(error, stack);
+        _logToCrashReporting(error, stack);
       }
       return true;
     };
@@ -71,11 +76,9 @@ class AppBootstrap extends StatelessWidget {
 
   /// Log error to crash reporting service.
   /// TODO: Implement with your preferred crash reporting (Firebase Crashlytics, Sentry, etc.)
-  static void _logError(Object error, StackTrace? stack) {
+  static void _logToCrashReporting(Object error, StackTrace? stack) {
     // Example: FirebaseCrashlytics.instance.recordError(error, stack);
-    if (kDebugMode) {
-      debugPrint('Error logged: $error');
-    }
+    AppLogger.instance.w('Error sent to crash reporting: $error');
   }
 
   @override
@@ -93,10 +96,7 @@ Future<void> runGuardedApp({required Widget app, Environment environment = Envir
       runApp(app);
     },
     (error, stack) {
-      if (kDebugMode) {
-        debugPrint('Uncaught error: $error');
-        debugPrint('$stack');
-      }
+      AppLogger.instance.f('Uncaught zone error', error: error, stackTrace: stack);
       // Log to crash reporting in production
     },
   );

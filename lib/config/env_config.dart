@@ -10,6 +10,7 @@ class EnvConfig {
   static late final Environment _environment;
   static late final String _baseUrl;
   static late final bool _enableLogging;
+  static late final bool _useMockRepositories;
 
   /// Initialize the environment configuration.
   /// Call this in main() before runApp().
@@ -17,6 +18,7 @@ class EnvConfig {
     _environment = environment;
     _baseUrl = _getBaseUrl(environment);
     _enableLogging = environment != Environment.prod;
+    _useMockRepositories = environment != Environment.prod;
   }
 
   static String _getBaseUrl(Environment env) {
@@ -44,4 +46,8 @@ class EnvConfig {
 
   /// Whether logging is enabled.
   static bool get enableLogging => _enableLogging;
+
+  /// Whether to use mock repositories instead of remote ones.
+  /// Returns true for dev and staging, false for production.
+  static bool get useMockRepositories => _useMockRepositories;
 }

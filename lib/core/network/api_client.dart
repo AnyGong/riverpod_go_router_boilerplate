@@ -3,18 +3,30 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/dio_provider.dart';
+import 'package:riverpod_go_router_boilerplate/core/network/error_converter.dart';
 import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
+
+/// Provider for the default error converter.
+final errorConverterProvider = Provider<ErrorConverter>((ref) {
+  return const DefaultErrorConverter();
+});
 
 /// Provider for the API client.
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(ref.watch(dioProvider));
+  return ApiClient(ref.watch(dioProvider), errorConverter: ref.watch(errorConverterProvider));
 });
 
 /// A type-safe API client wrapper around Dio.
 /// All network calls return [Result] for consistent error handling.
+///
+/// The error handling is delegated to an [ErrorConverter], making it
+/// easy to customize for different APIs (e.g., Stripe, Google Maps).
 class ApiClient {
-  ApiClient(this._dio);
+  ApiClient(this._dio, {ErrorConverter? errorConverter})
+    : _errorConverter = errorConverter ?? const DefaultErrorConverter();
+
   final Dio _dio;
+  final ErrorConverter _errorConverter;
 
   /// Perform a GET request.
   Future<Result<T>> get<T>(
@@ -94,66 +106,11 @@ class ApiClient {
 
       return Success(response.data as T);
     } on DioException catch (e, stackTrace) {
-      return Failure(_mapDioException(e, stackTrace));
-    } on SocketException catch (_, stackTrace) {
-      return Failure(
-        NetworkException(
-          message: 'No internet connection',
-          code: 'NO_CONNECTION',
-          stackTrace: stackTrace,
-        ),
-      );
+      return Failure(_errorConverter.convertDioException(e, stackTrace));
+    } on SocketException catch (e, stackTrace) {
+      return Failure(_errorConverter.convertSocketException(e, stackTrace));
     } catch (e, stackTrace) {
-      return Failure(
-        UnexpectedException(
-          message: 'An unexpected error occurred',
-          originalError: e,
-          stackTrace: stackTrace,
-        ),
-      );
+      return Failure(_errorConverter.convertUnknownError(e, stackTrace));
     }
-  }
-
-  /// Map Dio exceptions to our custom exceptions.
-  NetworkException _mapDioException(DioException e, StackTrace stackTrace) {
-    return switch (e.type) {
-      DioExceptionType.connectionTimeout ||
-      DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout => NetworkException.timeout(),
-      DioExceptionType.connectionError => NetworkException.noConnection(),
-      DioExceptionType.badResponse => _mapStatusCode(
-        e.response?.statusCode,
-        e.response?.data,
-        stackTrace,
-      ),
-      _ => NetworkException(message: e.message ?? 'Network error occurred', stackTrace: stackTrace),
-    };
-  }
-
-  /// Map HTTP status codes to exceptions.
-  NetworkException _mapStatusCode(int? statusCode, dynamic data, StackTrace stackTrace) {
-    final message = _extractErrorMessage(data);
-
-    if (statusCode == 401) {
-      return NetworkException.unauthorized();
-    }
-
-    if (statusCode != null && statusCode >= 500) {
-      return NetworkException.serverError(statusCode);
-    }
-
-    return NetworkException(
-      message: message ?? 'Request failed',
-      statusCode: statusCode,
-      stackTrace: stackTrace,
-    );
-  }
-
-  /// Extract error message from response data.
-  String? _extractErrorMessage(dynamic data) {
-    if (data is Map<String, dynamic>) {
-      return data['message'] as String? ?? data['error'] as String? ?? data['errors']?.toString();
-    }
-    return null;
   }
 }

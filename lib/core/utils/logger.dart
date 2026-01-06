@@ -4,7 +4,16 @@ import 'package:logger/logger.dart';
 
 /// Application logger with pretty output in debug mode.
 ///
-/// Usage:
+/// This logger is designed to work both:
+/// 1. As a static singleton (for bootstrap/pre-Riverpod usage)
+/// 2. Via Riverpod provider (for normal app usage)
+///
+/// ## Usage in Bootstrap (before ProviderScope):
+/// ```dart
+/// AppLogger.instance.i('Initializing app...');
+/// ```
+///
+/// ## Usage with Riverpod:
 /// ```dart
 /// final logger = ref.read(loggerProvider);
 /// logger.d('Debug message');
@@ -13,7 +22,7 @@ import 'package:logger/logger.dart';
 /// logger.e('Error message', error: exception, stackTrace: stack);
 /// ```
 class AppLogger {
-  AppLogger()
+  AppLogger._internal()
     : _logger = Logger(
         printer: PrettyPrinter(
           methodCount: 2,
@@ -25,6 +34,9 @@ class AppLogger {
         ),
         level: kDebugMode ? Level.debug : Level.warning,
       );
+
+  /// Singleton instance for use before Riverpod is available.
+  static final AppLogger instance = AppLogger._internal();
 
   final Logger _logger;
 
@@ -54,10 +66,11 @@ class AppLogger {
   }
 
   /// Log with custom level
-  void logMessage(Level level, String message, {Object? error, StackTrace? stackTrace}) {
+  void log(Level level, String message, {Object? error, StackTrace? stackTrace}) {
     _logger.log(level, message, error: error, stackTrace: stackTrace);
   }
 }
 
-/// Provider for the application logger
-final loggerProvider = Provider<AppLogger>((ref) => AppLogger());
+/// Provider for the application logger.
+/// Returns the singleton instance for consistency.
+final loggerProvider = Provider<AppLogger>((ref) => AppLogger.instance);
