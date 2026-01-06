@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
@@ -63,20 +64,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // Check session state for auth-based redirects
-      final isLoggedIn = sessionState.isAuthenticated;
+      // Only apply auth redirects if auth is enabled
+      if (AppConfig.authEnabled) {
+        final isLoggedIn = sessionState.isAuthenticated;
 
-      // Define protected routes
-      const protectedPaths = [AppRoutes.home, AppRoutes.profile, AppRoutes.settings];
+        // Define protected routes
+        const protectedPaths = [AppRoutes.home, AppRoutes.profile, AppRoutes.settings];
 
-      // Redirect unauthenticated users away from protected routes
-      if (protectedPaths.contains(path) && !isLoggedIn) {
-        return AppRoutes.login;
-      }
+        // Redirect unauthenticated users away from protected routes
+        if (protectedPaths.contains(path) && !isLoggedIn) {
+          return AppRoutes.login;
+        }
 
-      // Redirect authenticated users away from login
-      if (isLoggedIn && path == AppRoutes.login) {
-        return AppRoutes.home;
+        // Redirect authenticated users away from login
+        if (isLoggedIn && path == AppRoutes.login) {
+          return AppRoutes.home;
+        }
       }
 
       return null;
