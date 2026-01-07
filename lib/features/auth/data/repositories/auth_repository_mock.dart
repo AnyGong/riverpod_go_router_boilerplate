@@ -1,7 +1,8 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
-import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 
 /// Mock implementation of [AuthRepository].
 ///
@@ -21,7 +22,7 @@ import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 class AuthRepositoryMock implements AuthRepository {
   AuthRepositoryMock({required this.secureStorage});
 
-  final dynamic secureStorage;
+  final FlutterSecureStorage secureStorage;
 
   /// Simulated network delay
   static const _defaultDelay = Duration(milliseconds: 500);
@@ -64,7 +65,7 @@ class AuthRepositoryMock implements AuthRepository {
     await Future<void>.delayed(_defaultDelay);
 
     final token = await secureStorage.read(key: StorageKeys.accessToken);
-    final userId = await secureStorage.read(key: StorageKeys.userId) as String?;
+    final userId = await secureStorage.read(key: StorageKeys.userId);
 
     if (token == null || userId == null) {
       return Failure(AuthException.noSession());
@@ -99,7 +100,7 @@ class AuthRepositoryMock implements AuthRepository {
   String _extractNameFromEmail(String email) {
     final localPart = email.split('@').first;
     return localPart
-        .replaceAll(RegExp(r'[._-]'), ' ')
+        .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
         .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
         .join(' ');

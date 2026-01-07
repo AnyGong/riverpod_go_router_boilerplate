@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart' show immutable;
+
 /// A type-safe Result monad for handling success/failure outcomes.
 /// Use this instead of throwing exceptions for expected failures.
+@immutable
 sealed class Result<T> {
   const Result();
 
@@ -57,6 +60,29 @@ sealed class Result<T> {
   }
 
   /// Returns the data or throws the error.
+  ///
+  /// ⚠️ **WARNING:** Use with extreme caution!
+  ///
+  /// This method defeats the purpose of the Result type by introducing
+  /// unchecked exceptions. Only use in scenarios where:
+  /// - You have already checked [isSuccess] beforehand
+  /// - You're in test code where failing fast is acceptable
+  /// - You're in a controlled context like a repository that will catch the exception
+  ///
+  /// **DO NOT** use in UI/presentation layer code where crashes would impact users.
+  ///
+  /// Prefer using [fold], [dataOrNull], or [getOrElse] instead.
+  ///
+  /// ```dart
+  /// // ❌ BAD - Can crash in UI
+  /// final user = result.getOrThrow();
+  ///
+  /// // ✅ GOOD - Handle both cases
+  /// result.fold(
+  ///   onSuccess: (user) => showUser(user),
+  ///   onFailure: (error) => showError(error),
+  /// );
+  /// ```
   T getOrThrow() {
     return switch (this) {
       Success(:final data) => data,
@@ -74,6 +100,7 @@ sealed class Result<T> {
 }
 
 /// Represents a successful result with data.
+@immutable
 final class Success<T> extends Result<T> {
   const Success(this.data);
   final T data;
@@ -91,6 +118,7 @@ final class Success<T> extends Result<T> {
 }
 
 /// Represents a failed result with an error.
+@immutable
 final class Failure<T> extends Result<T> {
   const Failure(this.error);
   final AppException error;
@@ -124,8 +152,6 @@ sealed class AppException implements Exception {
 final class NetworkException extends AppException {
   const NetworkException({required super.message, super.code, super.stackTrace, this.statusCode});
 
-  final int? statusCode;
-
   factory NetworkException.noConnection() =>
       const NetworkException(message: 'No internet connection', code: 'NO_CONNECTION');
 
@@ -140,6 +166,8 @@ final class NetworkException extends AppException {
 
   factory NetworkException.unauthorized() =>
       const NetworkException(message: 'Unauthorized access', code: 'UNAUTHORIZED', statusCode: 401);
+
+  final int? statusCode;
 }
 
 /// Authentication-related exceptions.

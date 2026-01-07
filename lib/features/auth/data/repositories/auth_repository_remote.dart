@@ -1,8 +1,9 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/api_client.dart';
+import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
-import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 
 /// Remote implementation of [AuthRepository].
 ///
@@ -31,7 +32,7 @@ class AuthRepositoryRemote implements AuthRepository {
     : _apiClient = apiClient;
 
   final ApiClient _apiClient;
-  final dynamic secureStorage;
+  final FlutterSecureStorage secureStorage;
 
   @override
   Future<Result<User>> login(String email, String password) async {
