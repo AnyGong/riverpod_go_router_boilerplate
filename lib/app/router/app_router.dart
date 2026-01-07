@@ -6,6 +6,7 @@ import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 
 /// Route paths used throughout the app.
@@ -38,65 +39,111 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
-    redirect: (final context, final state) {
-      final path = state.uri.path;
-      final lifecycleState = ref.read(appLifecycleNotifierProvider);
-      final sessionState = ref.read(sessionStateProvider);
-      final isLoading = sessionState.isLoading;
+    redirect: (final context, final state) =>
+        _handleRedirect(ref, state.uri.path),
+    errorBuilder: (final context, final state) =>
+        _ErrorPage(path: state.uri.path),
+  );
+});
 
-      // Don't redirect while loading (except from splash)
-      if (isLoading && path != AppRoutes.splash) {
-        return null;
-      }
+// ============================================================================
+// Redirect Guards (Chain of Responsibility Pattern)
+// ============================================================================
 
-      // CRITICAL: Force splash until initialization completes.
-      // This prevents "flash of unauthenticated content" when:
-      // 1. A deep link arrives while app is still warming up
-      // 2. Session state hasn't been restored from storage yet
-      // GoRouter will remember the original deep link intent and
-      // the splash page will navigate to the correct route after init.
-      if (!lifecycleState.isInitialized) {
-        if (path != AppRoutes.splash) {
-          return AppRoutes.splash;
-        }
-        return null; // Stay on splash
-      }
+/// Main redirect handler - delegates to specific guards.
+String? _handleRedirect(final Ref ref, final String path) {
+  final lifecycleState = ref.read(appLifecycleNotifierProvider);
+  final sessionState = ref.read(sessionStateProvider);
 
-      // Maintenance hard stop - always allow access
-      if (path == AppRoutes.maintenance) {
-        return null;
-      }
+  // Apply guards in order of priority
+  return _guardLoading(path, sessionState) ??
+      _guardInitialization(path, lifecycleState) ??
+      _guardMaintenance(path) ??
+      _guardSplash(path) ??
+      _guardAuth(path, sessionState);
+}
 
-      // Allow splash to handle initial routing
-      if (path == AppRoutes.splash) {
-        return null;
-      }
+/// Guard: Don't redirect while session is loading (except from splash).
+String? _guardLoading(final String path, final SessionState sessionState) {
+  if (sessionState.isLoading && path != AppRoutes.splash) {
+    return null; // Allow current navigation to proceed
+  }
+  return null;
+}
 
-      // Only apply auth redirects if auth is enabled
-      if (AppConfig.authEnabled) {
-        final isLoggedIn = sessionState.isAuthenticated;
+/// Guard: Force splash until initialization completes.
+/// Prevents "flash of unauthenticated content" when deep links arrive
+/// before session state is restored from storage.
+String? _guardInitialization(
+  final String path,
+  final AppLifecycleState lifecycleState,
+) {
+  if (!lifecycleState.isInitialized) {
+    if (path != AppRoutes.splash) {
+      return AppRoutes.splash; // Force back to splash
+    }
+    return null; // Stay on splash
+  }
+  return null;
+}
 
-        // Define protected routes
-        const protectedPaths = [
-          AppRoutes.home,
-          AppRoutes.profile,
-          AppRoutes.settings,
-        ];
+/// Guard: Always allow access to maintenance page.
+String? _guardMaintenance(final String path) {
+  if (path == AppRoutes.maintenance) {
+    return null; // Allow access
+  }
+  return null;
+}
 
-        // Redirect unauthenticated users away from protected routes
-        if (protectedPaths.contains(path) && !isLoggedIn) {
-          return AppRoutes.login;
-        }
+/// Guard: Allow splash to handle its own routing.
+String? _guardSplash(final String path) {
+  if (path == AppRoutes.splash) {
+    return null; // Splash handles navigation after init
+  }
+  return null;
+}
 
-        // Redirect authenticated users away from login
-        if (isLoggedIn && path == AppRoutes.login) {
-          return AppRoutes.home;
-        }
-      }
+/// Guard: Handle authentication-based redirects.
+String? _guardAuth(final String path, final SessionState sessionState) {
+  if (!AppConfig.authEnabled) {
+    return null; // Auth disabled, allow all routes
+  }
 
-      return null;
-    },
-    errorBuilder: (final context, final state) => Scaffold(
+  final isLoggedIn = sessionState.isAuthenticated;
+
+  // Protected routes that require authentication
+  const protectedPaths = [
+    AppRoutes.home,
+    AppRoutes.profile,
+    AppRoutes.settings,
+  ];
+
+  // Redirect unauthenticated users away from protected routes
+  if (protectedPaths.contains(path) && !isLoggedIn) {
+    return AppRoutes.login;
+  }
+
+  // Redirect authenticated users away from login
+  if (isLoggedIn && path == AppRoutes.login) {
+    return AppRoutes.home;
+  }
+
+  return null;
+}
+
+// ============================================================================
+// Error Page
+// ============================================================================
+
+/// Error page shown when route is not found.
+class _ErrorPage extends StatelessWidget {
+  const _ErrorPage({required this.path});
+
+  final String path;
+
+  @override
+  Widget build(final BuildContext context) {
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +156,7 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
             ),
             const SizedBox(height: 8),
             Text(
-              state.uri.path,
+              path,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
@@ -122,6 +169,6 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
           ],
         ),
       ),
-    ),
-  );
-});
+    );
+  }
+}

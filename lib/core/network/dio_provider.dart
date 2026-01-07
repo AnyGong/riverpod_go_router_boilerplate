@@ -38,7 +38,22 @@ Dio dio(final Ref ref) {
 
   // Add interceptors in order
   dio.interceptors.addAll([
-    AuthInterceptor(ref),
+    AuthInterceptor(
+      ref,
+      parentDio: dio,
+      // Implement your token refresh logic here:
+      // onRefreshToken: (refreshToken, saveTokens) async {
+      //   final response = await Dio().post(
+      //     '${EnvConfig.baseUrl}/auth/refresh',
+      //     data: {'refresh_token': refreshToken},
+      //   );
+      //   await saveTokens(
+      //     response.data['access_token'] as String,
+      //     response.data['refresh_token'] as String?,
+      //   );
+      //   return true;
+      // },
+    ),
     RetryInterceptor(dio),
     if (EnvConfig.enableLogging) LoggingInterceptor(ref),
   ]);
@@ -46,10 +61,49 @@ Dio dio(final Ref ref) {
   return dio;
 }
 
+/// Callback type for token refresh logic.
+/// Returns true if refresh was successful, false otherwise.
+/// Implement this to call your backend's refresh token endpoint.
+typedef TokenRefreshCallback =
+    Future<bool> Function(
+      String? refreshToken,
+      Future<void> Function(String accessToken, String? refreshToken)
+      saveTokens,
+    );
+
 /// Interceptor for adding authentication headers and handling token refresh.
+///
+/// The refresh logic is injectable via [onRefreshToken] callback, allowing
+/// you to customize the refresh behavior for your specific backend.
+///
+/// Example:
+/// ```dart
+/// AuthInterceptor(
+///   ref,
+///   parentDio: dio,
+///   onRefreshToken: (refreshToken, saveTokens) async {
+///     final response = await Dio().post('/auth/refresh', data: {'token': refreshToken});
+///     await saveTokens(response.data['access_token'], response.data['refresh_token']);
+///     return true;
+///   },
+/// )
+/// ```
 class AuthInterceptor extends QueuedInterceptor {
-  AuthInterceptor(this._ref);
+  AuthInterceptor(
+    this._ref, {
+    required this.parentDio,
+    this.onRefreshToken,
+  });
+
   final Ref _ref;
+
+  /// The parent Dio instance used for retrying requests.
+  /// This ensures retry requests use the same configuration (base URL, timeouts, etc.).
+  final Dio parentDio;
+
+  /// Optional callback for custom token refresh logic.
+  /// If null, token refresh will always return false.
+  final TokenRefreshCallback? onRefreshToken;
 
   bool _isRefreshing = false;
 
@@ -101,25 +155,38 @@ class AuthInterceptor extends QueuedInterceptor {
 
     if (refreshToken == null) return false;
 
+    // If no refresh callback is provided, refresh is not supported
+    if (onRefreshToken == null) {
+      return false;
+    }
+
     try {
-      // TODO: Implement actual refresh token API call
-      // final response = await Dio().post(
-      //   '${EnvConfig.baseUrl}/auth/refresh',
-      //   data: {'refresh_token': refreshToken},
-      // );
-      // await storage.write(key: StorageKeys.accessToken, value: response.data['access_token']);
-      // await storage.write(key: StorageKeys.refreshToken, value: response.data['refresh_token']);
-      return false; // Mock: refresh not implemented
+      // Use injectable callback for token refresh
+      return await onRefreshToken!(
+        refreshToken,
+        (final accessToken, final newRefreshToken) async {
+          await storage.write(key: StorageKeys.accessToken, value: accessToken);
+          if (newRefreshToken != null) {
+            await storage.write(
+              key: StorageKeys.refreshToken,
+              value: newRefreshToken,
+            );
+          }
+        },
+      );
     } catch (e) {
       return false;
     }
   }
 
+  /// Retry the original request with the new access token.
+  /// Uses [parentDio] to preserve configuration (base URL, timeouts, interceptors).
   Future<Response<dynamic>> _retryRequest(final RequestOptions options) async {
     final storage = _ref.read(secureStorageProvider);
     final token = await storage.read(key: StorageKeys.accessToken);
     options.headers['Authorization'] = 'Bearer $token';
-    return Dio().fetch(options);
+    // IMPORTANT: Use parentDio instead of new Dio() to preserve configuration
+    return parentDio.fetch(options);
   }
 
   Future<void> _clearTokens() async {

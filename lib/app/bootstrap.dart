@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
 import 'package:riverpod_go_router_boilerplate/app/app.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
+import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bootstrap the application.
 /// Handles initialization, error handling, and app startup.
@@ -92,16 +96,50 @@ class AppBootstrap extends StatelessWidget {
   }
 }
 
-/// Run a guarded zone for the app.
-/// Use this in main() to catch all errors.
+/// Run a guarded zone for the app with comprehensive error catching.
+///
+/// This wraps the app in [runZonedGuarded] to catch any uncaught async errors
+/// that might otherwise be silently dropped. Use this in production for
+/// better error visibility and crash reporting.
+///
+/// The [appBuilder] callback receives the initialized services and returns
+/// the root widget (typically a [ProviderScope] with overrides).
+///
+/// Example:
+/// ```dart
+/// void main() {
+///   runGuardedApp(
+///     environment: Environment.prod,
+///     appBuilder: (sharedPrefs, connectivity) => ProviderScope(
+///       overrides: [
+///         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+///         connectivityServiceProvider.overrideWithValue(connectivity),
+///       ],
+///       child: const AppBootstrap(),
+///     ),
+///   );
+/// }
+/// ```
 Future<void> runGuardedApp({
-  required final Widget app,
+  required final Widget Function(
+    SharedPreferences sharedPreferences,
+    ConnectivityService connectivity,
+  )
+  appBuilder,
   final Environment environment = Environment.dev,
 }) async {
   await runZonedGuarded(
     () async {
+      // Initialize bootstrap (bindings, error handling, etc.)
       await AppBootstrap.initialize(environment: environment);
-      runApp(app);
+
+      // Initialize services that need to be ready before UI
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final connectivityService = ConnectivityService();
+      await connectivityService.initialize();
+
+      // Run the app with initialized services
+      runApp(appBuilder(sharedPreferences, connectivityService));
     },
     (final error, final stack) {
       AppLogger.instance.f(
@@ -109,7 +147,9 @@ Future<void> runGuardedApp({
         error: error,
         stackTrace: stack,
       );
-      // Log to crash reporting in production
+      if (kReleaseMode) {
+        AppBootstrap._logToCrashReporting(error, stack);
+      }
     },
   );
 }
