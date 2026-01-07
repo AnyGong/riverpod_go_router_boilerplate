@@ -8,11 +8,44 @@ abstract class AppConstants {
   static const Duration animationSlow = Duration(milliseconds: 500);
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // TIMEOUTS
+  // NETWORK TIMEOUTS
   // ─────────────────────────────────────────────────────────────────────────────
-  static const Duration networkTimeout = Duration(seconds: 30);
+  /// Connection timeout for HTTP requests.
+  static const Duration connectTimeout = Duration(seconds: 30);
+
+  /// Receive timeout for HTTP requests.
+  static const Duration receiveTimeout = Duration(seconds: 30);
+
+  /// Send timeout for HTTP requests.
+  static const Duration sendTimeout = Duration(seconds: 30);
+
+  /// Maximum number of retry attempts for failed requests.
+  static const int maxRetryAttempts = 3;
+
+  /// Delays between retry attempts (exponential backoff).
+  static const List<Duration> retryDelays = [
+    Duration(seconds: 1),
+    Duration(seconds: 2),
+    Duration(seconds: 4),
+  ];
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // CACHE TIMEOUTS
+  // ─────────────────────────────────────────────────────────────────────────────
+  /// Default cache expiry duration.
   static const Duration cacheExpiry = Duration(hours: 24);
+
+  /// Cache expiry for short-lived data (e.g., search results).
+  static const Duration cacheExpiryShort = Duration(minutes: 5);
+
+  /// Cache expiry for long-lived data (e.g., static content).
+  static const Duration cacheExpiryLong = Duration(days: 7);
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI TIMEOUTS & DELAYS
+  // ─────────────────────────────────────────────────────────────────────────────
   static const Duration debounceDelay = Duration(milliseconds: 500);
+  static const Duration throttleDelay = Duration(milliseconds: 300);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // PAGINATION

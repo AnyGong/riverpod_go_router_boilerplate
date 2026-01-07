@@ -26,7 +26,7 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Minimum SDK 23 required for flutter_secure_storage (Android Keystore)
         // and native_dio_adapter (Cronet requires API 23+)
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

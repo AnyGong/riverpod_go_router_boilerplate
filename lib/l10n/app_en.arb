@@ -1,0 +1,247 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2026-01-07T00:00:00.000Z",
+
+  "appTitle": "Flutter Boilerplate",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "welcomeMessage": "Welcome to the app!",
+  "@welcomeMessage": {
+    "description": "Welcome message shown on the home screen"
+  },
+
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+
+  "email": "Email",
+  "@email": {
+    "description": "Email input label"
+  },
+
+  "password": "Password",
+  "@password": {
+    "description": "Password input label"
+  },
+
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile screen title"
+  },
+
+  "home": "Home",
+  "@home": {
+    "description": "Home navigation label"
+  },
+
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode toggle label"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Language selection label"
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications settings label"
+  },
+
+  "biometricAuthentication": "Biometric Authentication",
+  "@biometricAuthentication": {
+    "description": "Biometric auth toggle label"
+  },
+
+  "biometricPromptTitle": "Authenticate",
+  "@biometricPromptTitle": {
+    "description": "Title shown in biometric prompt"
+  },
+
+  "biometricPromptSubtitle": "Verify your identity to continue",
+  "@biometricPromptSubtitle": {
+    "description": "Subtitle shown in biometric prompt"
+  },
+
+  "biometricPromptCancel": "Cancel",
+  "@biometricPromptCancel": {
+    "description": "Cancel button in biometric prompt"
+  },
+
+  "errorGeneric": "Something went wrong. Please try again.",
+  "@errorGeneric": {
+    "description": "Generic error message"
+  },
+
+  "errorNetwork": "Network error. Please check your connection.",
+  "@errorNetwork": {
+    "description": "Network error message"
+  },
+
+  "errorTimeout": "Request timed out. Please try again.",
+  "@errorTimeout": {
+    "description": "Timeout error message"
+  },
+
+  "errorUnauthorized": "Session expired. Please login again.",
+  "@errorUnauthorized": {
+    "description": "Unauthorized error message"
+  },
+
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+
+  "noData": "No data available",
+  "@noData": {
+    "description": "Empty state message"
+  },
+
+  "searchHint": "Search...",
+  "@searchHint": {
+    "description": "Search input hint text"
+  },
+
+  "version": "Version {version}",
+  "@version": {
+    "description": "App version display text",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+
+  "itemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@itemCount": {
+    "description": "Item count with pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+
+  "lastUpdated": "Last updated: {date}",
+  "@lastUpdated": {
+    "description": "Last updated timestamp",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  },
+
+  "onboardingTitle1": "Welcome",
+  "@onboardingTitle1": {
+    "description": "First onboarding screen title"
+  },
+
+  "onboardingDescription1": "Discover amazing features and get started with our app.",
+  "@onboardingDescription1": {
+    "description": "First onboarding screen description"
+  },
+
+  "onboardingTitle2": "Explore",
+  "@onboardingTitle2": {
+    "description": "Second onboarding screen title"
+  },
+
+  "onboardingDescription2": "Browse through a wide variety of content tailored for you.",
+  "@onboardingDescription2": {
+    "description": "Second onboarding screen description"
+  },
+
+  "onboardingTitle3": "Get Started",
+  "@onboardingTitle3": {
+    "description": "Third onboarding screen title"
+  },
+
+  "onboardingDescription3": "Create your account and start your journey.",
+  "@onboardingDescription3": {
+    "description": "Third onboarding screen description"
+  },
+
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button text"
+  },
+
+  "offlineModeEnabled": "Offline mode enabled",
+  "@offlineModeEnabled": {
+    "description": "Message shown when offline mode is active"
+  },
+
+  "backOnline": "You're back online",
+  "@backOnline": {
+    "description": "Message shown when connection is restored"
+  }
+}

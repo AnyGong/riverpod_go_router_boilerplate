@@ -3,7 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
+import 'package:riverpod_go_router_boilerplate/core/cache/cache_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/network/cache_interceptor.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
+import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
 part 'dio_provider.g.dart';
@@ -14,15 +18,21 @@ part 'dio_provider.g.dart';
 /// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
 /// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
 ///
+/// Includes interceptors for:
+/// - Authentication (token injection, refresh)
+/// - Offline caching (automatic cache for GET requests)
+/// - Retry (exponential backoff for failed requests)
+/// - Logging (request/response logging in debug mode)
+///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 @Riverpod(keepAlive: true)
 Dio dio(final Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: EnvConfig.baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      sendTimeout: const Duration(seconds: 30),
+      connectTimeout: AppConstants.connectTimeout,
+      receiveTimeout: AppConstants.receiveTimeout,
+      sendTimeout: AppConstants.sendTimeout,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -36,8 +46,9 @@ Dio dio(final Ref ref) {
     dio.httpClientAdapter = NativeAdapter();
   }
 
-  // Add interceptors in order
+  // Add interceptors in order of execution
   dio.interceptors.addAll([
+    // 1. Auth interceptor - adds tokens, handles 401 refresh
     AuthInterceptor(
       ref,
       parentDio: dio,
@@ -54,7 +65,15 @@ Dio dio(final Ref ref) {
       //   return true;
       // },
     ),
+    // 2. Cache interceptor - offline-first caching for GET requests
+    CacheInterceptor(
+      cacheService: ref.read(cacheServiceProvider),
+      connectivityService: ref.read(connectivityServiceProvider),
+      logger: EnvConfig.enableLogging ? ref.read(loggerProvider) : null,
+    ),
+    // 3. Retry interceptor - exponential backoff for failed requests
     RetryInterceptor(dio),
+    // 4. Logging interceptor - request/response logging (debug only)
     if (EnvConfig.enableLogging) LoggingInterceptor(ref),
   ]);
 
@@ -198,7 +217,11 @@ class AuthInterceptor extends QueuedInterceptor {
 
 /// Interceptor for retrying failed requests.
 class RetryInterceptor extends Interceptor {
-  RetryInterceptor(this._dio, {this.maxRetries = 3, this.retryDelays});
+  RetryInterceptor(
+    this._dio, {
+    this.maxRetries = AppConstants.maxRetryAttempts,
+    this.retryDelays,
+  });
 
   final Dio _dio;
   final int maxRetries;
@@ -206,9 +229,7 @@ class RetryInterceptor extends Interceptor {
 
   static const _retryKey = 'retry_count';
 
-  List<Duration> get _delays =>
-      retryDelays ??
-      const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
+  List<Duration> get _delays => retryDelays ?? AppConstants.retryDelays;
 
   @override
   Future<void> onError(

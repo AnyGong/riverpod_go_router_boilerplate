@@ -43,13 +43,19 @@ class AppBootstrap extends StatelessWidget {
       ),
     );
 
-    // Set up error handling
+    // Note: Drift database is lazily initialized when first accessed
+    // via the cacheDatabaseProvider. No explicit initialization needed.
+
+    // Initialize Firebase Crashlytics (production only by default)
+    // TODO: Uncomment after running `flutterfire configure`
+    // await CrashlyticsService.initialize();
+
+    // Set up error handling (falls back to local logging if Crashlytics not initialized)
     _setupErrorHandling();
 
     AppLogger.instance.i('App bootstrap completed');
 
     // Add any other initialization here:
-    // - Firebase.initializeApp()
     // - Initialize analytics
     // - Load remote config
     // - etc.
@@ -81,13 +87,28 @@ class AppBootstrap extends StatelessWidget {
   }
 
   /// Log error to crash reporting service.
-  /// TODO: Implement with your preferred crash reporting (Firebase Crashlytics, Sentry, etc.)
-  static void _logToCrashReporting(
+  ///
+  /// Uses Firebase Crashlytics in production.
+  /// Falls back to console logging if not initialized.
+  static Future<void> _logToCrashReporting(
     final Object error,
     final StackTrace? stack,
-  ) {
-    // Example: FirebaseCrashlytics.instance.recordError(error, stack);
-    AppLogger.instance.w('Error sent to crash reporting: $error');
+  ) async {
+    // TODO: Once Firebase is configured, uncomment the following:
+    // try {
+    //   await FirebaseCrashlytics.instance.recordError(
+    //     error,
+    //     stack,
+    //     reason: 'Uncaught error',
+    //     fatal: true,
+    //   );
+    //   return;
+    // } catch (_) {
+    //   // Crashlytics not available, fall through to local logging
+    // }
+
+    // Fallback: Log locally until Firebase is configured
+    AppLogger.instance.w('Error would be sent to crash reporting: $error');
   }
 
   @override

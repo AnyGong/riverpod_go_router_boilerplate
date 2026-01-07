@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/bootstrap.dart';
-import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/localization/locale_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 
 /// Application entry point.

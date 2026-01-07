@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/// Provider for shared preferences instance
-final sharedPreferencesProvider = Provider<SharedPreferences>((final ref) {
-  throw UnimplementedError('Initialize SharedPreferences in main.dart');
-});
+import 'package:riverpod_go_router_boilerplate/core/localization/locale_notifier.dart';
 
 /// Theme mode notifier for managing app theme
 class ThemeNotifier extends Notifier<ThemeMode> {

@@ -31,9 +31,13 @@ If you value **clarity over flexibility**, this boilerplate is for you.
 | :------------------------- | :----------------------------------------------------------------------------- |
 | **State Management**       | `flutter_riverpod`, `riverpod_annotation`, `flutter_hooks`, `hooks_riverpod`   |
 | **Navigation**             | `go_router`                                                                    |
-| **Networking**             | `dio`, `connectivity_plus`, `retry`                                            |
+| **Networking**             | `dio`, `connectivity_plus`, `retry`, `native_dio_adapter`                      |
 | **Models & Serialization** | `freezed_annotation`, `json_annotation`, `equatable`                           |
-| **Storage**                | `flutter_secure_storage`, `shared_preferences`                                 |
+| **Storage**                | `flutter_secure_storage`, `shared_preferences`, `drift`                        |
+| **Localization**           | `flutter_localizations`, `intl`                                                |
+| **Biometric Auth**         | `local_auth`                                                                   |
+| **Deep Linking**           | `app_links`                                                                    |
+| **Crash Reporting**        | `firebase_crashlytics`, `firebase_core`                                        |
 | **UI Components**          | `flutter_svg`, `cached_network_image`, `shimmer`, `gap`, `flutter_animate`     |
 | **Utilities**              | `logger`, `uuid`, `intl`, `url_launcher`, `package_info_plus`, `path_provider` |
 | **Code Generation**        | `build_runner`, `riverpod_generator`, `freezed`, `json_serializable`           |
@@ -138,8 +142,45 @@ lib/
 - **Dio client** with automatic token injection
 - **Token refresh** interceptor with queue management
 - **Retry interceptor** with exponential backoff
+- **Offline-first caching** with Drift (SQLite)
 - **Structured logging** with Logger package
 - **Result monad** for type-safe error handling
+
+### 🌍 Localization (i18n)
+
+- **Flutter Localizations** integration
+- **ARB files** for easy translation management
+- **Locale persistence** across app restarts
+- **Easy to add new languages** (just add new `.arb` files)
+
+### 🔐 Biometric Authentication
+
+- **Face ID** and **Touch ID** support (iOS)
+- **Fingerprint** and **face unlock** support (Android)
+- **Graceful fallback** for unsupported devices
+- **User preference persistence**
+
+### 🔗 Deep Linking
+
+- **Custom URL schemes** (`myapp://path`)
+- **Universal Links** (iOS) and **App Links** (Android)
+- **Automatic route handling** via GoRouter
+- **Pre-configured** manifest and entitlements
+
+### 💥 Crash Reporting
+
+- **Firebase Crashlytics** integration
+- **Automatic crash capture** in production
+- **Custom error recording** for non-fatal errors
+- **User identification** for crash reports
+
+### 📴 Offline-First Support
+
+- **Drift (SQLite) based caching** for API responses
+- **Automatic cache fallback** when offline
+- **ETag support** for conditional requests
+- **Configurable expiration** per request
+- **Type-safe queries** with code generation
 
 ### 🎨 Theme System
 

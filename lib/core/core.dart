@@ -2,14 +2,25 @@
 /// Import this file to access all core functionality.
 library;
 
+// Biometric Authentication
+export 'biometric/biometric.dart';
+// Cache (Offline-First)
+export 'cache/cache.dart';
 // Config
 export 'config/config.dart';
+// Crashlytics
+export 'crashlytics/crashlytics.dart';
+// Deep Linking
+export 'deep_link/deep_link.dart';
 // Extensions
 export 'extensions/extensions.dart';
 // Hooks
 export 'hooks/hooks.dart';
+// Localization
+export 'localization/localization.dart';
 // Network
 export 'network/api_client.dart';
+export 'network/cache_interceptor.dart';
 export 'network/dio_provider.dart';
 export 'network/error_converter.dart';
 // Result

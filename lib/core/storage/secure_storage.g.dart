@@ -9,13 +9,43 @@ part of 'secure_storage.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// Provider for secure storage instance.
-/// Use this for storing sensitive data like tokens.
+///
+/// Use this for storing sensitive data like tokens, API keys, and credentials.
+/// Configured with platform-specific security options:
+///
+/// **iOS:**
+/// - Uses Keychain with `first_unlock_this_device` accessibility
+/// - Data is available after first device unlock
+/// - Data is NOT backed up to iCloud
+///
+/// **Android:**
+/// - Uses encrypted shared preferences with AES encryption
+/// - Keys are stored in Android Keystore
+/// - Reset on device lock settings change (encryptedSharedPreferences: true)
+///
+/// **Important:** Never store unencrypted sensitive data. Always use this
+/// provider for tokens, passwords, and other credentials.
 
 @ProviderFor(secureStorage)
 final secureStorageProvider = SecureStorageProvider._();
 
 /// Provider for secure storage instance.
-/// Use this for storing sensitive data like tokens.
+///
+/// Use this for storing sensitive data like tokens, API keys, and credentials.
+/// Configured with platform-specific security options:
+///
+/// **iOS:**
+/// - Uses Keychain with `first_unlock_this_device` accessibility
+/// - Data is available after first device unlock
+/// - Data is NOT backed up to iCloud
+///
+/// **Android:**
+/// - Uses encrypted shared preferences with AES encryption
+/// - Keys are stored in Android Keystore
+/// - Reset on device lock settings change (encryptedSharedPreferences: true)
+///
+/// **Important:** Never store unencrypted sensitive data. Always use this
+/// provider for tokens, passwords, and other credentials.
 
 final class SecureStorageProvider
     extends
@@ -26,7 +56,22 @@ final class SecureStorageProvider
         >
     with $Provider<FlutterSecureStorage> {
   /// Provider for secure storage instance.
-  /// Use this for storing sensitive data like tokens.
+  ///
+  /// Use this for storing sensitive data like tokens, API keys, and credentials.
+  /// Configured with platform-specific security options:
+  ///
+  /// **iOS:**
+  /// - Uses Keychain with `first_unlock_this_device` accessibility
+  /// - Data is available after first device unlock
+  /// - Data is NOT backed up to iCloud
+  ///
+  /// **Android:**
+  /// - Uses encrypted shared preferences with AES encryption
+  /// - Keys are stored in Android Keystore
+  /// - Reset on device lock settings change (encryptedSharedPreferences: true)
+  ///
+  /// **Important:** Never store unencrypted sensitive data. Always use this
+  /// provider for tokens, passwords, and other credentials.
   SecureStorageProvider._()
     : super(
         from: null,
@@ -61,4 +106,4 @@ final class SecureStorageProvider
   }
 }
 
-String _$secureStorageHash() => r'9645cd258df865dc2786c7317c3ec32823728409';
+String _$secureStorageHash() => r'bd786a0d9f6cf3605137f1a6666af158710b03b8';

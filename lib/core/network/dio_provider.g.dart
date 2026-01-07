@@ -14,6 +14,12 @@ part of 'dio_provider.dart';
 /// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
 /// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
 ///
+/// Includes interceptors for:
+/// - Authentication (token injection, refresh)
+/// - Offline caching (automatic cache for GET requests)
+/// - Retry (exponential backoff for failed requests)
+/// - Logging (request/response logging in debug mode)
+///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 
 @ProviderFor(dio)
@@ -25,6 +31,12 @@ final dioProvider = DioProvider._();
 /// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
 /// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
 ///
+/// Includes interceptors for:
+/// - Authentication (token injection, refresh)
+/// - Offline caching (automatic cache for GET requests)
+/// - Retry (exponential backoff for failed requests)
+/// - Logging (request/response logging in debug mode)
+///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 
 final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
@@ -34,6 +46,12 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   /// Uses native platform adapters for optimal performance:
   /// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
   /// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
+  ///
+  /// Includes interceptors for:
+  /// - Authentication (token injection, refresh)
+  /// - Offline caching (automatic cache for GET requests)
+  /// - Retry (exponential backoff for failed requests)
+  /// - Logging (request/response logging in debug mode)
   ///
   /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
   DioProvider._()
@@ -69,4 +87,4 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'f5c03511197127d271b6dfbf5d449798a0d2ccdc';
+String _$dioHash() => r'86564c9603e4dafafc4ed0495cd2df87ef234c7d';
