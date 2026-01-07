@@ -5,8 +5,8 @@ import 'package:riverpod_go_router_boilerplate/features/auth/presentation/pages/
 /// Routes that are accessible without authentication.
 final authRoutes = [
   GoRoute(
-    path: AppRoutes.login,
-    name: 'login',
+    path: AppRoute.login.path,
+    name: AppRoute.login.name,
     builder: (final context, final state) => const LoginPage(),
   ),
 ];

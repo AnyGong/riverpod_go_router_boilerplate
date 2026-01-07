@@ -14,6 +14,20 @@ part of 'auth_notifier.dart';
 /// - Check if user is logged in
 /// - Login/logout
 /// - Access current user
+///
+/// ## Why `keepAlive: true`?
+///
+/// Auth state should persist for the entire app lifecycle because:
+/// - Auth state is needed across all screens for route guards
+/// - Prevents unnecessary session restoration on every navigation
+/// - Session should survive screen transitions
+///
+/// **Note:** Most presentation-layer providers (ViewModels, page-specific notifiers)
+/// should NOT use `keepAlive: true`. Use `autoDispose` (default) to free memory
+/// when the user navigates away. Only use `keepAlive` for:
+/// - Global app state (auth, theme, user preferences)
+/// - Expensive services (network clients, database connections)
+/// - State that must survive navigation (audio player, download manager)
 
 @ProviderFor(AuthNotifier)
 final authProvider = AuthNotifierProvider._();
@@ -24,6 +38,20 @@ final authProvider = AuthNotifierProvider._();
 /// - Check if user is logged in
 /// - Login/logout
 /// - Access current user
+///
+/// ## Why `keepAlive: true`?
+///
+/// Auth state should persist for the entire app lifecycle because:
+/// - Auth state is needed across all screens for route guards
+/// - Prevents unnecessary session restoration on every navigation
+/// - Session should survive screen transitions
+///
+/// **Note:** Most presentation-layer providers (ViewModels, page-specific notifiers)
+/// should NOT use `keepAlive: true`. Use `autoDispose` (default) to free memory
+/// when the user navigates away. Only use `keepAlive` for:
+/// - Global app state (auth, theme, user preferences)
+/// - Expensive services (network clients, database connections)
+/// - State that must survive navigation (audio player, download manager)
 final class AuthNotifierProvider
     extends $AsyncNotifierProvider<AuthNotifier, User?> {
   /// Manages authentication state.
@@ -32,6 +60,20 @@ final class AuthNotifierProvider
   /// - Check if user is logged in
   /// - Login/logout
   /// - Access current user
+  ///
+  /// ## Why `keepAlive: true`?
+  ///
+  /// Auth state should persist for the entire app lifecycle because:
+  /// - Auth state is needed across all screens for route guards
+  /// - Prevents unnecessary session restoration on every navigation
+  /// - Session should survive screen transitions
+  ///
+  /// **Note:** Most presentation-layer providers (ViewModels, page-specific notifiers)
+  /// should NOT use `keepAlive: true`. Use `autoDispose` (default) to free memory
+  /// when the user navigates away. Only use `keepAlive` for:
+  /// - Global app state (auth, theme, user preferences)
+  /// - Expensive services (network clients, database connections)
+  /// - State that must survive navigation (audio player, download manager)
   AuthNotifierProvider._()
     : super(
         from: null,
@@ -59,6 +101,20 @@ String _$authNotifierHash() => r'0fd97e219440efe93e9b74043e226a052d006b1c';
 /// - Check if user is logged in
 /// - Login/logout
 /// - Access current user
+///
+/// ## Why `keepAlive: true`?
+///
+/// Auth state should persist for the entire app lifecycle because:
+/// - Auth state is needed across all screens for route guards
+/// - Prevents unnecessary session restoration on every navigation
+/// - Session should survive screen transitions
+///
+/// **Note:** Most presentation-layer providers (ViewModels, page-specific notifiers)
+/// should NOT use `keepAlive: true`. Use `autoDispose` (default) to free memory
+/// when the user navigates away. Only use `keepAlive` for:
+/// - Global app state (auth, theme, user preferences)
+/// - Expensive services (network clients, database connections)
+/// - State that must survive navigation (audio player, download manager)
 
 abstract class _$AuthNotifier extends $AsyncNotifier<User?> {
   FutureOr<User?> build();

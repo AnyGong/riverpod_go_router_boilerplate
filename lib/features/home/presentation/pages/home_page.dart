@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
@@ -23,7 +22,7 @@ class HomePage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () => context.push(AppRoutes.settings),
+            onPressed: () => context.pushRoute(AppRoute.settings),
           ),
         ],
       ),

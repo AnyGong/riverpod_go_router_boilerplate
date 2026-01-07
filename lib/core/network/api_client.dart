@@ -105,7 +105,8 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () => _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
+      () =>
+          _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
       fromJson: fromJson,
     );
   }

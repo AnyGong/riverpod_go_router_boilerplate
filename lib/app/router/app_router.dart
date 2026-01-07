@@ -9,16 +9,90 @@ import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifie
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 
-/// Route paths used throughout the app.
-/// Use these instead of hardcoded strings.
-abstract class AppRoutes {
-  static const String splash = '/splash';
-  static const String login = '/login';
-  static const String home = '/';
-  static const String onboarding = '/onboarding';
-  static const String maintenance = '/maintenance';
-  static const String profile = '/profile';
-  static const String settings = '/settings';
+// ============================================================================
+// Route Definitions (Enum-based for compile-time safety)
+// ============================================================================
+
+/// All app routes defined as an enum for type safety.
+///
+/// Benefits over string constants:
+/// - Compile-time safety: typos are caught by the compiler
+/// - IDE autocomplete: easy to discover available routes
+/// - Exhaustive switch: compiler warns if you miss a case
+/// - Additional metadata: each route carries its properties
+///
+/// Usage:
+/// ```dart
+/// // Navigate using the path
+/// context.go(AppRoute.home.path);
+///
+/// // Or use the extension method
+/// context.goRoute(AppRoute.home);
+///
+/// // Check if route requires auth
+/// if (AppRoute.settings.requiresAuth) { ... }
+/// ```
+enum AppRoute {
+  splash('/splash', requiresAuth: false),
+  login('/login', requiresAuth: false),
+  home('/', requiresAuth: true),
+  onboarding('/onboarding', requiresAuth: false),
+  maintenance('/maintenance', requiresAuth: false),
+  profile('/profile', requiresAuth: true),
+  settings('/settings', requiresAuth: true)
+  ;
+
+  const AppRoute(this.path, {required this.requiresAuth});
+
+  /// The URL path for this route.
+  final String path;
+
+  /// Whether this route requires authentication.
+  final bool requiresAuth;
+
+  /// Get a route by its path, or null if not found.
+  static AppRoute? fromPath(final String path) {
+    for (final route in values) {
+      if (route.path == path) return route;
+    }
+    return null;
+  }
+
+  /// All routes that require authentication.
+  static List<AppRoute> get protectedRoutes =>
+      values.where((final r) => r.requiresAuth).toList();
+
+  /// All public routes (no auth required).
+  static List<AppRoute> get publicRoutes =>
+      values.where((final r) => !r.requiresAuth).toList();
+}
+
+/// Extension for convenient navigation with [AppRoute] enum.
+extension AppRouteNavigation on BuildContext {
+  /// Navigate to a route using [GoRouter.go].
+  void goRoute(final AppRoute route) => go(route.path);
+
+  /// Navigate to a route using [GoRouter.push].
+  void pushRoute(final AppRoute route) => push(route.path);
+
+  /// Replace current route using [GoRouter.pushReplacement].
+  void pushReplacementRoute(final AppRoute route) =>
+      pushReplacement(route.path);
+}
+
+// Legacy alias for backwards compatibility
+@Deprecated('Use AppRoute enum instead for type safety')
+typedef AppRoutes = _LegacyAppRoutes;
+
+/// @deprecated Use [AppRoute] enum instead.
+abstract class _LegacyAppRoutes {
+  static String get splash => AppRoute.splash.path;
+  static String get login => AppRoute.login.path;
+  static String get home => AppRoute.home.path;
+  static String get onboarding => AppRoute.onboarding.path;
+  static String get maintenance => AppRoute.maintenance.path;
+  static String get profile => AppRoute.profile.path;
+  static String get settings => AppRoute.settings.path;
 }
 
 /// Global navigator key for accessing navigation outside of widget context.
@@ -35,7 +109,7 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: AppRoutes.splash,
+    initialLocation: AppRoute.splash.path,
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
@@ -54,18 +128,19 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
 String? _handleRedirect(final Ref ref, final String path) {
   final lifecycleState = ref.read(appLifecycleNotifierProvider);
   final sessionState = ref.read(sessionStateProvider);
+  final route = AppRoute.fromPath(path);
 
   // Apply guards in order of priority
-  return _guardLoading(path, sessionState) ??
-      _guardInitialization(path, lifecycleState) ??
-      _guardMaintenance(path) ??
-      _guardSplash(path) ??
-      _guardAuth(path, sessionState);
+  return _guardLoading(route, sessionState) ??
+      _guardInitialization(route, lifecycleState) ??
+      _guardMaintenance(route) ??
+      _guardSplash(route) ??
+      _guardAuth(route, sessionState);
 }
 
 /// Guard: Don't redirect while session is loading (except from splash).
-String? _guardLoading(final String path, final SessionState sessionState) {
-  if (sessionState.isLoading && path != AppRoutes.splash) {
+String? _guardLoading(final AppRoute? route, final SessionState sessionState) {
+  if (sessionState.isLoading && route != AppRoute.splash) {
     return null; // Allow current navigation to proceed
   }
   return null;
@@ -75,12 +150,12 @@ String? _guardLoading(final String path, final SessionState sessionState) {
 /// Prevents "flash of unauthenticated content" when deep links arrive
 /// before session state is restored from storage.
 String? _guardInitialization(
-  final String path,
+  final AppRoute? route,
   final AppLifecycleState lifecycleState,
 ) {
   if (!lifecycleState.isInitialized) {
-    if (path != AppRoutes.splash) {
-      return AppRoutes.splash; // Force back to splash
+    if (route != AppRoute.splash) {
+      return AppRoute.splash.path; // Force back to splash
     }
     return null; // Stay on splash
   }
@@ -88,44 +163,37 @@ String? _guardInitialization(
 }
 
 /// Guard: Always allow access to maintenance page.
-String? _guardMaintenance(final String path) {
-  if (path == AppRoutes.maintenance) {
+String? _guardMaintenance(final AppRoute? route) {
+  if (route == AppRoute.maintenance) {
     return null; // Allow access
   }
   return null;
 }
 
 /// Guard: Allow splash to handle its own routing.
-String? _guardSplash(final String path) {
-  if (path == AppRoutes.splash) {
+String? _guardSplash(final AppRoute? route) {
+  if (route == AppRoute.splash) {
     return null; // Splash handles navigation after init
   }
   return null;
 }
 
 /// Guard: Handle authentication-based redirects.
-String? _guardAuth(final String path, final SessionState sessionState) {
-  if (!AppConfig.authEnabled) {
-    return null; // Auth disabled, allow all routes
+String? _guardAuth(final AppRoute? route, final SessionState sessionState) {
+  if (!AppConfig.authEnabled || route == null) {
+    return null; // Auth disabled or unknown route, allow
   }
 
   final isLoggedIn = sessionState.isAuthenticated;
 
-  // Protected routes that require authentication
-  const protectedPaths = [
-    AppRoutes.home,
-    AppRoutes.profile,
-    AppRoutes.settings,
-  ];
-
-  // Redirect unauthenticated users away from protected routes
-  if (protectedPaths.contains(path) && !isLoggedIn) {
-    return AppRoutes.login;
+  // Use the enum's requiresAuth property for cleaner logic
+  if (route.requiresAuth && !isLoggedIn) {
+    return AppRoute.login.path;
   }
 
   // Redirect authenticated users away from login
-  if (isLoggedIn && path == AppRoutes.login) {
-    return AppRoutes.home;
+  if (isLoggedIn && route == AppRoute.login) {
+    return AppRoute.home.path;
   }
 
   return null;
@@ -163,7 +231,7 @@ class _ErrorPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () => context.go(AppRoutes.home),
+              onPressed: () => context.goRoute(AppRoute.home),
               child: const Text('Go Home'),
             ),
           ],

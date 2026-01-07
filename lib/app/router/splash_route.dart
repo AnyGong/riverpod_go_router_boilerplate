@@ -4,7 +4,7 @@ import 'package:riverpod_go_router_boilerplate/app/startup/presentation/splash_p
 
 /// The splash route shown during app initialization.
 final splashRoute = GoRoute(
-  path: AppRoutes.splash,
-  name: 'splash',
+  path: AppRoute.splash.path,
+  name: AppRoute.splash.name,
   builder: (final context, final state) => const SplashPage(),
 );

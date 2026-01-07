@@ -8,11 +8,11 @@ class StartupRouteMapper {
   /// Get the route for a given startup state.
   static String map(final StartupState state) {
     return switch (state) {
-      MaintenanceState() => AppRoutes.maintenance,
-      OnboardingState() => AppRoutes.onboarding,
-      UnauthenticatedState() => AppRoutes.login,
-      AuthenticatedState() => AppRoutes.home,
-      PublicState() => AppRoutes.home,
+      MaintenanceState() => AppRoute.maintenance.path,
+      OnboardingState() => AppRoute.onboarding.path,
+      UnauthenticatedState() => AppRoute.login.path,
+      AuthenticatedState() => AppRoute.home.path,
+      PublicState() => AppRoute.home.path,
     };
   }
 }

@@ -8,29 +8,29 @@ import 'package:riverpod_go_router_boilerplate/features/settings/presentation/pa
 /// Routes that require authentication.
 final protectedRoutes = [
   GoRoute(
-    path: AppRoutes.home,
-    name: 'home',
+    path: AppRoute.home.path,
+    name: AppRoute.home.name,
     builder: (final context, final state) => const HomePage(),
   ),
   GoRoute(
-    path: AppRoutes.profile,
-    name: 'profile',
+    path: AppRoute.profile.path,
+    name: AppRoute.profile.name,
     builder: (final context, final state) =>
         const _PlaceholderPage(title: 'Profile'),
   ),
   GoRoute(
-    path: AppRoutes.settings,
-    name: 'settings',
+    path: AppRoute.settings.path,
+    name: AppRoute.settings.name,
     builder: (final context, final state) => const SettingsPage(),
   ),
   GoRoute(
-    path: AppRoutes.onboarding,
-    name: 'onboarding',
+    path: AppRoute.onboarding.path,
+    name: AppRoute.onboarding.name,
     builder: (final context, final state) => const OnboardingPage(),
   ),
   GoRoute(
-    path: AppRoutes.maintenance,
-    name: 'maintenance',
+    path: AppRoute.maintenance.path,
+    name: AppRoute.maintenance.name,
     builder: (final context, final state) => const _MaintenancePage(),
   ),
 ];
