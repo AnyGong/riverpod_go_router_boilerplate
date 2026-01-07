@@ -14,14 +14,14 @@ import 'package:shimmer/shimmer.dart';
 /// )
 /// ```
 class ShimmerLoading extends StatelessWidget {
-  const ShimmerLoading({super.key, required this.child, this.baseColor, this.highlightColor});
+  const ShimmerLoading({required this.child, super.key, this.baseColor, this.highlightColor});
 
   final Widget child;
   final Color? baseColor;
   final Color? highlightColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Shimmer.fromColors(
@@ -41,7 +41,7 @@ class ShimmerLine extends StatelessWidget {
   final double borderRadius;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return ShimmerLoading(
       child: Container(
         width: width ?? double.infinity,
@@ -62,7 +62,7 @@ class ShimmerCircle extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return ShimmerLoading(
       child: Container(
         width: size,
@@ -82,7 +82,7 @@ class ShimmerBox extends StatelessWidget {
   final double borderRadius;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return ShimmerLoading(
       child: Container(
         width: width,
@@ -110,12 +110,12 @@ class ShimmerListTile extends StatelessWidget {
   final int lines;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         children: [
-          if (hasLeading) ...[const ShimmerCircle(size: 48), const SizedBox(width: 16)],
+          if (hasLeading) ...[const ShimmerCircle(), const SizedBox(width: 16)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +144,7 @@ class ShimmerCard extends StatelessWidget {
   final double imageHeight;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Container(
       width: width,
       decoration: BoxDecoration(
@@ -190,12 +190,12 @@ class ShimmerList extends StatelessWidget {
   final int lines;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: itemCount,
-      itemBuilder: (context, index) =>
+      itemBuilder: (final context, final index) =>
           ShimmerListTile(hasLeading: hasLeading, hasTrailing: hasTrailing, lines: lines),
     );
   }

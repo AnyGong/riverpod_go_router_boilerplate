@@ -27,11 +27,6 @@ class AppLogger {
   AppLogger._internal()
     : _logger = Logger(
         printer: PrettyPrinter(
-          methodCount: 2,
-          errorMethodCount: 8,
-          lineLength: 120,
-          colors: true,
-          printEmojis: true,
           dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
         ),
         level: kDebugMode ? Level.debug : Level.warning,
@@ -43,32 +38,32 @@ class AppLogger {
   final Logger _logger;
 
   /// Log debug message
-  void d(String message, {Object? error, StackTrace? stackTrace}) {
+  void d(final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.d(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log info message
-  void i(String message, {Object? error, StackTrace? stackTrace}) {
+  void i(final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.i(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log warning message
-  void w(String message, {Object? error, StackTrace? stackTrace}) {
+  void w(final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.w(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log error message
-  void e(String message, {Object? error, StackTrace? stackTrace}) {
+  void e(final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.e(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log fatal message
-  void f(String message, {Object? error, StackTrace? stackTrace}) {
+  void f(final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.f(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log with custom level
-  void log(Level level, String message, {Object? error, StackTrace? stackTrace}) {
+  void log(final Level level, final String message, {final Object? error, final StackTrace? stackTrace}) {
     _logger.log(level, message, error: error, stackTrace: stackTrace);
   }
 }
@@ -76,4 +71,4 @@ class AppLogger {
 /// Provider for the application logger.
 /// Returns the singleton instance for consistency.
 @Riverpod(keepAlive: true)
-AppLogger logger(Ref ref) => AppLogger.instance;
+AppLogger logger(final Ref ref) => AppLogger.instance;

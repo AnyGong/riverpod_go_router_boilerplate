@@ -5,7 +5,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/use
 /// Implemented by [AuthRepositoryImpl] in the data layer.
 abstract interface class AuthRepository {
   /// Attempt to login with email and password.
-  Future<Result<User>> login(String email, String password);
+  Future<Result<User>> login(final String email, final String password);
 
   /// Restore session from stored credentials.
   Future<Result<User>> restoreSession();

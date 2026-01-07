@@ -13,7 +13,7 @@ class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(final BuildContext context, final WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final theme = Theme.of(context);
 
@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
       ),
       body: AsyncValueWidget<User?>(
         value: authState,
-        data: (user) {
+        data: (final user) {
           if (user == null) {
             return const Center(child: Text('No user data'));
           }
@@ -75,7 +75,7 @@ class HomePage extends ConsumerWidget {
                         children: [
                           Icon(Icons.check_circle, size: 48, color: theme.colorScheme.primary),
                           const SizedBox(height: 16),
-                          Text('You\'re all set!', style: theme.textTheme.titleLarge),
+                          Text("You're all set!", style: theme.textTheme.titleLarge),
                           const SizedBox(height: 8),
                           Text(
                             'Start building your amazing app.',
@@ -105,10 +105,10 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleLogout(final BuildContext context, final WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [

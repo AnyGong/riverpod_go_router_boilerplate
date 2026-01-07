@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 
 /// Route paths used throughout the app.
 /// Use these instead of hardcoded strings.
@@ -27,7 +27,7 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 ///
 /// Uses [appLifecycleListenableProvider] to refresh when lifecycle state changes.
 /// This enables reactive routing based on session state, maintenance mode, etc.
-final appRouterProvider = Provider<GoRouter>((ref) {
+final appRouterProvider = Provider<GoRouter>((final ref) {
   // Use lifecycle listenable for refresh - this triggers re-evaluation
   // when session state changes, maintenance mode toggles, etc.
   final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
@@ -38,7 +38,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
-    redirect: (context, state) {
+    redirect: (final context, final state) {
       final path = state.uri.path;
       final lifecycleState = ref.read(appLifecycleNotifierProvider);
       final sessionState = ref.read(sessionStateProvider);
@@ -49,9 +49,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // Don't redirect until lifecycle is initialized
-      if (!lifecycleState.isInitialized && path == AppRoutes.splash) {
-        return null;
+      // CRITICAL: Force splash until initialization completes.
+      // This prevents "flash of unauthenticated content" when:
+      // 1. A deep link arrives while app is still warming up
+      // 2. Session state hasn't been restored from storage yet
+      // GoRouter will remember the original deep link intent and
+      // the splash page will navigate to the correct route after init.
+      if (!lifecycleState.isInitialized) {
+        if (path != AppRoutes.splash) {
+          return AppRoutes.splash;
+        }
+        return null; // Stay on splash
       }
 
       // Maintenance hard stop - always allow access
@@ -84,7 +92,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       return null;
     },
-    errorBuilder: (context, state) => Scaffold(
+    errorBuilder: (final context, final state) => Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

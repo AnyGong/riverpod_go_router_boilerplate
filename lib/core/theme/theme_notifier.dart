@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Provider for shared preferences instance
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+final sharedPreferencesProvider = Provider<SharedPreferences>((final ref) {
   throw UnimplementedError('Initialize SharedPreferences in main.dart');
 });
 
@@ -25,7 +25,7 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     }
   }
 
-  Future<void> setThemeMode(ThemeMode mode) async {
+  Future<void> setThemeMode(final ThemeMode mode) async {
     state = mode;
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setInt(_themeKey, mode.index);
@@ -49,7 +49,7 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
 
 /// Provider that returns true if dark mode is active
-final isDarkModeProvider = Provider<bool>((ref) {
+final isDarkModeProvider = Provider<bool>((final ref) {
   final themeMode = ref.watch(themeNotifierProvider);
   if (themeMode == ThemeMode.system) {
     // This will need to be updated based on actual platform brightness

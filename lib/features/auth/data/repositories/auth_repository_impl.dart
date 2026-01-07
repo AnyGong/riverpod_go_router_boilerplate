@@ -33,7 +33,7 @@ part 'auth_repository_impl.g.dart';
 /// authRepositoryProvider.overrideWith((ref) => AuthRepositoryMock(...))
 /// ```
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(Ref ref) {
+AuthRepository authRepository(final Ref ref) {
   final secureStorage = ref.watch(secureStorageProvider);
 
   // Use mock repository for development and staging

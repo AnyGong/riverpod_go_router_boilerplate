@@ -29,7 +29,7 @@ class AuthRepositoryMock implements AuthRepository {
   static const _slowDelay = Duration(seconds: 2);
 
   @override
-  Future<Result<User>> login(String email, String password) async {
+  Future<Result<User>> login(final String email, final String password) async {
     // Simulate slow network for testing
     final delay = email == 'slow@test.com' ? _slowDelay : _defaultDelay;
     await Future<void>.delayed(delay);
@@ -97,12 +97,12 @@ class AuthRepositoryMock implements AuthRepository {
   }
 
   /// Extract a display name from email address
-  String _extractNameFromEmail(String email) {
+  String _extractNameFromEmail(final String email) {
     final localPart = email.split('@').first;
     return localPart
         .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
-        .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
+        .map((final word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
         .join(' ');
   }
 }

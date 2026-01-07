@@ -30,8 +30,8 @@ class ConnectivityService {
     _subscription = _connectivity.onConnectivityChanged.listen(_emitStatus);
   }
 
-  void _emitStatus(List<ConnectivityResult> results) {
-    final hasConnection = results.any((result) => result != ConnectivityResult.none);
+  void _emitStatus(final List<ConnectivityResult> results) {
+    final hasConnection = results.any((final result) => result != ConnectivityResult.none);
     _statusController.add(
       hasConnection ? ConnectivityStatus.connected : ConnectivityStatus.disconnected,
     );
@@ -40,7 +40,7 @@ class ConnectivityService {
   /// Check current connectivity status
   Future<bool> isConnected() async {
     final results = await _connectivity.checkConnectivity();
-    return results.any((result) => result != ConnectivityResult.none);
+    return results.any((final result) => result != ConnectivityResult.none);
   }
 
   /// Dispose the service
@@ -51,23 +51,23 @@ class ConnectivityService {
 }
 
 /// Provider for connectivity service
-final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
+final connectivityServiceProvider = Provider<ConnectivityService>((final ref) {
   final service = ConnectivityService();
-  ref.onDispose(() => service.dispose());
+  ref.onDispose(service.dispose);
   return service;
 });
 
 /// Provider for connectivity status stream
-final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((ref) {
+final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((final ref) {
   final service = ref.watch(connectivityServiceProvider);
   return service.statusStream;
 });
 
 /// Provider for checking if device is online
-final isOnlineProvider = Provider<bool>((ref) {
+final isOnlineProvider = Provider<bool>((final ref) {
   final status = ref.watch(connectivityStatusProvider);
   return status.maybeWhen(
-    data: (s) => s == ConnectivityStatus.connected,
+    data: (final s) => s == ConnectivityStatus.connected,
     orElse: () => true, // Assume connected if unknown
   );
 });

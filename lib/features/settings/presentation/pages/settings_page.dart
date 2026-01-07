@@ -5,7 +5,7 @@ import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Provider for package info
-final packageInfoProvider = FutureProvider<PackageInfo>((ref) async {
+final packageInfoProvider = FutureProvider<PackageInfo>((final ref) async {
   return PackageInfo.fromPlatform();
 });
 
@@ -14,7 +14,7 @@ class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(final BuildContext context, final WidgetRef ref) {
     final themeMode = ref.watch(themeNotifierProvider);
     final packageInfo = ref.watch(packageInfoProvider);
 
@@ -37,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
           // About section
           const _SectionHeader(title: 'About'),
           packageInfo.when(
-            data: (info) => Column(
+            data: (final info) => Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.info_outline),
@@ -94,7 +94,7 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  String _themeModeLabel(ThemeMode mode) {
+  String _themeModeLabel(final ThemeMode mode) {
     return switch (mode) {
       ThemeMode.light => 'Light',
       ThemeMode.dark => 'Dark',
@@ -102,14 +102,14 @@ class SettingsPage extends ConsumerWidget {
     };
   }
 
-  void _showThemeDialog(BuildContext context, WidgetRef ref) {
+  void _showThemeDialog(final BuildContext context, final WidgetRef ref) {
     final currentMode = ref.read(themeNotifierProvider);
 
     showDialog(
       context: context,
-      builder: (dialogContext) => SimpleDialog(
+      builder: (final dialogContext) => SimpleDialog(
         title: const Text('Choose Theme'),
-        children: ThemeMode.values.map((mode) {
+        children: ThemeMode.values.map((final mode) {
           final isSelected = mode == currentMode;
           return SimpleDialogOption(
             onPressed: () {
@@ -147,7 +147,7 @@ class _SectionHeader extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,

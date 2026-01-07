@@ -12,9 +12,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// ```
 class AsyncValueWidget<T> extends StatelessWidget {
   const AsyncValueWidget({
-    super.key,
     required this.value,
     required this.data,
+    super.key,
     this.loading,
     this.error,
     this.skipLoadingOnRefresh = true,
@@ -42,11 +42,11 @@ class AsyncValueWidget<T> extends StatelessWidget {
   final bool skipLoadingOnReload;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return value.when(
       data: data,
       loading: loading ?? () => const LoadingWidget(),
-      error: error ?? (e, st) => ErrorWidget.builder(context: context, error: e, stackTrace: st),
+      error: error ?? (final e, final st) => ErrorWidget.builder(error: e),
       skipLoadingOnRefresh: skipLoadingOnRefresh,
       skipLoadingOnReload: skipLoadingOnReload,
     );
@@ -62,7 +62,7 @@ class LoadingWidget extends StatelessWidget {
   final String? message;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -88,18 +88,16 @@ class LoadingWidget extends StatelessWidget {
 /// A widget that displays an error message with optional retry action.
 class ErrorWidget extends StatelessWidget {
   const ErrorWidget({
-    super.key,
     required this.message,
+    super.key,
     this.onRetry,
     this.icon = Icons.error_outline,
   });
 
   /// Build an error widget from an exception.
   factory ErrorWidget.builder({
-    required BuildContext context,
-    required Object error,
-    StackTrace? stackTrace,
-    VoidCallback? onRetry,
+    required final Object error,
+    final VoidCallback? onRetry,
   }) {
     return ErrorWidget(message: error.toString(), onRetry: onRetry);
   }
@@ -109,7 +107,7 @@ class ErrorWidget extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Center(
@@ -145,8 +143,8 @@ class ErrorWidget extends StatelessWidget {
 /// A widget that displays an empty state.
 class EmptyWidget extends StatelessWidget {
   const EmptyWidget({
-    super.key,
     required this.message,
+    super.key,
     this.icon = Icons.inbox_outlined,
     this.action,
     this.actionLabel,
@@ -158,7 +156,7 @@ class EmptyWidget extends StatelessWidget {
   final String? actionLabel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Center(

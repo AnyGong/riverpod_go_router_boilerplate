@@ -6,9 +6,8 @@ part 'secure_storage.g.dart';
 /// Provider for secure storage instance.
 /// Use this for storing sensitive data like tokens.
 @Riverpod(keepAlive: true)
-FlutterSecureStorage secureStorage(Ref ref) {
+FlutterSecureStorage secureStorage(final Ref ref) {
   return const FlutterSecureStorage(
-    aOptions: AndroidOptions(),
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
   );
 }

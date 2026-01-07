@@ -46,7 +46,7 @@ class OnboardingPage extends HookConsumerWidget {
   const OnboardingPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(final BuildContext context, final WidgetRef ref) {
     final pageController = usePageController();
     final currentPage = useState(0);
     final theme = Theme.of(context);
@@ -69,8 +69,8 @@ class OnboardingPage extends HookConsumerWidget {
               child: PageView.builder(
                 controller: pageController,
                 itemCount: _pages.length,
-                onPageChanged: (index) => currentPage.value = index,
-                itemBuilder: (context, index) {
+                onPageChanged: (final index) => currentPage.value = index,
+                itemBuilder: (final context, final index) {
                   final page = _pages[index];
                   return _OnboardingPageContent(page: page);
                 },
@@ -84,7 +84,7 @@ class OnboardingPage extends HookConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   _pages.length,
-                  (index) => _PageIndicator(
+                  (final index) => _PageIndicator(
                     isActive: index == currentPage.value,
                     color: theme.colorScheme.primary,
                   ),
@@ -135,7 +135,7 @@ class OnboardingPage extends HookConsumerWidget {
     );
   }
 
-  Future<void> _completeOnboarding(BuildContext context, WidgetRef ref) async {
+  Future<void> _completeOnboarding(final BuildContext context, final WidgetRef ref) async {
     // Mark onboarding as completed
     final onboardingService = ref.read(onboardingServiceProvider);
     await onboardingService.complete();
@@ -159,7 +159,7 @@ class _OnboardingPageContent extends StatelessWidget {
   final OnboardingPageData page;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Padding(
@@ -201,7 +201,7 @@ class _PageIndicator extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin: const EdgeInsets.symmetric(horizontal: 4),

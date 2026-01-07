@@ -6,7 +6,7 @@ class StartupRouteMapper {
   const StartupRouteMapper._();
 
   /// Get the route for a given startup state.
-  static String map(StartupState state) {
+  static String map(final StartupState state) {
     return switch (state) {
       MaintenanceState() => AppRoutes.maintenance,
       OnboardingState() => AppRoutes.onboarding,

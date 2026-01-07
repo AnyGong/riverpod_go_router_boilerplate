@@ -22,10 +22,10 @@ class AppLifecycleState {
   final bool isInitialized;
 
   AppLifecycleState copyWith({
-    StartupState? currentState,
-    StartupEvent? lastEvent,
-    StartupState? previousState,
-    bool? isInitialized,
+    final StartupState? currentState,
+    final StartupEvent? lastEvent,
+    final StartupState? previousState,
+    final bool? isInitialized,
   }) {
     return AppLifecycleState(
       currentState: currentState ?? this.currentState,

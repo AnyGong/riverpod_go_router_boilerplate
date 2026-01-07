@@ -18,16 +18,16 @@ abstract class Breakpoints {
 /// )
 /// ```
 class ResponsiveBuilder extends StatelessWidget {
-  const ResponsiveBuilder({super.key, required this.mobile, this.tablet, this.desktop});
+  const ResponsiveBuilder({required this.mobile, super.key, this.tablet, this.desktop});
 
   final Widget Function(BuildContext context) mobile;
   final Widget Function(BuildContext context)? tablet;
   final Widget Function(BuildContext context)? desktop;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder: (final context, final constraints) {
         if (constraints.maxWidth >= Breakpoints.desktop) {
           return desktop?.call(context) ?? tablet?.call(context) ?? mobile(context);
         }
@@ -52,7 +52,7 @@ class ResponsiveBuilder extends StatelessWidget {
 /// ).value
 /// ```
 class ResponsiveValue<T> {
-  ResponsiveValue({required BuildContext context, required T mobile, T? tablet, T? desktop})
+  ResponsiveValue({required final BuildContext context, required final T mobile, final T? tablet, final T? desktop})
     : _mobile = mobile,
       _tablet = tablet,
       _desktop = desktop,
@@ -77,7 +77,7 @@ class ResponsiveValue<T> {
 /// Extension for getting responsive values from context.
 extension ResponsiveContextExtension on BuildContext {
   /// Get a responsive value based on screen size
-  T responsiveValue<T>({required T mobile, T? tablet, T? desktop}) {
+  T responsiveValue<T>({required final T mobile, final T? tablet, final T? desktop}) {
     return ResponsiveValue<T>(
       context: this,
       mobile: mobile,
@@ -102,8 +102,7 @@ extension ResponsiveContextExtension on BuildContext {
 /// A responsive grid that adjusts columns based on screen size.
 class ResponsiveGrid extends StatelessWidget {
   const ResponsiveGrid({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.mobileColumns = 1,
     this.tabletColumns = 2,
     this.desktopColumns = 3,
@@ -121,9 +120,9 @@ class ResponsiveGrid extends StatelessWidget {
   final double childAspectRatio;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder: (final context, final constraints) {
         int columns;
         if (constraints.maxWidth >= Breakpoints.desktop) {
           columns = desktopColumns;
@@ -143,7 +142,7 @@ class ResponsiveGrid extends StatelessWidget {
             childAspectRatio: childAspectRatio,
           ),
           itemCount: children.length,
-          itemBuilder: (context, index) => children[index],
+          itemBuilder: (final context, final index) => children[index],
         );
       },
     );
@@ -153,8 +152,7 @@ class ResponsiveGrid extends StatelessWidget {
 /// A widget that shows/hides content based on screen size.
 class ResponsiveVisibility extends StatelessWidget {
   const ResponsiveVisibility({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.visibleOnMobile = true,
     this.visibleOnTablet = true,
     this.visibleOnDesktop = true,
@@ -168,9 +166,9 @@ class ResponsiveVisibility extends StatelessWidget {
   final Widget? replacement;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder: (final context, final constraints) {
         bool visible;
         if (constraints.maxWidth >= Breakpoints.desktop) {
           visible = visibleOnDesktop;

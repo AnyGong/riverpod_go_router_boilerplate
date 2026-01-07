@@ -16,7 +16,7 @@ part 'dio_provider.g.dart';
 ///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 @Riverpod(keepAlive: true)
-Dio dio(Ref ref) {
+Dio dio(final Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: EnvConfig.baseUrl,
@@ -51,7 +51,7 @@ class AuthInterceptor extends QueuedInterceptor {
   bool _isRefreshing = false;
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(final RequestOptions options, final RequestInterceptorHandler handler) async {
     final storage = _ref.read(secureStorageProvider);
     final token = await storage.read(key: StorageKeys.accessToken);
 
@@ -63,7 +63,7 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(final DioException err, final ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401 && !_isRefreshing) {
       _isRefreshing = true;
 
@@ -106,7 +106,7 @@ class AuthInterceptor extends QueuedInterceptor {
     }
   }
 
-  Future<Response<dynamic>> _retryRequest(RequestOptions options) async {
+  Future<Response<dynamic>> _retryRequest(final RequestOptions options) async {
     final storage = _ref.read(secureStorageProvider);
     final token = await storage.read(key: StorageKeys.accessToken);
     options.headers['Authorization'] = 'Bearer $token';
@@ -134,7 +134,7 @@ class RetryInterceptor extends Interceptor {
       retryDelays ?? const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(final DioException err, final ErrorInterceptorHandler handler) async {
     final shouldRetry = _shouldRetry(err);
     if (!shouldRetry) {
       return handler.next(err);
@@ -159,7 +159,7 @@ class RetryInterceptor extends Interceptor {
     }
   }
 
-  bool _shouldRetry(DioException err) {
+  bool _shouldRetry(final DioException err) {
     // Only retry on network errors or 5xx server errors
     return err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.sendTimeout ||
@@ -177,7 +177,7 @@ class LoggingInterceptor extends Interceptor {
   AppLogger get _logger => _ref.read(loggerProvider);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(final RequestOptions options, final RequestInterceptorHandler handler) {
     if (kDebugMode) {
       _logger.d('→ ${options.method} ${options.uri}');
       if (options.data != null) {
@@ -188,7 +188,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(final Response<dynamic> response, final ResponseInterceptorHandler handler) {
     if (kDebugMode) {
       _logger.d('← ${response.statusCode} ${response.requestOptions.uri}');
     }
@@ -196,7 +196,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(final DioException err, final ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       _logger.e(
         '✖ ${err.response?.statusCode ?? 'NETWORK'} ${err.requestOptions.uri}',

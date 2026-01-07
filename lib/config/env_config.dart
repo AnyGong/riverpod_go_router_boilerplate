@@ -14,14 +14,14 @@ class EnvConfig {
 
   /// Initialize the environment configuration.
   /// Call this in main() before runApp().
-  static void initialize({required Environment environment}) {
+  static void initialize({required final Environment environment}) {
     _environment = environment;
     _baseUrl = _getBaseUrl(environment);
     _enableLogging = environment != Environment.prod;
     _useMockRepositories = environment != Environment.prod;
   }
 
-  static String _getBaseUrl(Environment env) {
+  static String _getBaseUrl(final Environment env) {
     return switch (env) {
       Environment.dev => 'https://dev-api.example.com',
       Environment.staging => 'https://staging-api.example.com',

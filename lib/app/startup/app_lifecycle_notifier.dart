@@ -25,7 +25,7 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
   }
 
   /// Process a startup event and potentially transition to a new state.
-  Future<void> processEvent(StartupEvent event) async {
+  Future<void> processEvent(final StartupEvent event) async {
     final signals = await _collectSignals(event);
     final newState = StartupStateResolver.resolve(signals);
 
@@ -46,7 +46,7 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
     }
   }
 
-  Future<StartupSignals> _collectSignals(StartupEvent event) async {
+  Future<StartupSignals> _collectSignals(final StartupEvent event) async {
     return switch (event) {
       AppLaunched() => _collectCurrentSignals(),
       UserAuthenticated() => StartupSignals(
@@ -117,7 +117,7 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
     return sessionState.isAuthenticated;
   }
 
-  void _transitionTo(StartupState newState, StartupEvent? event) {
+  void _transitionTo(final StartupState newState, final StartupEvent? event) {
     state = AppLifecycleState(
       currentState: newState,
       lastEvent: event,
@@ -128,17 +128,17 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
   }
 
   // --- Convenience methods ---
-  Future<void> onUserLoggedIn(String userId) async =>
+  Future<void> onUserLoggedIn(final String userId) async =>
       processEvent(UserAuthenticated(userId: userId));
 
   Future<void> onUserLoggedOut() async => processEvent(const UserLoggedOut());
 
-  Future<void> onSessionExpired({String? reason}) async =>
+  Future<void> onSessionExpired({final String? reason}) async =>
       processEvent(SessionExpiredEvent(reason: reason));
 
   Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
 
-  Future<void> onMaintenanceModeChanged({required bool isEnabled}) async =>
+  Future<void> onMaintenanceModeChanged({required final bool isEnabled}) async =>
       processEvent(isEnabled ? const MaintenanceEnabled() : const MaintenanceDisabled());
 }
 
@@ -148,16 +148,16 @@ final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppL
 );
 
 /// Listenable for GoRouter refresh.
-final appLifecycleListenableProvider = Provider<Listenable>((ref) {
+final appLifecycleListenableProvider = Provider<Listenable>((final ref) {
   return ref.watch(appLifecycleNotifierProvider.notifier);
 });
 
 /// Current startup state for convenience.
-final currentStartupStateProvider = Provider<StartupState>((ref) {
+final currentStartupStateProvider = Provider<StartupState>((final ref) {
   return ref.watch(appLifecycleNotifierProvider).currentState;
 });
 
 /// Whether app lifecycle is initialized.
-final isLifecycleInitializedProvider = Provider<bool>((ref) {
+final isLifecycleInitializedProvider = Provider<bool>((final ref) {
   return ref.watch(appLifecycleNotifierProvider).isInitialized;
 });

@@ -38,7 +38,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.read(authProvider);
 
     authState.whenOrNull(
-      error: (error, _) {
+      error: (final error, _) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.toString()),
@@ -46,7 +46,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         );
       },
-      data: (user) {
+      data: (final user) {
         if (user != null) {
           context.go(AppRoutes.home);
         }
@@ -55,7 +55,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
@@ -112,7 +112,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (value) {
+                      validator: (final value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
@@ -147,7 +147,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           },
                         ),
                       ),
-                      validator: (value) {
+                      validator: (final value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
                         }

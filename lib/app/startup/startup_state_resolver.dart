@@ -1,5 +1,5 @@
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart';
+import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine.dart';
 
 /// Resolves the current startup state from signals.
 ///
@@ -23,7 +23,7 @@ class StartupStateResolver {
   const StartupStateResolver._();
 
   /// Resolve the startup state from the given signals.
-  static StartupState resolve(StartupSignals signals) {
+  static StartupState resolve(final StartupSignals signals) {
     // 1️⃣ Maintenance ALWAYS wins
     if (signals.isInMaintenance) {
       return const MaintenanceState();

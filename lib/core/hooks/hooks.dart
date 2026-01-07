@@ -7,7 +7,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// ```dart
 /// final debouncedValue = useDebouncedValue(searchController.text, Duration(milliseconds: 500));
 /// ```
-String useDebouncedValue(String value, Duration delay) {
+String useDebouncedValue(final String value, final Duration delay) {
   final debouncedValue = useState(value);
 
   useEffect(() {
@@ -48,7 +48,7 @@ AsyncState<T> useAsyncState<T>() {
   final isLoading = useState(false);
   final error = useState<Object?>(null);
 
-  Future<void> execute(Future<T> Function() operation) async {
+  Future<void> execute(final Future<T> Function() operation) async {
     isLoading.value = true;
     error.value = null;
     try {
@@ -81,7 +81,7 @@ AsyncState<T> useAsyncState<T>() {
 /// ```dart
 /// final (isVisible, toggle) = useToggle(false);
 /// ```
-(bool, VoidCallback) useToggle([bool initialValue = false]) {
+(bool, VoidCallback) useToggle([final bool initialValue = false]) {
   final state = useState(initialValue);
   return (state.value, () => state.value = !state.value);
 }
@@ -92,7 +92,7 @@ AsyncState<T> useAsyncState<T>() {
 /// ```dart
 /// final controller = useTextController(text: 'initial');
 /// ```
-TextEditingController useTextController({String? text}) {
+TextEditingController useTextController({final String? text}) {
   return useTextEditingController(text: text);
 }
 
@@ -103,7 +103,7 @@ TextEditingController useTextController({String? text}) {
 /// final focusNode = useFocusNode();
 /// ```
 FocusNode useFocusNode() {
-  final focusNode = useMemoized(() => FocusNode());
+  final focusNode = useMemoized(FocusNode.new);
   useEffect(() => focusNode.dispose, [focusNode]);
   return focusNode;
 }
@@ -115,7 +115,7 @@ FocusNode useFocusNode() {
 /// final scrollController = useScrollController();
 /// ```
 ScrollController useScrollController() {
-  final controller = useMemoized(() => ScrollController());
+  final controller = useMemoized(ScrollController.new);
   useEffect(() => controller.dispose, [controller]);
   return controller;
 }
@@ -126,7 +126,7 @@ ScrollController useScrollController() {
 /// ```dart
 /// final pageController = usePageController();
 /// ```
-PageController usePageController({int initialPage = 0}) {
+PageController usePageController({final int initialPage = 0}) {
   final controller = useMemoized(() => PageController(initialPage: initialPage));
   useEffect(() => controller.dispose, [controller]);
   return controller;
@@ -156,7 +156,7 @@ class CountdownState {
   final void Function([int?]) reset;
 }
 
-CountdownState useCountdown(int initialSeconds) {
+CountdownState useCountdown(final int initialSeconds) {
   final remaining = useState(initialSeconds);
   final isRunning = useState(false);
   final isMounted = useIsMounted();
@@ -173,7 +173,7 @@ CountdownState useCountdown(int initialSeconds) {
       }
     });
 
-    return () => future.ignore();
+    return future.ignore;
   }, [isRunning.value, remaining.value]);
 
   return CountdownState(
@@ -181,7 +181,7 @@ CountdownState useCountdown(int initialSeconds) {
     isRunning: isRunning.value,
     start: () => isRunning.value = true,
     pause: () => isRunning.value = false,
-    reset: ([int? newValue]) {
+    reset: ([final int? newValue]) {
       remaining.value = newValue ?? initialSeconds;
       isRunning.value = false;
     },
@@ -194,7 +194,7 @@ CountdownState useCountdown(int initialSeconds) {
 /// ```dart
 /// final prevCount = usePrevious(count);
 /// ```
-T? usePrevious<T>(T value) {
+T? usePrevious<T>(final T value) {
   final ref = useRef<T?>(null);
   useEffect(() {
     ref.value = value;

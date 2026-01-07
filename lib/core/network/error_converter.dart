@@ -23,19 +23,19 @@ import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 /// ```
 abstract interface class ErrorConverter {
   /// Convert a DioException to a NetworkException.
-  NetworkException convertDioException(DioException e, StackTrace stackTrace);
+  NetworkException convertDioException(final DioException e, final StackTrace stackTrace);
 
   /// Convert a SocketException to a NetworkException.
-  NetworkException convertSocketException(SocketException e, StackTrace stackTrace);
+  NetworkException convertSocketException(final SocketException e, final StackTrace stackTrace);
 
   /// Convert an unknown error to an UnexpectedException.
-  AppException convertUnknownError(Object error, StackTrace stackTrace);
+  AppException convertUnknownError(final Object error, final StackTrace stackTrace);
 
   /// Extract error message from response data.
-  String? extractErrorMessage(dynamic data);
+  String? extractErrorMessage(final dynamic data);
 
   /// Map HTTP status code to a NetworkException.
-  NetworkException mapStatusCode(int? statusCode, dynamic data, StackTrace stackTrace);
+  NetworkException mapStatusCode(final int? statusCode, final dynamic data, final StackTrace stackTrace);
 }
 
 /// Default error converter for standard REST APIs.
@@ -48,7 +48,7 @@ class DefaultErrorConverter implements ErrorConverter {
   const DefaultErrorConverter();
 
   @override
-  NetworkException convertDioException(DioException e, StackTrace stackTrace) {
+  NetworkException convertDioException(final DioException e, final StackTrace stackTrace) {
     return switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
@@ -64,7 +64,7 @@ class DefaultErrorConverter implements ErrorConverter {
   }
 
   @override
-  NetworkException convertSocketException(SocketException e, StackTrace stackTrace) {
+  NetworkException convertSocketException(final SocketException e, final StackTrace stackTrace) {
     return NetworkException(
       message: 'No internet connection',
       code: 'NO_CONNECTION',
@@ -73,7 +73,7 @@ class DefaultErrorConverter implements ErrorConverter {
   }
 
   @override
-  AppException convertUnknownError(Object error, StackTrace stackTrace) {
+  AppException convertUnknownError(final Object error, final StackTrace stackTrace) {
     return UnexpectedException(
       message: 'An unexpected error occurred',
       originalError: error,
@@ -82,7 +82,7 @@ class DefaultErrorConverter implements ErrorConverter {
   }
 
   @override
-  String? extractErrorMessage(dynamic data) {
+  String? extractErrorMessage(final dynamic data) {
     if (data is Map<String, dynamic>) {
       // Try common error message field names
       return data['message'] as String? ??
@@ -96,18 +96,18 @@ class DefaultErrorConverter implements ErrorConverter {
     return null;
   }
 
-  String? _extractErrors(dynamic errors) {
+  String? _extractErrors(final dynamic errors) {
     if (errors is List) {
-      return errors.map((e) => e.toString()).join(', ');
+      return errors.map((final e) => e.toString()).join(', ');
     }
     if (errors is Map) {
-      return errors.values.map((e) => e.toString()).join(', ');
+      return errors.values.map((final e) => e.toString()).join(', ');
     }
     return errors?.toString();
   }
 
   @override
-  NetworkException mapStatusCode(int? statusCode, dynamic data, StackTrace stackTrace) {
+  NetworkException mapStatusCode(final int? statusCode, final dynamic data, final StackTrace stackTrace) {
     final message = extractErrorMessage(data);
 
     return switch (statusCode) {

@@ -14,8 +14,7 @@ import 'package:shimmer/shimmer.dart';
 /// ```
 class AppCachedImage extends StatelessWidget {
   const AppCachedImage({
-    super.key,
-    required this.imageUrl,
+    required this.imageUrl, super.key,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -33,15 +32,15 @@ class AppCachedImage extends StatelessWidget {
   final Widget? errorWidget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final image = CachedNetworkImage(
       imageUrl: imageUrl,
       width: width,
       height: height,
       fit: fit,
-      placeholder: (context, url) =>
+      placeholder: (final context, final url) =>
           placeholder ?? _ShimmerPlaceholder(width: width, height: height),
-      errorWidget: (context, url, error) =>
+      errorWidget: (final context, final url, final error) =>
           errorWidget ?? _ErrorPlaceholder(width: width, height: height),
     );
 
@@ -60,7 +59,7 @@ class _ShimmerPlaceholder extends StatelessWidget {
   final double? height;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
@@ -76,7 +75,7 @@ class _ErrorPlaceholder extends StatelessWidget {
   final double? height;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Container(
       width: width,
       height: height,
@@ -92,14 +91,14 @@ class _ErrorPlaceholder extends StatelessWidget {
 
 /// A circular cached avatar image.
 class AppCachedAvatar extends StatelessWidget {
-  const AppCachedAvatar({super.key, required this.imageUrl, this.radius = 24, this.placeholder});
+  const AppCachedAvatar({required this.imageUrl, super.key, this.radius = 24, this.placeholder});
 
   final String? imageUrl;
   final double radius;
   final Widget? placeholder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) {
       return CircleAvatar(
         radius: radius,
@@ -112,9 +111,9 @@ class AppCachedAvatar extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: imageUrl!,
-      imageBuilder: (context, imageProvider) =>
+      imageBuilder: (final context, final imageProvider) =>
           CircleAvatar(radius: radius, backgroundImage: imageProvider),
-      placeholder: (context, url) => CircleAvatar(
+      placeholder: (final context, final url) => CircleAvatar(
         radius: radius,
         child: Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
@@ -124,7 +123,7 @@ class AppCachedAvatar extends StatelessWidget {
           ),
         ),
       ),
-      errorWidget: (context, url, error) => CircleAvatar(
+      errorWidget: (final context, final url, final error) => CircleAvatar(
         radius: radius,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child:

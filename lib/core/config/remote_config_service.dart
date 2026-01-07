@@ -21,16 +21,16 @@ class RemoteConfig {
   final bool forceUpdate;
   final Map<String, bool> featureFlags;
 
-  bool getFlag(String key, {bool defaultValue = false}) {
+  bool getFlag(final String key, {final bool defaultValue = false}) {
     return featureFlags[key] ?? defaultValue;
   }
 
   RemoteConfig copyWith({
-    bool? isMaintenanceMode,
-    String? maintenanceMessage,
-    String? minimumVersion,
-    bool? forceUpdate,
-    Map<String, bool>? featureFlags,
+    final bool? isMaintenanceMode,
+    final String? maintenanceMessage,
+    final String? minimumVersion,
+    final bool? forceUpdate,
+    final Map<String, bool>? featureFlags,
   }) {
     return RemoteConfig(
       isMaintenanceMode: isMaintenanceMode ?? this.isMaintenanceMode,
@@ -79,23 +79,23 @@ class RemoteConfigService {
   }
 
   /// Manually update config (useful for testing or local overrides).
-  void updateConfig(RemoteConfig config) {
+  void updateConfig(final RemoteConfig config) {
     _currentConfig = config;
     _configController.add(_currentConfig);
   }
 
   /// Enable maintenance mode (useful for testing).
-  void enableMaintenance({String? message}) {
+  void enableMaintenance({final String? message}) {
     updateConfig(_currentConfig.copyWith(isMaintenanceMode: true, maintenanceMessage: message));
   }
 
   /// Disable maintenance mode.
   void disableMaintenance() {
-    updateConfig(_currentConfig.copyWith(isMaintenanceMode: false, maintenanceMessage: null));
+    updateConfig(_currentConfig.copyWith(isMaintenanceMode: false));
   }
 
   /// Set a feature flag.
-  void setFeatureFlag(String key, bool value) {
+  void setFeatureFlag(final String key, final bool value) {
     final newFlags = Map<String, bool>.from(_currentConfig.featureFlags);
     newFlags[key] = value;
     updateConfig(_currentConfig.copyWith(featureFlags: newFlags));
@@ -107,26 +107,26 @@ class RemoteConfigService {
 }
 
 /// Provider for the RemoteConfigService singleton.
-final remoteConfigServiceProvider = Provider<RemoteConfigService>((ref) {
+final remoteConfigServiceProvider = Provider<RemoteConfigService>((final ref) {
   final service = RemoteConfigService();
-  ref.onDispose(() => service.dispose());
+  ref.onDispose(service.dispose);
   return service;
 });
 
 /// Provider for the current remote config.
-final remoteConfigProvider = StreamProvider<RemoteConfig>((ref) {
+final remoteConfigProvider = StreamProvider<RemoteConfig>((final ref) {
   final service = ref.watch(remoteConfigServiceProvider);
   return service.configStream;
 });
 
 /// Provider for checking if app is in maintenance mode.
-final isMaintenanceModeProvider = Provider<bool>((ref) {
+final isMaintenanceModeProvider = Provider<bool>((final ref) {
   final config = ref.watch(remoteConfigProvider);
   return config.value?.isMaintenanceMode ?? false;
 });
 
 /// Provider for the maintenance message.
-final maintenanceMessageProvider = Provider<String?>((ref) {
+final maintenanceMessageProvider = Provider<String?>((final ref) {
   final config = ref.watch(remoteConfigProvider);
   return config.value?.maintenanceMessage;
 });

@@ -23,7 +23,7 @@ class HorizontalSpace extends StatelessWidget {
   final double width;
 
   @override
-  Widget build(BuildContext context) => SizedBox(width: width);
+  Widget build(final BuildContext context) => SizedBox(width: width);
 }
 
 /// Vertical spacing widgets.
@@ -39,14 +39,13 @@ class VerticalSpace extends StatelessWidget {
   final double height;
 
   @override
-  Widget build(BuildContext context) => SizedBox(height: height);
+  Widget build(final BuildContext context) => SizedBox(height: height);
 }
 
 /// A responsive padding wrapper.
 class ResponsivePadding extends StatelessWidget {
   const ResponsivePadding({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.horizontal = AppSpacing.md,
     this.vertical = AppSpacing.md,
   });
@@ -56,7 +55,7 @@ class ResponsivePadding extends StatelessWidget {
   final double vertical;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical),
       child: child,
@@ -67,8 +66,7 @@ class ResponsivePadding extends StatelessWidget {
 /// A constrained container for maximum width content.
 class ContentContainer extends StatelessWidget {
   const ContentContainer({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.maxWidth = 600,
     this.padding = const EdgeInsets.symmetric(horizontal: AppSpacing.md),
   });
@@ -78,7 +76,7 @@ class ContentContainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),

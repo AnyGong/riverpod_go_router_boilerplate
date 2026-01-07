@@ -7,26 +7,26 @@ import 'package:riverpod_go_router_boilerplate/features/settings/presentation/pa
 
 /// Routes that require authentication.
 final protectedRoutes = [
-  GoRoute(path: AppRoutes.home, name: 'home', builder: (context, state) => const HomePage()),
+  GoRoute(path: AppRoutes.home, name: 'home', builder: (final context, final state) => const HomePage()),
   GoRoute(
     path: AppRoutes.profile,
     name: 'profile',
-    builder: (context, state) => const _PlaceholderPage(title: 'Profile'),
+    builder: (final context, final state) => const _PlaceholderPage(title: 'Profile'),
   ),
   GoRoute(
     path: AppRoutes.settings,
     name: 'settings',
-    builder: (context, state) => const SettingsPage(),
+    builder: (final context, final state) => const SettingsPage(),
   ),
   GoRoute(
     path: AppRoutes.onboarding,
     name: 'onboarding',
-    builder: (context, state) => const OnboardingPage(),
+    builder: (final context, final state) => const OnboardingPage(),
   ),
   GoRoute(
     path: AppRoutes.maintenance,
     name: 'maintenance',
-    builder: (context, state) => const _MaintenancePage(),
+    builder: (final context, final state) => const _MaintenancePage(),
   ),
 ];
 
@@ -37,7 +37,7 @@ class _PlaceholderPage extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Center(
@@ -64,7 +64,7 @@ class _MaintenancePage extends StatelessWidget {
   const _MaintenancePage();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -77,7 +77,7 @@ class _MaintenancePage extends StatelessWidget {
               Text('Under Maintenance', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 16),
               Text(
-                'We\'re currently performing maintenance.\nPlease check back later.',
+                "We're currently performing maintenance.\nPlease check back later.",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
               ),

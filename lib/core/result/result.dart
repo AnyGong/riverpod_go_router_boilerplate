@@ -34,8 +34,8 @@ sealed class Result<T> {
   /// );
   /// ```
   R fold<R>({
-    required R Function(T data) onSuccess,
-    required R Function(AppException error) onFailure,
+    required final R Function(T data) onSuccess,
+    required final R Function(AppException error) onFailure,
   }) {
     return switch (this) {
       Success(:final data) => onSuccess(data),
@@ -44,7 +44,7 @@ sealed class Result<T> {
   }
 
   /// Transform the success value.
-  Result<R> map<R>(R Function(T data) transform) {
+  Result<R> map<R>(final R Function(T data) transform) {
     return switch (this) {
       Success(:final data) => Success(transform(data)),
       Failure(:final error) => Failure(error),
@@ -52,7 +52,7 @@ sealed class Result<T> {
   }
 
   /// Chain another Result-returning operation.
-  Future<Result<R>> flatMap<R>(Future<Result<R>> Function(T data) transform) async {
+  Future<Result<R>> flatMap<R>(final Future<Result<R>> Function(T data) transform) async {
     return switch (this) {
       Success(:final data) => transform(data),
       Failure(:final error) => Failure(error),
@@ -91,7 +91,7 @@ sealed class Result<T> {
   }
 
   /// Returns the data or a default value.
-  T getOrElse(T defaultValue) {
+  T getOrElse(final T defaultValue) {
     return switch (this) {
       Success(:final data) => data,
       Failure() => defaultValue,
@@ -106,7 +106,7 @@ final class Success<T> extends Result<T> {
   final T data;
 
   @override
-  bool operator ==(Object other) =>
+  bool operator ==(final Object other) =>
       identical(this, other) ||
       other is Success<T> && runtimeType == other.runtimeType && data == other.data;
 
@@ -124,7 +124,7 @@ final class Failure<T> extends Result<T> {
   final AppException error;
 
   @override
-  bool operator ==(Object other) =>
+  bool operator ==(final Object other) =>
       identical(this, other) ||
       other is Failure<T> && runtimeType == other.runtimeType && error == other.error;
 
@@ -158,7 +158,7 @@ final class NetworkException extends AppException {
   factory NetworkException.timeout() =>
       const NetworkException(message: 'Request timed out', code: 'TIMEOUT');
 
-  factory NetworkException.serverError([int? statusCode]) => NetworkException(
+  factory NetworkException.serverError([final int? statusCode]) => NetworkException(
     message: 'Server error occurred',
     code: 'SERVER_ERROR',
     statusCode: statusCode,

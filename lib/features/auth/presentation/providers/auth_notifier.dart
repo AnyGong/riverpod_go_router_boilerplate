@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
 
 part 'auth_notifier.g.dart';
@@ -25,14 +25,14 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Attempt to login with credentials.
-  Future<void> login(String email, String password) async {
+  Future<void> login(final String email, final String password) async {
     state = const AsyncLoading();
 
     final result = await _repo.login(email, password);
 
     state = result.fold(
-      onSuccess: (user) => AsyncData(user),
-      onFailure: (error) => AsyncError(error, StackTrace.current),
+      onSuccess: AsyncData.new,
+      onFailure: (final error) => AsyncError(error, StackTrace.current),
     );
   }
 
@@ -42,7 +42,7 @@ class AuthNotifier extends _$AuthNotifier {
 
     result.fold(
       onSuccess: (_) => state = const AsyncData(null),
-      onFailure: (error) {
+      onFailure: (final error) {
         // Still clear local state even if server logout fails
         state = const AsyncData(null);
         if (kDebugMode) {

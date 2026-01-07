@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for managing onboarding state.
 class OnboardingService {
@@ -24,12 +24,12 @@ class OnboardingService {
 }
 
 /// Provider for onboarding service
-final onboardingServiceProvider = Provider<OnboardingService>((ref) {
+final onboardingServiceProvider = Provider<OnboardingService>((final ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return OnboardingService(prefs);
 });
 
 /// Provider for checking if onboarding is completed
-final isOnboardingCompletedProvider = Provider<bool>((ref) {
+final isOnboardingCompletedProvider = Provider<bool>((final ref) {
   return ref.watch(onboardingServiceProvider).isCompleted;
 });

@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 /// A primary button with consistent styling.
 class AppButton extends StatelessWidget {
   const AppButton({
-    super.key,
-    required this.onPressed,
-    required this.label,
+    required this.onPressed, required this.label, super.key,
     this.icon,
     this.isLoading = false,
     this.isExpanded = true,
@@ -22,7 +20,7 @@ class AppButton extends StatelessWidget {
   final AppButtonSize size;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     final Widget child = isLoading
@@ -75,7 +73,7 @@ class AppButton extends StatelessWidget {
     AppButtonSize.large => 24,
   };
 
-  ButtonStyle _buttonStyle(BuildContext context) {
+  ButtonStyle _buttonStyle(final BuildContext context) {
     return ButtonStyle(
       minimumSize: WidgetStatePropertyAll(_minSize),
       padding: WidgetStatePropertyAll(_padding),
@@ -102,9 +100,7 @@ enum AppButtonSize { small, medium, large }
 /// An icon button with consistent styling.
 class AppIconButton extends StatelessWidget {
   const AppIconButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
+    required this.icon, required this.onPressed, super.key,
     this.tooltip,
     this.variant = AppIconButtonVariant.standard,
     this.size = 24,
@@ -119,7 +115,7 @@ class AppIconButton extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final button = switch (variant) {
       AppIconButtonVariant.standard => IconButton(
         onPressed: isLoading ? null : onPressed,
@@ -150,7 +146,7 @@ class AppIconButton extends StatelessWidget {
     return button;
   }
 
-  Widget _buildIcon(BuildContext context) {
+  Widget _buildIcon(final BuildContext context) {
     if (isLoading) {
       return SizedBox(
         width: size * 0.8,

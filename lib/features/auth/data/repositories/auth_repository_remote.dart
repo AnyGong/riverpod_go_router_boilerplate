@@ -28,22 +28,22 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// }
 /// ```
 class AuthRepositoryRemote implements AuthRepository {
-  AuthRepositoryRemote({required ApiClient apiClient, required this.secureStorage})
+  AuthRepositoryRemote({required final ApiClient apiClient, required this.secureStorage})
     : _apiClient = apiClient;
 
   final ApiClient _apiClient;
   final FlutterSecureStorage secureStorage;
 
   @override
-  Future<Result<User>> login(String email, String password) async {
+  Future<Result<User>> login(final String email, final String password) async {
     final result = await _apiClient.post<Map<String, dynamic>>(
       '/auth/login',
       data: {'email': email, 'password': password},
-      fromJson: (json) => json as Map<String, dynamic>,
+      fromJson: (final json) => json as Map<String, dynamic>,
     );
 
     return result.fold(
-      onSuccess: (data) async {
+      onSuccess: (final data) async {
         // Store tokens
         final token = data['token'] as String?;
         final refreshToken = data['refresh_token'] as String?;
@@ -81,15 +81,15 @@ class AuthRepositoryRemote implements AuthRepository {
     // Validate token by fetching current user
     final result = await _apiClient.get<Map<String, dynamic>>(
       '/auth/me',
-      fromJson: (json) => json as Map<String, dynamic>,
+      fromJson: (final json) => json as Map<String, dynamic>,
     );
 
     return result.fold(
-      onSuccess: (data) {
+      onSuccess: (final data) {
         final userData = data['user'] as Map<String, dynamic>? ?? data;
         return Success(User.fromJson(userData));
       },
-      onFailure: (error) async {
+      onFailure: (final error) async {
         // Token is invalid, clear stored tokens
         if (error is NetworkException && error.statusCode == 401) {
           await _clearTokens();

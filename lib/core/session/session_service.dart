@@ -7,18 +7,18 @@ import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 ///
 /// Use this when you need to watch session state changes.
 /// This is the single source of truth for session state.
-final sessionStateProvider = Provider<SessionState>((ref) {
+final sessionStateProvider = Provider<SessionState>((final ref) {
   final authState = ref.watch(authProvider);
 
   return authState.when(
-    data: (user) {
+    data: (final user) {
       if (user == null) {
         return const SessionInactive();
       }
       return SessionActive(userId: user.id);
     },
     loading: () => const SessionLoading(),
-    error: (error, _) {
+    error: (final error, _) {
       if (error is AuthException) {
         return SessionExpired(reason: error.message);
       }
@@ -30,7 +30,7 @@ final sessionStateProvider = Provider<SessionState>((ref) {
 /// Provider that indicates whether user is authenticated.
 ///
 /// Simple boolean for convenience in guards and conditionals.
-final isAuthenticatedProvider = Provider<bool>((ref) {
+final isAuthenticatedProvider = Provider<bool>((final ref) {
   return ref.watch(sessionStateProvider).isAuthenticated;
 });
 
@@ -63,6 +63,6 @@ class SessionService {
 }
 
 /// Provider for the SessionService.
-final sessionServiceProvider = Provider<SessionService>((ref) {
+final sessionServiceProvider = Provider<SessionService>((final ref) {
   return SessionService(ref);
 });

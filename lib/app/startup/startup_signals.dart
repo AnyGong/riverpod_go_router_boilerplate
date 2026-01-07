@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:riverpod_go_router_boilerplate/app/app_exports.dart' show AppConfig, StartupState, StartupStateResolver;
 
 /// Runtime signals that influence startup behavior.
 ///
@@ -46,7 +47,7 @@ class StartupSignals {
   final bool isAuthEnabled;
 
   @override
-  bool operator ==(Object other) =>
+  bool operator ==(final Object other) =>
       identical(this, other) ||
       other is StartupSignals &&
           runtimeType == other.runtimeType &&
