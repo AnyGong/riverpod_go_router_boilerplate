@@ -255,7 +255,8 @@ class BiometricService {
       'PermanentlyLockedOut' => BiometricResult.permanentlyLockedOut,
       'PasscodeNotSet' => BiometricResult.noDeviceSecurity,
       'OtherOperatingSystem' => BiometricResult.notAvailable,
-      _ when e.message?.contains('cancel') ?? false => BiometricResult.cancelled,
+      _ when e.message?.contains('cancel') ?? false =>
+        BiometricResult.cancelled,
       _ => BiometricResult.error,
     };
   }
@@ -277,7 +278,8 @@ extension BiometricResultExtension on BiometricResult {
 
   /// Whether there was a lockout due to too many failed attempts.
   bool get isLockedOut =>
-      this == BiometricResult.lockedOut || this == BiometricResult.permanentlyLockedOut;
+      this == BiometricResult.lockedOut ||
+      this == BiometricResult.permanentlyLockedOut;
 
   /// Get a user-friendly message for this result.
   String get message {
@@ -291,7 +293,8 @@ extension BiometricResultExtension on BiometricResult {
       BiometricResult.noDeviceSecurity =>
         'Device security not set up. Please set a PIN or password in device settings.',
       BiometricResult.lockedOut => 'Too many attempts. Please try again later.',
-      BiometricResult.permanentlyLockedOut => 'Biometrics locked. Please unlock your device first.',
+      BiometricResult.permanentlyLockedOut =>
+        'Biometrics locked. Please unlock your device first.',
       BiometricResult.error => 'An error occurred. Please try again.',
     };
   }
