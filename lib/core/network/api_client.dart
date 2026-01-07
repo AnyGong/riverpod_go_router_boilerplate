@@ -150,14 +150,22 @@ class ApiClient {
   /// If [fromJson] is provided, it will be used to parse the response.
   /// If [fromJson] is null, the response data must be directly castable to [T].
   ///
-  /// **Important:** For complex types like `List<User>`, always provide [fromJson].
-  /// Direct casting will fail for generic collections due to Dart's type system.
+  /// **Special Cases:**
+  /// - For `void` responses (DELETE, POST with no body), use `T = void`
+  /// - For complex types like `List<User>`, always provide [fromJson]
   Future<Result<T>> _executeRequest<T>(
     final Future<Response<dynamic>> Function() request, {
     final T Function(dynamic json)? fromJson,
   }) async {
     try {
       final response = await request();
+
+      // Handle void responses (e.g., DELETE requests that return no body)
+      // Check if T is void, Null, or if response has no data
+      if (_isVoidType<T>() || response.data == null) {
+        // For void type, return null cast to T (which is valid for void)
+        return Success(null as T);
+      }
 
       if (fromJson != null) {
         return Success(fromJson(response.data));
@@ -186,5 +194,12 @@ class ApiClient {
     } catch (e, stackTrace) {
       return Failure(_errorConverter.convertUnknownError(e, stackTrace));
     }
+  }
+
+  /// Check if T is a void-like type (void, Null, or dynamic with null intent).
+  bool _isVoidType<T>() {
+    // In Dart, void is represented as Null at runtime
+    // We also check for explicit Null type
+    return null is T;
   }
 }

@@ -34,14 +34,42 @@ final isAuthenticatedProvider = Provider<bool>((final ref) {
   return ref.watch(sessionStateProvider).isAuthenticated;
 });
 
+/// Callback type for invalidating user-specific providers on logout.
+///
+/// Implement this to clear any cached user data when the session ends.
+typedef InvalidateProvidersCallback = void Function(Ref ref);
+
 /// Service for session operations.
 ///
 /// Use [sessionStateProvider] for reactive state.
 /// Use this service for imperative operations like ending session.
+///
+/// ## Provider Invalidation on Logout
+///
+/// Register a callback to invalidate user-specific providers:
+/// ```dart
+/// final sessionService = ref.read(sessionServiceProvider);
+/// sessionService.onLogoutInvalidate = (ref) {
+///   ref.invalidate(userProfileProvider);
+///   ref.invalidate(userSettingsProvider);
+/// };
+/// ```
 class SessionService {
-  const SessionService(this._ref);
+  SessionService(this._ref);
 
   final Ref _ref;
+
+  /// Callback to invalidate user-specific providers on logout.
+  ///
+  /// Set this to clear any cached user data when the session ends.
+  /// Example:
+  /// ```dart
+  /// sessionService.onLogoutInvalidate = (ref) {
+  ///   ref.invalidate(userProfileProvider);
+  ///   ref.invalidate(notificationsProvider);
+  /// };
+  /// ```
+  InvalidateProvidersCallback? onLogoutInvalidate;
 
   /// Get the current session state (non-reactive).
   SessionState get currentState => _ref.read(sessionStateProvider);
@@ -56,7 +84,17 @@ class SessionService {
   }
 
   /// End the current session (logout).
+  ///
+  /// This will:
+  /// 1. Call the [onLogoutInvalidate] callback to clear cached user data
+  /// 2. Call the auth notifier to perform logout
+  ///
+  /// Any cached user data will be cleared to ensure a clean state.
   Future<void> endSession() async {
+    // First, invalidate all user-specific cached data via callback
+    onLogoutInvalidate?.call(_ref);
+
+    // Then perform the actual logout
     final notifier = _ref.read(authProvider.notifier);
     await notifier.logout();
   }

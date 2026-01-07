@@ -23,8 +23,10 @@ analyzer:
 
 linter:
   rules:
-    # Relaxed rules for boilerplate flexibility
-    public_member_api_docs: false
+    # Documentation: Enable for core/domain layers, relaxed for features
+    # Set to 'info' to encourage docs without breaking builds
+    # For stricter enforcement, change to 'warning' or remove this line
+    public_member_api_docs: info
     lines_longer_than_80_chars: false
     # Allow some flexibility in sorting
     sort_pub_dependencies: false
