@@ -56,7 +56,9 @@ class HomePage extends ConsumerWidget {
                   // User info
                   Text(
                     user.name ?? 'User',
-                    style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -73,9 +75,16 @@ class HomePage extends ConsumerWidget {
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         children: [
-                          Icon(Icons.check_circle, size: 48, color: theme.colorScheme.primary),
+                          Icon(
+                            Icons.check_circle,
+                            size: 48,
+                            color: theme.colorScheme.primary,
+                          ),
                           const SizedBox(height: 16),
-                          Text("You're all set!", style: theme.textTheme.titleLarge),
+                          Text(
+                            "You're all set!",
+                            style: theme.textTheme.titleLarge,
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             'Start building your amazing app.',
@@ -105,7 +114,10 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleLogout(final BuildContext context, final WidgetRef ref) async {
+  Future<void> _handleLogout(
+    final BuildContext context,
+    final WidgetRef ref,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (final context) => AlertDialog(
@@ -114,8 +126,13 @@ class HomePage extends ConsumerWidget {
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-            child: Text('Sign Out', style: TextStyle(color: Theme.of(context).colorScheme.onError)),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(
+              'Sign Out',
+              style: TextStyle(color: Theme.of(context).colorScheme.onError),
+            ),
           ),
         ],
       ),

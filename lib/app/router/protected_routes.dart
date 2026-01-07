@@ -7,11 +7,16 @@ import 'package:riverpod_go_router_boilerplate/features/settings/presentation/pa
 
 /// Routes that require authentication.
 final protectedRoutes = [
-  GoRoute(path: AppRoutes.home, name: 'home', builder: (final context, final state) => const HomePage()),
+  GoRoute(
+    path: AppRoutes.home,
+    name: 'home',
+    builder: (final context, final state) => const HomePage(),
+  ),
   GoRoute(
     path: AppRoutes.profile,
     name: 'profile',
-    builder: (final context, final state) => const _PlaceholderPage(title: 'Profile'),
+    builder: (final context, final state) =>
+        const _PlaceholderPage(title: 'Profile'),
   ),
   GoRoute(
     path: AppRoutes.settings,
@@ -44,13 +49,19 @@ class _PlaceholderPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.construction, size: 64, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.construction,
+              size: 64,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(height: 16),
             Text(title, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               'This page is under construction',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ],
         ),
@@ -72,14 +83,23 @@ class _MaintenancePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.build_circle, size: 80, color: Theme.of(context).colorScheme.primary),
+              Icon(
+                Icons.build_circle,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(height: 24),
-              Text('Under Maintenance', style: Theme.of(context).textTheme.headlineMedium),
+              Text(
+                'Under Maintenance',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               const SizedBox(height: 16),
               Text(
                 "We're currently performing maintenance.\nPlease check back later.",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
               ),
             ],
           ),

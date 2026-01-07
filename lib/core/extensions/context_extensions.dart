@@ -60,7 +60,11 @@ extension BuildContextExtensions on BuildContext {
   bool get isDesktop => screenWidth >= 1024;
 
   /// Get responsive value based on screen size
-  T responsive<T>({required final T mobile, final T? tablet, final T? desktop}) {
+  T responsive<T>({
+    required final T mobile,
+    final T? tablet,
+    final T? desktop,
+  }) {
     if (isDesktop) return desktop ?? tablet ?? mobile;
     if (isTablet) return tablet ?? mobile;
     return mobile;
@@ -84,14 +88,19 @@ extension BuildContextExtensions on BuildContext {
   void unfocus() => FocusScope.of(this).unfocus();
 
   /// Request focus on a specific node
-  void requestFocus(final FocusNode node) => FocusScope.of(this).requestFocus(node);
+  void requestFocus(final FocusNode node) =>
+      FocusScope.of(this).requestFocus(node);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // SNACKBAR
   // ─────────────────────────────────────────────────────────────────────────────
 
   /// Show a snackbar with the given message
-  void showSnackBar(final String message, {final Duration? duration, final SnackBarAction? action}) {
+  void showSnackBar(
+    final String message, {
+    final Duration? duration,
+    final SnackBarAction? action,
+  }) {
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -105,13 +114,17 @@ extension BuildContextExtensions on BuildContext {
   void showErrorSnackBar(final String message) {
     ScaffoldMessenger.of(
       this,
-    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: colorScheme.error));
+    ).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: colorScheme.error),
+    );
   }
 
   /// Show a success snackbar
   void showSuccessSnackBar(final String message) {
     ScaffoldMessenger.of(
       this,
-    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.green));
+    ).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    );
   }
 }

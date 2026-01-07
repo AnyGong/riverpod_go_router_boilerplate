@@ -14,7 +14,12 @@ import 'package:shimmer/shimmer.dart';
 /// )
 /// ```
 class ShimmerLoading extends StatelessWidget {
-  const ShimmerLoading({required this.child, super.key, this.baseColor, this.highlightColor});
+  const ShimmerLoading({
+    required this.child,
+    super.key,
+    this.baseColor,
+    this.highlightColor,
+  });
 
   final Widget child;
   final Color? baseColor;
@@ -26,7 +31,8 @@ class ShimmerLoading extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
-      highlightColor: highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
+      highlightColor:
+          highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
       child: child,
     );
   }
@@ -34,7 +40,12 @@ class ShimmerLoading extends StatelessWidget {
 
 /// A shimmer loading placeholder for a single line of text.
 class ShimmerLine extends StatelessWidget {
-  const ShimmerLine({super.key, this.width, this.height = 16, this.borderRadius = 4});
+  const ShimmerLine({
+    super.key,
+    this.width,
+    this.height = 16,
+    this.borderRadius = 4,
+  });
 
   final double? width;
   final double height;
@@ -67,7 +78,10 @@ class ShimmerCircle extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }
@@ -121,15 +135,24 @@ class ShimmerListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const ShimmerLine(width: 120, height: 14),
-                if (lines > 1) ...[const SizedBox(height: 8), const ShimmerLine(height: 12)],
+                if (lines > 1) ...[
+                  const SizedBox(height: 8),
+                  const ShimmerLine(height: 12),
+                ],
                 if (lines > 2) ...[
                   const SizedBox(height: 6),
-                  ShimmerLine(width: MediaQuery.of(context).size.width * 0.6, height: 12),
+                  ShimmerLine(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 12,
+                  ),
                 ],
               ],
             ),
           ),
-          if (hasTrailing) ...[const SizedBox(width: 16), const ShimmerBox(width: 24, height: 24)],
+          if (hasTrailing) ...[
+            const SizedBox(width: 16),
+            const ShimmerBox(width: 24, height: 24),
+          ],
         ],
       ),
     );
@@ -154,7 +177,11 @@ class ShimmerCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ShimmerBox(width: double.infinity, height: imageHeight, borderRadius: 12),
+          ShimmerBox(
+            width: double.infinity,
+            height: imageHeight,
+            borderRadius: 12,
+          ),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
@@ -164,7 +191,10 @@ class ShimmerCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 const ShimmerLine(height: 12),
                 const SizedBox(height: 4),
-                ShimmerLine(width: width != null ? width! * 0.5 : 100, height: 12),
+                ShimmerLine(
+                  width: width != null ? width! * 0.5 : 100,
+                  height: 12,
+                ),
               ],
             ),
           ),
@@ -195,8 +225,11 @@ class ShimmerList extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: itemCount,
-      itemBuilder: (final context, final index) =>
-          ShimmerListTile(hasLeading: hasLeading, hasTrailing: hasTrailing, lines: lines),
+      itemBuilder: (final context, final index) => ShimmerListTile(
+        hasLeading: hasLeading,
+        hasTrailing: hasTrailing,
+        lines: lines,
+      ),
     );
   }
 }

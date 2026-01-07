@@ -28,8 +28,10 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// }
 /// ```
 class AuthRepositoryRemote implements AuthRepository {
-  AuthRepositoryRemote({required final ApiClient apiClient, required this.secureStorage})
-    : _apiClient = apiClient;
+  AuthRepositoryRemote({
+    required final ApiClient apiClient,
+    required this.secureStorage,
+  }) : _apiClient = apiClient;
 
   final ApiClient _apiClient;
   final FlutterSecureStorage secureStorage;
@@ -52,13 +54,18 @@ class AuthRepositoryRemote implements AuthRepository {
           await secureStorage.write(key: StorageKeys.accessToken, value: token);
         }
         if (refreshToken != null) {
-          await secureStorage.write(key: StorageKeys.refreshToken, value: refreshToken);
+          await secureStorage.write(
+            key: StorageKeys.refreshToken,
+            value: refreshToken,
+          );
         }
 
         // Parse user
         final userData = data['user'] as Map<String, dynamic>?;
         if (userData == null) {
-          return const Failure(AuthException(message: 'Invalid response: missing user data'));
+          return const Failure(
+            AuthException(message: 'Invalid response: missing user data'),
+          );
         }
 
         final user = User.fromJson(userData);
@@ -124,7 +131,12 @@ class AuthRepositoryRemote implements AuthRepository {
       await secureStorage.delete(key: StorageKeys.userId);
       return const Success(null);
     } catch (e, stackTrace) {
-      return Failure(CacheException(message: 'Failed to clear session', stackTrace: stackTrace));
+      return Failure(
+        CacheException(
+          message: 'Failed to clear session',
+          stackTrace: stackTrace,
+        ),
+      );
     }
   }
 }

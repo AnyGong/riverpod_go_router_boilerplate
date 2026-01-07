@@ -77,7 +77,11 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
         final isLoggedIn = sessionState.isAuthenticated;
 
         // Define protected routes
-        const protectedPaths = [AppRoutes.home, AppRoutes.profile, AppRoutes.settings];
+        const protectedPaths = [
+          AppRoutes.home,
+          AppRoutes.profile,
+          AppRoutes.settings,
+        ];
 
         // Redirect unauthenticated users away from protected routes
         if (protectedPaths.contains(path) && !isLoggedIn) {
@@ -99,11 +103,16 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
           children: [
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
-            Text('Page not found', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              'Page not found',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 8),
             Text(
               state.uri.path,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

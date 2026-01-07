@@ -21,5 +21,6 @@ abstract class User with _$User {
     final DateTime? createdAt,
   }) = _User;
 
-  factory User.fromJson(final Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(final Map<String, dynamic> json) =>
+      _$UserFromJson(json);
 }

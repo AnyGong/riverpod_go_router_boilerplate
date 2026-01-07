@@ -17,7 +17,10 @@ ErrorConverter errorConverter(final Ref ref) {
 /// Provider for the API client.
 @Riverpod(keepAlive: true)
 ApiClient apiClient(final Ref ref) {
-  return ApiClient(ref.watch(dioProvider), errorConverter: ref.watch(errorConverterProvider));
+  return ApiClient(
+    ref.watch(dioProvider),
+    errorConverter: ref.watch(errorConverterProvider),
+  );
 }
 
 /// A type-safe API client wrapper around Dio.
@@ -52,7 +55,11 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () => _dio.post<dynamic>(path, data: data, queryParameters: queryParameters),
+      () => _dio.post<dynamic>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      ),
       fromJson: fromJson,
     );
   }
@@ -65,7 +72,8 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () => _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
+      () =>
+          _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
       fromJson: fromJson,
     );
   }
@@ -78,7 +86,11 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () => _dio.patch<dynamic>(path, data: data, queryParameters: queryParameters),
+      () => _dio.patch<dynamic>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      ),
       fromJson: fromJson,
     );
   }
@@ -91,7 +103,11 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () => _dio.delete<dynamic>(path, data: data, queryParameters: queryParameters),
+      () => _dio.delete<dynamic>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      ),
       fromJson: fromJson,
     );
   }

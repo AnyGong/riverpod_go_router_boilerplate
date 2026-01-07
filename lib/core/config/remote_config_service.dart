@@ -86,7 +86,12 @@ class RemoteConfigService {
 
   /// Enable maintenance mode (useful for testing).
   void enableMaintenance({final String? message}) {
-    updateConfig(_currentConfig.copyWith(isMaintenanceMode: true, maintenanceMessage: message));
+    updateConfig(
+      _currentConfig.copyWith(
+        isMaintenanceMode: true,
+        maintenanceMessage: message,
+      ),
+    );
   }
 
   /// Disable maintenance mode.

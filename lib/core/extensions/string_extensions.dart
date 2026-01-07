@@ -38,7 +38,9 @@ extension StringExtensions on String {
 
   /// Convert to slug format
   String get toSlug {
-    return toLowerCase().replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(RegExp(r'\s+'), '-');
+    return toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s-]'), '')
+        .replaceAll(RegExp(r'\s+'), '-');
   }
 
   /// Check if string contains only digits

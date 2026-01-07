@@ -23,7 +23,10 @@ Dio dio(final Ref ref) {
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
-      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     ),
   );
 
@@ -51,7 +54,10 @@ class AuthInterceptor extends QueuedInterceptor {
   bool _isRefreshing = false;
 
   @override
-  Future<void> onRequest(final RequestOptions options, final RequestInterceptorHandler handler) async {
+  Future<void> onRequest(
+    final RequestOptions options,
+    final RequestInterceptorHandler handler,
+  ) async {
     final storage = _ref.read(secureStorageProvider);
     final token = await storage.read(key: StorageKeys.accessToken);
 
@@ -63,7 +69,10 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   @override
-  Future<void> onError(final DioException err, final ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    final DioException err,
+    final ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401 && !_isRefreshing) {
       _isRefreshing = true;
 
@@ -131,10 +140,14 @@ class RetryInterceptor extends Interceptor {
   static const _retryKey = 'retry_count';
 
   List<Duration> get _delays =>
-      retryDelays ?? const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
+      retryDelays ??
+      const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
 
   @override
-  Future<void> onError(final DioException err, final ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    final DioException err,
+    final ErrorInterceptorHandler handler,
+  ) async {
     final shouldRetry = _shouldRetry(err);
     if (!shouldRetry) {
       return handler.next(err);
@@ -177,7 +190,10 @@ class LoggingInterceptor extends Interceptor {
   AppLogger get _logger => _ref.read(loggerProvider);
 
   @override
-  void onRequest(final RequestOptions options, final RequestInterceptorHandler handler) {
+  void onRequest(
+    final RequestOptions options,
+    final RequestInterceptorHandler handler,
+  ) {
     if (kDebugMode) {
       _logger.d('→ ${options.method} ${options.uri}');
       if (options.data != null) {
@@ -188,7 +204,10 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(final Response<dynamic> response, final ResponseInterceptorHandler handler) {
+  void onResponse(
+    final Response<dynamic> response,
+    final ResponseInterceptorHandler handler,
+  ) {
     if (kDebugMode) {
       _logger.d('← ${response.statusCode} ${response.requestOptions.uri}');
     }

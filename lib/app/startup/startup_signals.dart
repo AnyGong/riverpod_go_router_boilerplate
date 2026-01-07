@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:riverpod_go_router_boilerplate/app/app_exports.dart' show AppConfig, StartupState, StartupStateResolver;
+import 'package:riverpod_go_router_boilerplate/app/app_exports.dart'
+    show AppConfig, StartupState, StartupStateResolver;
 
 /// Runtime signals that influence startup behavior.
 ///

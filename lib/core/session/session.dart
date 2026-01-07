@@ -7,8 +7,10 @@
 /// - [isAuthenticatedProvider] - Simple auth check
 library;
 
-import 'package:riverpod_go_router_boilerplate/core/core.dart' show SessionService, SessionState;
-import 'package:riverpod_go_router_boilerplate/core/session/session.dart' show SessionService, SessionState;
+import 'package:riverpod_go_router_boilerplate/core/core.dart'
+    show SessionService, SessionState;
+import 'package:riverpod_go_router_boilerplate/core/session/session.dart'
+    show SessionService, SessionState;
 
 export 'session_service.dart';
 export 'session_state.dart';

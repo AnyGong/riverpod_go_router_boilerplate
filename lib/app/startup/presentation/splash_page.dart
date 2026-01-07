@@ -72,18 +72,27 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 color: theme.colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: Icon(Icons.flutter_dash, size: 64, color: theme.colorScheme.primary),
+              child: Icon(
+                Icons.flutter_dash,
+                size: 64,
+                color: theme.colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 32),
             Text(
               'Flutter Boilerplate',
-              style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 48),
             SizedBox(
               width: 32,
               height: 32,
-              child: CircularProgressIndicator(strokeWidth: 3, color: theme.colorScheme.primary),
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ],
         ),

@@ -73,7 +73,9 @@ class AuthRepositoryMock implements AuthRepository {
 
     // In a real app, you would validate the token here
     // For mock, we just return a user if token exists
-    return Success(User(id: userId, email: 'restored@test.com', name: 'Restored User'));
+    return Success(
+      User(id: userId, email: 'restored@test.com', name: 'Restored User'),
+    );
   }
 
   @override
@@ -86,7 +88,12 @@ class AuthRepositoryMock implements AuthRepository {
       await secureStorage.delete(key: StorageKeys.userId);
       return const Success(null);
     } catch (e, stackTrace) {
-      return Failure(CacheException(message: 'Failed to clear session', stackTrace: stackTrace));
+      return Failure(
+        CacheException(
+          message: 'Failed to clear session',
+          stackTrace: stackTrace,
+        ),
+      );
     }
   }
 
@@ -102,7 +109,11 @@ class AuthRepositoryMock implements AuthRepository {
     return localPart
         .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
-        .map((final word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
+        .map(
+          (final word) => word.isNotEmpty
+              ? '${word[0].toUpperCase()}${word.substring(1)}'
+              : '',
+        )
         .join(' ');
   }
 }

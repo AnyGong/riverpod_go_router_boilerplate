@@ -14,7 +14,8 @@ import 'package:shimmer/shimmer.dart';
 /// ```
 class AppCachedImage extends StatelessWidget {
   const AppCachedImage({
-    required this.imageUrl, super.key,
+    required this.imageUrl,
+    super.key,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -91,7 +92,12 @@ class _ErrorPlaceholder extends StatelessWidget {
 
 /// A circular cached avatar image.
 class AppCachedAvatar extends StatelessWidget {
-  const AppCachedAvatar({required this.imageUrl, super.key, this.radius = 24, this.placeholder});
+  const AppCachedAvatar({
+    required this.imageUrl,
+    super.key,
+    this.radius = 24,
+    this.placeholder,
+  });
 
   final String? imageUrl;
   final double radius;
@@ -105,7 +111,11 @@ class AppCachedAvatar extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child:
             placeholder ??
-            Icon(Icons.person, size: radius, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.person,
+              size: radius,
+              color: Theme.of(context).colorScheme.primary,
+            ),
       );
     }
 
@@ -119,7 +129,10 @@ class AppCachedAvatar extends StatelessWidget {
           baseColor: Colors.grey[300]!,
           highlightColor: Colors.grey[100]!,
           child: Container(
-            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
           ),
         ),
       ),
@@ -128,7 +141,11 @@ class AppCachedAvatar extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child:
             placeholder ??
-            Icon(Icons.person, size: radius, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.person,
+              size: radius,
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
     );
   }

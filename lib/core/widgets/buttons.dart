@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 /// A primary button with consistent styling.
 class AppButton extends StatelessWidget {
   const AppButton({
-    required this.onPressed, required this.label, super.key,
+    required this.onPressed,
+    required this.label,
+    super.key,
     this.icon,
     this.isLoading = false,
     this.isExpanded = true,
@@ -30,7 +32,9 @@ class AppButton extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                variant == AppButtonVariant.primary ? colorScheme.onPrimary : colorScheme.primary,
+                variant == AppButtonVariant.primary
+                    ? colorScheme.onPrimary
+                    : colorScheme.primary,
               ),
             ),
           )
@@ -38,7 +42,10 @@ class AppButton extends StatelessWidget {
             mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (icon != null) ...[Icon(icon, size: _iconSize), const SizedBox(width: 8)],
+              if (icon != null) ...[
+                Icon(icon, size: _iconSize),
+                const SizedBox(width: 8),
+              ],
               Text(label),
             ],
           );
@@ -87,9 +94,18 @@ class AppButton extends StatelessWidget {
   };
 
   EdgeInsets get _padding => switch (size) {
-    AppButtonSize.small => const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    AppButtonSize.medium => const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    AppButtonSize.large => const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    AppButtonSize.small => const EdgeInsets.symmetric(
+      horizontal: 12,
+      vertical: 8,
+    ),
+    AppButtonSize.medium => const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 12,
+    ),
+    AppButtonSize.large => const EdgeInsets.symmetric(
+      horizontal: 24,
+      vertical: 16,
+    ),
   };
 }
 
@@ -100,7 +116,9 @@ enum AppButtonSize { small, medium, large }
 /// An icon button with consistent styling.
 class AppIconButton extends StatelessWidget {
   const AppIconButton({
-    required this.icon, required this.onPressed, super.key,
+    required this.icon,
+    required this.onPressed,
+    super.key,
     this.tooltip,
     this.variant = AppIconButtonVariant.standard,
     this.size = 24,

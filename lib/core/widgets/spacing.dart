@@ -45,7 +45,8 @@ class VerticalSpace extends StatelessWidget {
 /// A responsive padding wrapper.
 class ResponsivePadding extends StatelessWidget {
   const ResponsivePadding({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.horizontal = AppSpacing.md,
     this.vertical = AppSpacing.md,
   });
@@ -66,7 +67,8 @@ class ResponsivePadding extends StatelessWidget {
 /// A constrained container for maximum width content.
 class ContentContainer extends StatelessWidget {
   const ContentContainer({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.maxWidth = 600,
     this.padding = const EdgeInsets.symmetric(horizontal: AppSpacing.md),
   });

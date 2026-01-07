@@ -61,4 +61,4 @@ final class SecureStorageProvider
   }
 }
 
-String _$secureStorageHash() => r'88c1c2b49f80650d62870bcce4cae12f9bc5e633';
+String _$secureStorageHash() => r'9645cd258df865dc2786c7317c3ec32823728409';

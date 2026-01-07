@@ -1,6 +1,9 @@
-import 'package:riverpod_go_router_boilerplate/app/app_exports.dart' show StartupStateResolver;
-import 'package:riverpod_go_router_boilerplate/app/startup/startup.dart' show StartupStateResolver;
-import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart' show StartupStateResolver;
+import 'package:riverpod_go_router_boilerplate/app/app_exports.dart'
+    show StartupStateResolver;
+import 'package:riverpod_go_router_boilerplate/app/startup/startup.dart'
+    show StartupStateResolver;
+import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart'
+    show StartupStateResolver;
 
 /// Represents the valid startup states of the app.
 ///

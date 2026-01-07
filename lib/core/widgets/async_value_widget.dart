@@ -55,7 +55,12 @@ class AsyncValueWidget<T> extends StatelessWidget {
 
 /// A widget that displays a loading indicator.
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({super.key, this.size = 40.0, this.strokeWidth = 3.0, this.message});
+  const LoadingWidget({
+    super.key,
+    this.size = 40.0,
+    this.strokeWidth = 3.0,
+    this.message,
+  });
 
   final double size;
   final double strokeWidth;
@@ -76,7 +81,9 @@ class LoadingWidget extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               message!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ],
         ],

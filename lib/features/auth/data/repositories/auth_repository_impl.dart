@@ -43,5 +43,8 @@ AuthRepository authRepository(final Ref ref) {
 
   // Use real repository for production
   final apiClient = ref.watch(apiClientProvider);
-  return AuthRepositoryRemote(apiClient: apiClient, secureStorage: secureStorage);
+  return AuthRepositoryRemote(
+    apiClient: apiClient,
+    secureStorage: secureStorage,
+  );
 }

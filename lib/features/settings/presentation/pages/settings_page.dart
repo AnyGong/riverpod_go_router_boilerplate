@@ -87,7 +87,10 @@ class SettingsPage extends ConsumerWidget {
             leading: const Icon(Icons.article_outlined),
             title: const Text('Open Source Licenses'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => showLicensePage(context: context, applicationName: 'Flutter Boilerplate'),
+            onTap: () => showLicensePage(
+              context: context,
+              applicationName: 'Flutter Boilerplate',
+            ),
           ),
         ],
       ),
@@ -119,8 +122,12 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: isSelected ? Theme.of(dialogContext).colorScheme.primary : null,
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  color: isSelected
+                      ? Theme.of(dialogContext).colorScheme.primary
+                      : null,
                 ),
                 const SizedBox(width: 12),
                 Text(

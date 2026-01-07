@@ -31,9 +31,13 @@ class ConnectivityService {
   }
 
   void _emitStatus(final List<ConnectivityResult> results) {
-    final hasConnection = results.any((final result) => result != ConnectivityResult.none);
+    final hasConnection = results.any(
+      (final result) => result != ConnectivityResult.none,
+    );
     _statusController.add(
-      hasConnection ? ConnectivityStatus.connected : ConnectivityStatus.disconnected,
+      hasConnection
+          ? ConnectivityStatus.connected
+          : ConnectivityStatus.disconnected,
     );
   }
 
@@ -58,7 +62,9 @@ final connectivityServiceProvider = Provider<ConnectivityService>((final ref) {
 });
 
 /// Provider for connectivity status stream
-final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((final ref) {
+final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((
+  final ref,
+) {
   final service = ref.watch(connectivityServiceProvider);
   return service.statusStream;
 });

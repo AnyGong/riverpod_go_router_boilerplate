@@ -14,7 +14,9 @@ class AppBootstrap extends StatelessWidget {
 
   /// Initialize the app before running.
   /// Call this before runApp().
-  static Future<void> initialize({final Environment environment = Environment.dev}) async {
+  static Future<void> initialize({
+    final Environment environment = Environment.dev,
+  }) async {
     // Ensure Flutter bindings are initialized
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -76,7 +78,10 @@ class AppBootstrap extends StatelessWidget {
 
   /// Log error to crash reporting service.
   /// TODO: Implement with your preferred crash reporting (Firebase Crashlytics, Sentry, etc.)
-  static void _logToCrashReporting(final Object error, final StackTrace? stack) {
+  static void _logToCrashReporting(
+    final Object error,
+    final StackTrace? stack,
+  ) {
     // Example: FirebaseCrashlytics.instance.recordError(error, stack);
     AppLogger.instance.w('Error sent to crash reporting: $error');
   }
@@ -89,14 +94,21 @@ class AppBootstrap extends StatelessWidget {
 
 /// Run a guarded zone for the app.
 /// Use this in main() to catch all errors.
-Future<void> runGuardedApp({required final Widget app, final Environment environment = Environment.dev}) async {
+Future<void> runGuardedApp({
+  required final Widget app,
+  final Environment environment = Environment.dev,
+}) async {
   await runZonedGuarded(
     () async {
       await AppBootstrap.initialize(environment: environment);
       runApp(app);
     },
     (final error, final stack) {
-      AppLogger.instance.f('Uncaught zone error', error: error, stackTrace: stack);
+      AppLogger.instance.f(
+        'Uncaught zone error',
+        error: error,
+        stackTrace: stack,
+      );
       // Log to crash reporting in production
     },
   );

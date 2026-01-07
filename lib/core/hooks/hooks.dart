@@ -127,7 +127,9 @@ ScrollController useScrollController() {
 /// final pageController = usePageController();
 /// ```
 PageController usePageController({final int initialPage = 0}) {
-  final controller = useMemoized(() => PageController(initialPage: initialPage));
+  final controller = useMemoized(
+    () => PageController(initialPage: initialPage),
+  );
   useEffect(() => controller.dispose, [controller]);
   return controller;
 }

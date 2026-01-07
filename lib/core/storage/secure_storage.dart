@@ -8,7 +8,9 @@ part 'secure_storage.g.dart';
 @Riverpod(keepAlive: true)
 FlutterSecureStorage secureStorage(final Ref ref) {
   return const FlutterSecureStorage(
-    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
   );
 }
 

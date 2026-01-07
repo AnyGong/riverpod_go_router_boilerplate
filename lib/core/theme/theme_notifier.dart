@@ -46,7 +46,9 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 }
 
 /// Provider for the theme notifier
-final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
+final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
+  ThemeNotifier.new,
+);
 
 /// Provider that returns true if dark mode is active
 final isDarkModeProvider = Provider<bool>((final ref) {

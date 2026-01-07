@@ -26,12 +26,14 @@ class OnboardingPageData {
 const _pages = [
   OnboardingPageData(
     title: 'Welcome',
-    description: 'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
+    description:
+        'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
     icon: Icons.flutter_dash,
   ),
   OnboardingPageData(
     title: 'Modern Architecture',
-    description: 'Built with Riverpod, GoRouter, and clean architecture principles.',
+    description:
+        'Built with Riverpod, GoRouter, and clean architecture principles.',
     icon: Icons.architecture,
   ),
   OnboardingPageData(
@@ -113,7 +115,9 @@ class OnboardingPage extends HookConsumerWidget {
                   if (currentPage.value > 0) const SizedBox(width: 16),
                   Expanded(
                     child: AppButton(
-                      label: currentPage.value == _pages.length - 1 ? 'Get Started' : 'Next',
+                      label: currentPage.value == _pages.length - 1
+                          ? 'Get Started'
+                          : 'Next',
                       onPressed: () {
                         if (currentPage.value == _pages.length - 1) {
                           _completeOnboarding(context, ref);
@@ -135,7 +139,10 @@ class OnboardingPage extends HookConsumerWidget {
     );
   }
 
-  Future<void> _completeOnboarding(final BuildContext context, final WidgetRef ref) async {
+  Future<void> _completeOnboarding(
+    final BuildContext context,
+    final WidgetRef ref,
+  ) async {
     // Mark onboarding as completed
     final onboardingService = ref.read(onboardingServiceProvider);
     await onboardingService.complete();
@@ -171,21 +178,31 @@ class _OnboardingPageContent extends StatelessWidget {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: (page.color ?? theme.colorScheme.primary).withValues(alpha: 0.1),
+              color: (page.color ?? theme.colorScheme.primary).withValues(
+                alpha: 0.1,
+              ),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(page.icon, size: 64, color: page.color ?? theme.colorScheme.primary),
+            child: Icon(
+              page.icon,
+              size: 64,
+              color: page.color ?? theme.colorScheme.primary,
+            ),
           ),
           const SizedBox(height: 48),
           Text(
             page.title,
-            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             page.description,
-            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],

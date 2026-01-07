@@ -52,7 +52,9 @@ sealed class Result<T> {
   }
 
   /// Chain another Result-returning operation.
-  Future<Result<R>> flatMap<R>(final Future<Result<R>> Function(T data) transform) async {
+  Future<Result<R>> flatMap<R>(
+    final Future<Result<R>> Function(T data) transform,
+  ) async {
     return switch (this) {
       Success(:final data) => transform(data),
       Failure(:final error) => Failure(error),
@@ -108,7 +110,9 @@ final class Success<T> extends Result<T> {
   @override
   bool operator ==(final Object other) =>
       identical(this, other) ||
-      other is Success<T> && runtimeType == other.runtimeType && data == other.data;
+      other is Success<T> &&
+          runtimeType == other.runtimeType &&
+          data == other.data;
 
   @override
   int get hashCode => data.hashCode;
@@ -126,7 +130,9 @@ final class Failure<T> extends Result<T> {
   @override
   bool operator ==(final Object other) =>
       identical(this, other) ||
-      other is Failure<T> && runtimeType == other.runtimeType && error == other.error;
+      other is Failure<T> &&
+          runtimeType == other.runtimeType &&
+          error == other.error;
 
   @override
   int get hashCode => error.hashCode;
@@ -145,27 +151,39 @@ sealed class AppException implements Exception {
   final StackTrace? stackTrace;
 
   @override
-  String toString() => 'AppException: $message${code != null ? ' (code: $code)' : ''}';
+  String toString() =>
+      'AppException: $message${code != null ? ' (code: $code)' : ''}';
 }
 
 /// Network-related exceptions.
 final class NetworkException extends AppException {
-  const NetworkException({required super.message, super.code, super.stackTrace, this.statusCode});
+  const NetworkException({
+    required super.message,
+    super.code,
+    super.stackTrace,
+    this.statusCode,
+  });
 
-  factory NetworkException.noConnection() =>
-      const NetworkException(message: 'No internet connection', code: 'NO_CONNECTION');
+  factory NetworkException.noConnection() => const NetworkException(
+    message: 'No internet connection',
+    code: 'NO_CONNECTION',
+  );
 
   factory NetworkException.timeout() =>
       const NetworkException(message: 'Request timed out', code: 'TIMEOUT');
 
-  factory NetworkException.serverError([final int? statusCode]) => NetworkException(
-    message: 'Server error occurred',
-    code: 'SERVER_ERROR',
-    statusCode: statusCode,
-  );
+  factory NetworkException.serverError([final int? statusCode]) =>
+      NetworkException(
+        message: 'Server error occurred',
+        code: 'SERVER_ERROR',
+        statusCode: statusCode,
+      );
 
-  factory NetworkException.unauthorized() =>
-      const NetworkException(message: 'Unauthorized access', code: 'UNAUTHORIZED', statusCode: 401);
+  factory NetworkException.unauthorized() => const NetworkException(
+    message: 'Unauthorized access',
+    code: 'UNAUTHORIZED',
+    statusCode: 401,
+  );
 
   final int? statusCode;
 }
@@ -174,11 +192,15 @@ final class NetworkException extends AppException {
 final class AuthException extends AppException {
   const AuthException({required super.message, super.code, super.stackTrace});
 
-  factory AuthException.invalidCredentials() =>
-      const AuthException(message: 'Invalid email or password', code: 'INVALID_CREDENTIALS');
+  factory AuthException.invalidCredentials() => const AuthException(
+    message: 'Invalid email or password',
+    code: 'INVALID_CREDENTIALS',
+  );
 
-  factory AuthException.sessionExpired() =>
-      const AuthException(message: 'Session expired. Please login again', code: 'SESSION_EXPIRED');
+  factory AuthException.sessionExpired() => const AuthException(
+    message: 'Session expired. Please login again',
+    code: 'SESSION_EXPIRED',
+  );
 
   factory AuthException.noSession() =>
       const AuthException(message: 'No active session', code: 'NO_SESSION');
@@ -186,7 +208,12 @@ final class AuthException extends AppException {
 
 /// Validation-related exceptions.
 final class ValidationException extends AppException {
-  const ValidationException({required super.message, super.code, super.stackTrace, this.field});
+  const ValidationException({
+    required super.message,
+    super.code,
+    super.stackTrace,
+    this.field,
+  });
 
   final String? field;
 }

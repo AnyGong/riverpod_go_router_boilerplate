@@ -32,13 +32,17 @@ extension DateTimeExtensions on DateTime {
   /// Check if date is yesterday
   bool get isYesterday {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return year == yesterday.year && month == yesterday.month && day == yesterday.day;
+    return year == yesterday.year &&
+        month == yesterday.month &&
+        day == yesterday.day;
   }
 
   /// Check if date is tomorrow
   bool get isTomorrow {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
-    return year == tomorrow.year && month == tomorrow.month && day == tomorrow.day;
+    return year == tomorrow.year &&
+        month == tomorrow.month &&
+        day == tomorrow.day;
   }
 
   /// Get relative time string (e.g., "2 hours ago")
@@ -80,7 +84,8 @@ extension DateTimeExtensions on DateTime {
     var remaining = days;
     while (remaining > 0) {
       result = result.add(const Duration(days: 1));
-      if (result.weekday != DateTime.saturday && result.weekday != DateTime.sunday) {
+      if (result.weekday != DateTime.saturday &&
+          result.weekday != DateTime.sunday) {
         remaining--;
       }
     }
@@ -91,7 +96,10 @@ extension DateTimeExtensions on DateTime {
 /// Nullable DateTime extensions
 extension NullableDateTimeExtensions on DateTime? {
   /// Format or return default string if null
-  String formatOrDefault(final String pattern, {final String defaultValue = '-'}) {
+  String formatOrDefault(
+    final String pattern, {
+    final String defaultValue = '-',
+  }) {
     if (this == null) return defaultValue;
     return DateFormat(pattern).format(this!);
   }

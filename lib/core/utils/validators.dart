@@ -13,7 +13,9 @@ class Validators {
   const Validators._();
 
   /// Compose multiple validators
-  static String? Function(String?) compose(final List<String? Function(String?)> validators) {
+  static String? Function(String?) compose(
+    final List<String? Function(String?)> validators,
+  ) {
     return (final value) {
       for (final validator in validators) {
         final result = validator(value);
@@ -46,7 +48,10 @@ class Validators {
   }
 
   /// Minimum length validator
-  static String? Function(String?) minLength(final int length, [final String? message]) {
+  static String? Function(String?) minLength(
+    final int length, [
+    final String? message,
+  ]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       if (value.length < length) {
@@ -57,7 +62,10 @@ class Validators {
   }
 
   /// Maximum length validator
-  static String? Function(String?) maxLength(final int length, [final String? message]) {
+  static String? Function(String?) maxLength(
+    final int length, [
+    final String? message,
+  ]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       if (value.length > length) {
@@ -68,7 +76,10 @@ class Validators {
   }
 
   /// Exact length validator
-  static String? Function(String?) exactLength(final int length, [final String? message]) {
+  static String? Function(String?) exactLength(
+    final int length, [
+    final String? message,
+  ]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       if (value.length != length) {
@@ -79,7 +90,10 @@ class Validators {
   }
 
   /// Pattern validator
-  static String? Function(String?) pattern(final RegExp regex, [final String? message]) {
+  static String? Function(String?) pattern(
+    final RegExp regex, [
+    final String? message,
+  ]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       if (!regex.hasMatch(value)) {
@@ -125,7 +139,10 @@ class Validators {
   }
 
   /// Match validator (for password confirmation)
-  static String? Function(String?) match(final String? Function() getValue, [final String? message]) {
+  static String? Function(String?) match(
+    final String? Function() getValue, [
+    final String? message,
+  ]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       if (value != getValue()) {
@@ -146,7 +163,11 @@ class Validators {
       final hasSpecialChar = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
       final hasMinLength = value.length >= 8;
 
-      if (!hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar || !hasMinLength) {
+      if (!hasUpperCase ||
+          !hasLowerCase ||
+          !hasDigit ||
+          !hasSpecialChar ||
+          !hasMinLength) {
         return message ??
             'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
       }

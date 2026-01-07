@@ -58,7 +58,10 @@ void main() {
       test('creates with message', () {
         const event = MaintenanceEnabled(message: 'System maintenance');
         expect(event.message, 'System maintenance');
-        expect(event.toString(), 'MaintenanceEnabled(message: System maintenance)');
+        expect(
+          event.toString(),
+          'MaintenanceEnabled(message: System maintenance)',
+        );
       });
 
       test('creates without message', () {

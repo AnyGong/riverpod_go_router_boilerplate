@@ -38,32 +38,57 @@ class AppLogger {
   final Logger _logger;
 
   /// Log debug message
-  void d(final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void d(
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.d(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log info message
-  void i(final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void i(
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.i(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log warning message
-  void w(final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void w(
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.w(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log error message
-  void e(final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void e(
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.e(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log fatal message
-  void f(final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void f(
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.f(message, error: error, stackTrace: stackTrace);
   }
 
   /// Log with custom level
-  void log(final Level level, final String message, {final Object? error, final StackTrace? stackTrace}) {
+  void log(
+    final Level level,
+    final String message, {
+    final Object? error,
+    final StackTrace? stackTrace,
+  }) {
     _logger.log(level, message, error: error, stackTrace: stackTrace);
   }
 }

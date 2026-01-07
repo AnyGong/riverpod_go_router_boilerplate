@@ -11,7 +11,8 @@ import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Notifier that manages the app lifecycle and state transitions.
-class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifier {
+class AppLifecycleNotifier extends Notifier<AppLifecycleState>
+    with ChangeNotifier {
   @override
   AppLifecycleState build() => const AppLifecycleState.initial();
 
@@ -136,16 +137,21 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
   Future<void> onSessionExpired({final String? reason}) async =>
       processEvent(SessionExpiredEvent(reason: reason));
 
-  Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
+  Future<void> onOnboardingCompleted() async =>
+      processEvent(const OnboardingCompleted());
 
-  Future<void> onMaintenanceModeChanged({required final bool isEnabled}) async =>
-      processEvent(isEnabled ? const MaintenanceEnabled() : const MaintenanceDisabled());
+  Future<void> onMaintenanceModeChanged({
+    required final bool isEnabled,
+  }) async => processEvent(
+    isEnabled ? const MaintenanceEnabled() : const MaintenanceDisabled(),
+  );
 }
 
 /// Provider for the AppLifecycleNotifier.
-final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
-  AppLifecycleNotifier.new,
-);
+final appLifecycleNotifierProvider =
+    NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
+      AppLifecycleNotifier.new,
+    );
 
 /// Listenable for GoRouter refresh.
 final appLifecycleListenableProvider = Provider<Listenable>((final ref) {

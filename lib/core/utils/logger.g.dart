@@ -55,4 +55,4 @@ final class LoggerProvider
   }
 }
 
-String _$loggerHash() => r'383229c74e13942cd2cd699e8432aa685fe98171';
+String _$loggerHash() => r'4275f366e4e4afbba3abe3bf697e69ed0634e1f8';

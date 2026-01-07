@@ -83,13 +83,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         color: theme.colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Icon(Icons.flutter_dash, size: 48, color: theme.colorScheme.primary),
+                      child: Icon(
+                        Icons.flutter_dash,
+                        size: 48,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
 
                     // Title
                     Text(
                       'Welcome Back',
-                      style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const VerticalSpace.sm(),
@@ -168,7 +174,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text('Sign In'),

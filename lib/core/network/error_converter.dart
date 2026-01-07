@@ -23,19 +23,32 @@ import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 /// ```
 abstract interface class ErrorConverter {
   /// Convert a DioException to a NetworkException.
-  NetworkException convertDioException(final DioException e, final StackTrace stackTrace);
+  NetworkException convertDioException(
+    final DioException e,
+    final StackTrace stackTrace,
+  );
 
   /// Convert a SocketException to a NetworkException.
-  NetworkException convertSocketException(final SocketException e, final StackTrace stackTrace);
+  NetworkException convertSocketException(
+    final SocketException e,
+    final StackTrace stackTrace,
+  );
 
   /// Convert an unknown error to an UnexpectedException.
-  AppException convertUnknownError(final Object error, final StackTrace stackTrace);
+  AppException convertUnknownError(
+    final Object error,
+    final StackTrace stackTrace,
+  );
 
   /// Extract error message from response data.
   String? extractErrorMessage(final dynamic data);
 
   /// Map HTTP status code to a NetworkException.
-  NetworkException mapStatusCode(final int? statusCode, final dynamic data, final StackTrace stackTrace);
+  NetworkException mapStatusCode(
+    final int? statusCode,
+    final dynamic data,
+    final StackTrace stackTrace,
+  );
 }
 
 /// Default error converter for standard REST APIs.
@@ -48,7 +61,10 @@ class DefaultErrorConverter implements ErrorConverter {
   const DefaultErrorConverter();
 
   @override
-  NetworkException convertDioException(final DioException e, final StackTrace stackTrace) {
+  NetworkException convertDioException(
+    final DioException e,
+    final StackTrace stackTrace,
+  ) {
     return switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
@@ -59,12 +75,18 @@ class DefaultErrorConverter implements ErrorConverter {
         e.response?.data,
         stackTrace,
       ),
-      _ => NetworkException(message: e.message ?? 'Network error occurred', stackTrace: stackTrace),
+      _ => NetworkException(
+        message: e.message ?? 'Network error occurred',
+        stackTrace: stackTrace,
+      ),
     };
   }
 
   @override
-  NetworkException convertSocketException(final SocketException e, final StackTrace stackTrace) {
+  NetworkException convertSocketException(
+    final SocketException e,
+    final StackTrace stackTrace,
+  ) {
     return NetworkException(
       message: 'No internet connection',
       code: 'NO_CONNECTION',
@@ -73,7 +95,10 @@ class DefaultErrorConverter implements ErrorConverter {
   }
 
   @override
-  AppException convertUnknownError(final Object error, final StackTrace stackTrace) {
+  AppException convertUnknownError(
+    final Object error,
+    final StackTrace stackTrace,
+  ) {
     return UnexpectedException(
       message: 'An unexpected error occurred',
       originalError: error,
@@ -107,7 +132,11 @@ class DefaultErrorConverter implements ErrorConverter {
   }
 
   @override
-  NetworkException mapStatusCode(final int? statusCode, final dynamic data, final StackTrace stackTrace) {
+  NetworkException mapStatusCode(
+    final int? statusCode,
+    final dynamic data,
+    final StackTrace stackTrace,
+  ) {
     final message = extractErrorMessage(data);
 
     return switch (statusCode) {
@@ -142,7 +171,8 @@ class DefaultErrorConverter implements ErrorConverter {
         code: 'RATE_LIMITED',
         stackTrace: stackTrace,
       ),
-      _ when statusCode != null && statusCode >= 500 => NetworkException.serverError(statusCode),
+      _ when statusCode != null && statusCode >= 500 =>
+        NetworkException.serverError(statusCode),
       _ => NetworkException(
         message: message ?? 'Request failed',
         statusCode: statusCode,

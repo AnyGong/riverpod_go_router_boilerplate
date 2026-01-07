@@ -62,7 +62,10 @@ void main() {
     group('login', () {
       test('returns Success with mock user on valid credentials', () async {
         // Act
-        final result = await repository.login('test@example.com', 'password123');
+        final result = await repository.login(
+          'test@example.com',
+          'password123',
+        );
 
         // Assert
         expect(result.isSuccess, true);
@@ -240,7 +243,10 @@ void main() {
     setUp(() {
       mockStorage = MockFlutterSecureStorage();
       mockApiClient = MockApiClient();
-      repository = AuthRepositoryRemote(secureStorage: mockStorage, apiClient: mockApiClient);
+      repository = AuthRepositoryRemote(
+        secureStorage: mockStorage,
+        apiClient: mockApiClient,
+      );
 
       // Setup default mock behavior
       when(
@@ -292,14 +298,21 @@ void main() {
           ),
         ).thenAnswer(
           (_) async => const Success({
-            'user': {'id': 'user_123', 'email': 'test@example.com', 'name': 'Test User'},
+            'user': {
+              'id': 'user_123',
+              'email': 'test@example.com',
+              'name': 'Test User',
+            },
             'token': 'token_abc',
             'refresh_token': 'refresh_xyz',
           }),
         );
 
         // Act
-        final result = await repository.login('test@example.com', 'password123');
+        final result = await repository.login(
+          'test@example.com',
+          'password123',
+        );
 
         // Assert
         expect(result.isSuccess, true);

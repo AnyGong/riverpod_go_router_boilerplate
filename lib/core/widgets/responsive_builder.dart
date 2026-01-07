@@ -18,7 +18,12 @@ abstract class Breakpoints {
 /// )
 /// ```
 class ResponsiveBuilder extends StatelessWidget {
-  const ResponsiveBuilder({required this.mobile, super.key, this.tablet, this.desktop});
+  const ResponsiveBuilder({
+    required this.mobile,
+    super.key,
+    this.tablet,
+    this.desktop,
+  });
 
   final Widget Function(BuildContext context) mobile;
   final Widget Function(BuildContext context)? tablet;
@@ -29,7 +34,9 @@ class ResponsiveBuilder extends StatelessWidget {
     return LayoutBuilder(
       builder: (final context, final constraints) {
         if (constraints.maxWidth >= Breakpoints.desktop) {
-          return desktop?.call(context) ?? tablet?.call(context) ?? mobile(context);
+          return desktop?.call(context) ??
+              tablet?.call(context) ??
+              mobile(context);
         }
         if (constraints.maxWidth >= Breakpoints.tablet) {
           return tablet?.call(context) ?? mobile(context);
@@ -52,11 +59,15 @@ class ResponsiveBuilder extends StatelessWidget {
 /// ).value
 /// ```
 class ResponsiveValue<T> {
-  ResponsiveValue({required final BuildContext context, required final T mobile, final T? tablet, final T? desktop})
-    : _mobile = mobile,
-      _tablet = tablet,
-      _desktop = desktop,
-      _width = MediaQuery.of(context).size.width;
+  ResponsiveValue({
+    required final BuildContext context,
+    required final T mobile,
+    final T? tablet,
+    final T? desktop,
+  }) : _mobile = mobile,
+       _tablet = tablet,
+       _desktop = desktop,
+       _width = MediaQuery.of(context).size.width;
 
   final T _mobile;
   final T? _tablet;
@@ -77,7 +88,11 @@ class ResponsiveValue<T> {
 /// Extension for getting responsive values from context.
 extension ResponsiveContextExtension on BuildContext {
   /// Get a responsive value based on screen size
-  T responsiveValue<T>({required final T mobile, final T? tablet, final T? desktop}) {
+  T responsiveValue<T>({
+    required final T mobile,
+    final T? tablet,
+    final T? desktop,
+  }) {
     return ResponsiveValue<T>(
       context: this,
       mobile: mobile,
@@ -102,7 +117,8 @@ extension ResponsiveContextExtension on BuildContext {
 /// A responsive grid that adjusts columns based on screen size.
 class ResponsiveGrid extends StatelessWidget {
   const ResponsiveGrid({
-    required this.children, super.key,
+    required this.children,
+    super.key,
     this.mobileColumns = 1,
     this.tabletColumns = 2,
     this.desktopColumns = 3,
@@ -152,7 +168,8 @@ class ResponsiveGrid extends StatelessWidget {
 /// A widget that shows/hides content based on screen size.
 class ResponsiveVisibility extends StatelessWidget {
   const ResponsiveVisibility({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.visibleOnMobile = true,
     this.visibleOnTablet = true,
     this.visibleOnDesktop = true,

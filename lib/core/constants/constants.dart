@@ -62,7 +62,9 @@ abstract class AppConstants {
   // ─────────────────────────────────────────────────────────────────────────────
   // REGEX PATTERNS
   // ─────────────────────────────────────────────────────────────────────────────
-  static final RegExp emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final RegExp emailPattern = RegExp(
+    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+  );
   static final RegExp phonePattern = RegExp(r'^\+?[\d\s-]{10,}$');
   static final RegExp urlPattern = RegExp(
     r'^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$',
