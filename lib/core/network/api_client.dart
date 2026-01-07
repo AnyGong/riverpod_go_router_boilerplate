@@ -97,6 +97,12 @@ class ApiClient {
   }
 
   /// Execute a request and convert to Result.
+  ///
+  /// If [fromJson] is provided, it will be used to parse the response.
+  /// If [fromJson] is null, the response data must be directly castable to [T].
+  ///
+  /// **Important:** For complex types like `List<User>`, always provide [fromJson].
+  /// Direct casting will fail for generic collections due to Dart's type system.
   Future<Result<T>> _executeRequest<T>(
     Future<Response<dynamic>> Function() request, {
     T Function(dynamic json)? fromJson,
@@ -108,7 +114,22 @@ class ApiClient {
         return Success(fromJson(response.data));
       }
 
-      return Success(response.data as T);
+      // Safety check: Warn if trying to cast complex types without fromJson
+      // This prevents runtime errors when T is a generic type like List<User>
+      final data = response.data;
+      if (data is! T) {
+        // Type mismatch - provide helpful error message
+        return Failure(
+          UnexpectedException(
+            message:
+                'Type mismatch: Expected $T but got ${data.runtimeType}. '
+                'For complex types, provide a fromJson parameter.',
+            code: 'TYPE_MISMATCH',
+          ),
+        );
+      }
+
+      return Success(data);
     } on DioException catch (e, stackTrace) {
       return Failure(_errorConverter.convertDioException(e, stackTrace));
     } on SocketException catch (e, stackTrace) {

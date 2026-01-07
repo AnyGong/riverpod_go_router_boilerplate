@@ -10,6 +10,10 @@ part of 'dio_provider.dart';
 // ignore_for_file: type=lint, type=warning
 /// Provider for the Dio HTTP client.
 ///
+/// Uses native platform adapters for optimal performance:
+/// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
+/// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
+///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 
 @ProviderFor(dio)
@@ -17,11 +21,19 @@ final dioProvider = DioProvider._();
 
 /// Provider for the Dio HTTP client.
 ///
+/// Uses native platform adapters for optimal performance:
+/// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
+/// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
+///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 
 final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
     with $Provider<Dio> {
   /// Provider for the Dio HTTP client.
+  ///
+  /// Uses native platform adapters for optimal performance:
+  /// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
+  /// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
   ///
   /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
   DioProvider._()
@@ -57,4 +69,4 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'722031662355954eb391586ed47e56ab5005d959';
+String _$dioHash() => r'8f00f69b0b3ce69707f0884e5d7d6da010396ff2';

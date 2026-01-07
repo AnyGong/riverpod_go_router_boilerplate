@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
@@ -8,6 +9,10 @@ import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 part 'dio_provider.g.dart';
 
 /// Provider for the Dio HTTP client.
+///
+/// Uses native platform adapters for optimal performance:
+/// - Android: Cronet (HTTP/3, QUIC, Brotli compression)
+/// - iOS/macOS: NSURLSession (HTTP/3, system proxy support)
 ///
 /// keepAlive: true ensures Dio instance is not disposed when no longer watched.
 @Riverpod(keepAlive: true)
@@ -21,6 +26,12 @@ Dio dio(Ref ref) {
       headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     ),
   );
+
+  // Use native HTTP adapter for better performance (HTTP/3, Brotli, system proxy)
+  // Only in release mode to preserve debugging capabilities in development
+  if (kReleaseMode) {
+    dio.httpClientAdapter = NativeAdapter();
+  }
 
   // Add interceptors in order
   dio.interceptors.addAll([
