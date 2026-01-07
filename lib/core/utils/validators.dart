@@ -1,6 +1,21 @@
 /// Form validation utilities.
 ///
-/// Usage:
+/// Provides a collection of reusable, composable validators for form fields.
+/// All validators are pure functions that return null for valid input or
+/// an error message string for invalid input.
+///
+/// ## Basic Usage
+///
+/// ```dart
+/// TextFormField(
+///   validator: Validators.required('Email is required'),
+/// )
+/// ```
+///
+/// ## Composing Validators
+///
+/// Chain multiple validators together - the first error wins:
+///
 /// ```dart
 /// TextFormField(
 ///   validator: Validators.compose([
@@ -8,6 +23,26 @@
 ///     Validators.email('Invalid email format'),
 ///   ]),
 /// )
+/// ```
+///
+/// ## Password Confirmation Example
+///
+/// ```dart
+/// final passwordController = TextEditingController();
+///
+/// TextFormField(
+///   controller: passwordController,
+///   validator: Validators.compose([
+///     Validators.required(),
+///     Validators.strongPassword(),
+///   ]),
+/// ),
+/// TextFormField(
+///   validator: Validators.compose([
+///     Validators.required('Please confirm password'),
+///     Validators.match(() => passwordController.text, 'Passwords do not match'),
+///   ]),
+/// ),
 /// ```
 class Validators {
   const Validators._();
@@ -163,11 +198,7 @@ class Validators {
       final hasSpecialChar = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
       final hasMinLength = value.length >= 8;
 
-      if (!hasUpperCase ||
-          !hasLowerCase ||
-          !hasDigit ||
-          !hasSpecialChar ||
-          !hasMinLength) {
+      if (!hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar || !hasMinLength) {
         return message ??
             'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
       }

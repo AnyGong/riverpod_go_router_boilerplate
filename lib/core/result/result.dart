@@ -1,7 +1,44 @@
 import 'package:flutter/foundation.dart' show immutable;
 
 /// A type-safe Result monad for handling success/failure outcomes.
+///
 /// Use this instead of throwing exceptions for expected failures.
+/// This provides compile-time safety and forces callers to handle both cases.
+///
+/// ## Why Use Result?
+///
+/// - **Explicit error handling**: Callers must acknowledge the possibility of failure
+/// - **No hidden control flow**: Unlike exceptions, errors don't bypass normal code flow
+/// - **Type safety**: Both success and failure types are known at compile time
+/// - **Composability**: Chain operations with [map], [flatMap], and [fold]
+///
+/// ## Basic Usage
+///
+/// ```dart
+/// Future<Result<User>> fetchUser(String id) async {
+///   try {
+///     final response = await api.get('/users/$id');
+///     return Success(User.fromJson(response.data));
+///   } on DioException catch (e) {
+///     return Failure(NetworkException(message: e.message ?? 'Network error'));
+///   }
+/// }
+///
+/// // Handle the result
+/// final result = await fetchUser('123');
+/// result.fold(
+///   onSuccess: (user) => showUser(user),
+///   onFailure: (error) => showError(error.message),
+/// );
+/// ```
+///
+/// ## Chaining Operations
+///
+/// ```dart
+/// final result = await fetchUser('123')
+///   .flatMap((user) => fetchProfile(user.id))
+///   .map((profile) => profile.displayName);
+/// ```
 @immutable
 sealed class Result<T> {
   const Result();
@@ -110,9 +147,7 @@ final class Success<T> extends Result<T> {
   @override
   bool operator ==(final Object other) =>
       identical(this, other) ||
-      other is Success<T> &&
-          runtimeType == other.runtimeType &&
-          data == other.data;
+      other is Success<T> && runtimeType == other.runtimeType && data == other.data;
 
   @override
   int get hashCode => data.hashCode;
@@ -130,9 +165,7 @@ final class Failure<T> extends Result<T> {
   @override
   bool operator ==(final Object other) =>
       identical(this, other) ||
-      other is Failure<T> &&
-          runtimeType == other.runtimeType &&
-          error == other.error;
+      other is Failure<T> && runtimeType == other.runtimeType && error == other.error;
 
   @override
   int get hashCode => error.hashCode;
@@ -151,8 +184,7 @@ sealed class AppException implements Exception {
   final StackTrace? stackTrace;
 
   @override
-  String toString() =>
-      'AppException: $message${code != null ? ' (code: $code)' : ''}';
+  String toString() => 'AppException: $message${code != null ? ' (code: $code)' : ''}';
 }
 
 /// Network-related exceptions.
@@ -172,12 +204,11 @@ final class NetworkException extends AppException {
   factory NetworkException.timeout() =>
       const NetworkException(message: 'Request timed out', code: 'TIMEOUT');
 
-  factory NetworkException.serverError([final int? statusCode]) =>
-      NetworkException(
-        message: 'Server error occurred',
-        code: 'SERVER_ERROR',
-        statusCode: statusCode,
-      );
+  factory NetworkException.serverError([final int? statusCode]) => NetworkException(
+    message: 'Server error occurred',
+    code: 'SERVER_ERROR',
+    statusCode: statusCode,
+  );
 
   factory NetworkException.unauthorized() => const NetworkException(
     message: 'Unauthorized access',

@@ -60,7 +60,7 @@ class RemoteConfigService {
   /// a REST API, or your preferred config service.
   Future<RemoteConfig> fetch() async {
     // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
 
     // In real implementation:
     // final response = await FirebaseRemoteConfig.instance.fetchAndActivate();

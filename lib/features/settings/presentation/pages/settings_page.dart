@@ -108,7 +108,7 @@ class SettingsPage extends ConsumerWidget {
   void _showThemeDialog(final BuildContext context, final WidgetRef ref) {
     final currentMode = ref.read(themeNotifierProvider);
 
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (final dialogContext) => SimpleDialog(
         title: const Text('Choose Theme'),
@@ -122,12 +122,8 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  isSelected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked,
-                  color: isSelected
-                      ? Theme.of(dialogContext).colorScheme.primary
-                      : null,
+                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  color: isSelected ? Theme.of(dialogContext).colorScheme.primary : null,
                 ),
                 const SizedBox(width: 12),
                 Text(

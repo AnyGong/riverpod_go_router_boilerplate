@@ -1,20 +1,84 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// Custom hook for debounced text input.
 ///
-/// Usage:
+/// Returns a debounced version of the input value that only updates
+/// after the specified delay has passed without new input.
+///
+/// Useful for search fields to avoid making API calls on every keystroke.
+///
+/// ## Usage
+///
 /// ```dart
-/// final debouncedValue = useDebouncedValue(searchController.text, Duration(milliseconds: 500));
+/// class SearchPage extends HookWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     final searchController = useTextEditingController();
+///     final searchText = useState('');
+///
+///     // Update searchText on every change
+///     useEffect(() {
+///       void listener() => searchText.value = searchController.text;
+///       searchController.addListener(listener);
+///       return () => searchController.removeListener(listener);
+///     }, [searchController]);
+///
+///     // Debounce the search query
+///     final debouncedQuery = useDebouncedValue(
+///       searchText.value,
+///       const Duration(milliseconds: 500),
+///     );
+///
+///     // Only fetch when debounced value changes
+///     useEffect(() {
+///       if (debouncedQuery.isNotEmpty) {
+///         fetchSearchResults(debouncedQuery);
+///       }
+///       return null;
+///     }, [debouncedQuery]);
+///
+///     return TextField(controller: searchController);
+///   }
+/// }
 /// ```
 String useDebouncedValue(final String value, final Duration delay) {
   final debouncedValue = useState(value);
 
   useEffect(() {
-    Future.delayed(delay, () {
+    final timer = Timer(delay, () {
       debouncedValue.value = value;
     });
-    return null;
+
+    return timer.cancel;
+  }, [value, delay]);
+
+  return debouncedValue.value;
+}
+
+/// Generic debounced value hook for any type.
+///
+/// Similar to [useDebouncedValue] but works with any type, not just strings.
+///
+/// ## Usage
+///
+/// ```dart
+/// final debouncedFilter = useDebounced<FilterOptions>(
+///   currentFilter,
+///   const Duration(milliseconds: 300),
+/// );
+/// ```
+T useDebounced<T>(final T value, final Duration delay) {
+  final debouncedValue = useState(value);
+
+  useEffect(() {
+    final timer = Timer(delay, () {
+      debouncedValue.value = value;
+    });
+
+    return timer.cancel;
   }, [value, delay]);
 
   return debouncedValue.value;

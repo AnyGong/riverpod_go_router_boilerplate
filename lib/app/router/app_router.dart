@@ -147,12 +147,10 @@ enum AppRoute {
   }
 
   /// All routes that require authentication.
-  static List<AppRoute> get protectedRoutes =>
-      values.where((final r) => r.requiresAuth).toList();
+  static List<AppRoute> get protectedRoutes => values.where((final r) => r.requiresAuth).toList();
 
   /// All public routes (no auth required).
-  static List<AppRoute> get publicRoutes =>
-      values.where((final r) => !r.requiresAuth).toList();
+  static List<AppRoute> get publicRoutes => values.where((final r) => !r.requiresAuth).toList();
 }
 
 /// Extension for convenient navigation with [AppRoute] enum.
@@ -177,29 +175,13 @@ extension AppRouteNavigation on BuildContext {
       push(route.pathWith(params));
 
   /// Replace current route using [GoRouter.pushReplacement].
-  void pushReplacementRoute(final AppRoute route) =>
-      pushReplacement(route.path);
+  void pushReplacementRoute(final AppRoute route) => pushReplacement(route.path);
 
   /// Replace current route with parameters using [GoRouter.pushReplacement].
   void pushReplacementRouteWith(
     final AppRoute route,
     final Map<String, String> params,
   ) => pushReplacement(route.pathWith(params));
-}
-
-// Legacy alias for backwards compatibility
-@Deprecated('Use AppRoute enum instead for type safety')
-typedef AppRoutes = _LegacyAppRoutes;
-
-/// @deprecated Use [AppRoute] enum instead.
-abstract class _LegacyAppRoutes {
-  static String get splash => AppRoute.splash.path;
-  static String get login => AppRoute.login.path;
-  static String get home => AppRoute.home.path;
-  static String get onboarding => AppRoute.onboarding.path;
-  static String get maintenance => AppRoute.maintenance.path;
-  static String get profile => AppRoute.profile.path;
-  static String get settings => AppRoute.settings.path;
 }
 
 /// Global navigator key for accessing navigation outside of widget context.
@@ -221,10 +203,8 @@ GoRouter appRouter(final Ref ref) {
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
-    redirect: (final context, final state) =>
-        _handleRedirect(ref, state.uri.path),
-    errorBuilder: (final context, final state) =>
-        _ErrorPage(path: state.uri.path),
+    redirect: (final context, final state) => _handleRedirect(ref, state.uri.path),
+    errorBuilder: (final context, final state) => _ErrorPage(path: state.uri.path),
   );
 }
 
