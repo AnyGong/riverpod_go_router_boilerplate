@@ -28,6 +28,39 @@ ApiClient apiClient(final Ref ref) {
 ///
 /// The error handling is delegated to an [ErrorConverter], making it
 /// easy to customize for different APIs (e.g., Stripe, Google Maps).
+///
+/// ## Type Safety with Complex Types
+///
+/// **Important:** Always provide [fromJson] for complex types. Dart's type system
+/// cannot verify generic types at runtime due to type erasure.
+///
+/// ✅ **Correct - Using fromJson:**
+/// ```dart
+/// // For a single object
+/// final result = await apiClient.get<User>(
+///   '/users/1',
+///   fromJson: (json) => User.fromJson(json as Map<String, dynamic>),
+/// );
+///
+/// // For a list of objects
+/// final result = await apiClient.get<List<User>>(
+///   '/users',
+///   fromJson: (json) => (json as List)
+///       .map((e) => User.fromJson(e as Map<String, dynamic>))
+///       .toList(),
+/// );
+/// ```
+///
+/// ❌ **Incorrect - Will fail at runtime:**
+/// ```dart
+/// // This will fail! Dart cannot verify List<User> at runtime.
+/// final result = await apiClient.get<List<User>>('/users');
+/// ```
+///
+/// **Safe without fromJson:** Only primitives and simple types:
+/// - `String`, `int`, `double`, `bool`
+/// - `Map<String, dynamic>` (raw JSON)
+/// - `List<dynamic>` (raw JSON array)
 class ApiClient {
   ApiClient(this._dio, {final ErrorConverter? errorConverter})
     : _errorConverter = errorConverter ?? const DefaultErrorConverter();
@@ -72,8 +105,7 @@ class ApiClient {
     final T Function(dynamic json)? fromJson,
   }) async {
     return _executeRequest(
-      () =>
-          _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
+      () => _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
       fromJson: fromJson,
     );
   }
