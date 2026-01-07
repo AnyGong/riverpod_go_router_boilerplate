@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'logger.g.dart';
 
 /// Application logger with pretty output in debug mode.
 ///
@@ -73,4 +75,5 @@ class AppLogger {
 
 /// Provider for the application logger.
 /// Returns the singleton instance for consistency.
-final loggerProvider = Provider<AppLogger>((ref) => AppLogger.instance);
+@Riverpod(keepAlive: true)
+AppLogger logger(Ref ref) => AppLogger.instance;

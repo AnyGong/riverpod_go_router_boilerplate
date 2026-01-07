@@ -1,10 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/api_client.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/data/repositories/auth_repository_mock.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/data/repositories/auth_repository_remote.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
+
+part 'auth_repository_impl.g.dart';
 
 /// Provider for the auth repository.
 ///
@@ -13,16 +15,25 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// - Development/Staging: Uses [AuthRepositoryMock]
 /// - Production: Uses [AuthRepositoryRemote]
 ///
-/// To force a specific implementation, override this provider in tests:
+/// ## Testing
+/// Override this provider in tests for isolation:
 /// ```dart
 /// ProviderScope(
 ///   overrides: [
-///     authRepositoryProvider.overrideWithValue(AuthRepositoryMock(...)),
+///     authRepositoryProvider.overrideWithValue(MockAuthRepository()),
 ///   ],
 ///   child: MyApp(),
 /// )
 /// ```
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
+///
+/// ## Forcing specific implementation
+/// You can also override the underlying implementation providers:
+/// ```dart
+/// // Force mock in production for debugging
+/// authRepositoryProvider.overrideWith((ref) => AuthRepositoryMock(...))
+/// ```
+@Riverpod(keepAlive: true)
+AuthRepository authRepository(Ref ref) {
   final secureStorage = ref.watch(secureStorageProvider);
 
   // Use mock repository for development and staging
@@ -33,4 +44,4 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   // Use real repository for production
   final apiClient = ref.watch(apiClientProvider);
   return AuthRepositoryRemote(apiClient: apiClient, secureStorage: secureStorage);
-});
+}

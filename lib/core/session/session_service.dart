@@ -8,7 +8,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 /// Use this when you need to watch session state changes.
 /// This is the single source of truth for session state.
 final sessionStateProvider = Provider<SessionState>((ref) {
-  final authState = ref.watch(authNotifierProvider);
+  final authState = ref.watch(authProvider);
 
   return authState.when(
     data: (user) {
@@ -57,7 +57,7 @@ class SessionService {
 
   /// End the current session (logout).
   Future<void> endSession() async {
-    final notifier = _ref.read(authNotifierProvider.notifier);
+    final notifier = _ref.read(authProvider.notifier);
     await notifier.logout();
   }
 }

@@ -1,12 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
+part 'dio_provider.g.dart';
+
 /// Provider for the Dio HTTP client.
-final dioProvider = Provider<Dio>((ref) {
+///
+/// keepAlive: true ensures Dio instance is not disposed when no longer watched.
+@Riverpod(keepAlive: true)
+Dio dio(Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: EnvConfig.baseUrl,
@@ -25,7 +30,7 @@ final dioProvider = Provider<Dio>((ref) {
   ]);
 
   return dio;
-});
+}
 
 /// Interceptor for adding authentication headers and handling token refresh.
 class AuthInterceptor extends QueuedInterceptor {

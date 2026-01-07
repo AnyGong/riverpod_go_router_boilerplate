@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
 
-/// Provider for the auth state notifier.
-final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, User?>(AuthNotifier.new);
+part 'auth_notifier.g.dart';
 
 /// Manages authentication state.
 ///
@@ -13,7 +12,8 @@ final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, User?>(AuthNoti
 /// - Check if user is logged in
 /// - Login/logout
 /// - Access current user
-class AuthNotifier extends AsyncNotifier<User?> {
+@Riverpod(keepAlive: true)
+class AuthNotifier extends _$AuthNotifier {
   late final AuthRepository _repo;
 
   @override

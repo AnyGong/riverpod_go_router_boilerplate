@@ -1,20 +1,24 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/dio_provider.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/error_converter.dart';
 import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 
+part 'api_client.g.dart';
+
 /// Provider for the default error converter.
-final errorConverterProvider = Provider<ErrorConverter>((ref) {
+@Riverpod(keepAlive: true)
+ErrorConverter errorConverter(Ref ref) {
   return const DefaultErrorConverter();
-});
+}
 
 /// Provider for the API client.
-final apiClientProvider = Provider<ApiClient>((ref) {
+@Riverpod(keepAlive: true)
+ApiClient apiClient(Ref ref) {
   return ApiClient(ref.watch(dioProvider), errorConverter: ref.watch(errorConverterProvider));
-});
+}
 
 /// A type-safe API client wrapper around Dio.
 /// All network calls return [Result] for consistent error handling.

@@ -6,9 +6,6 @@ version: 1.0.0+1
 environment:
   sdk: ^3.10.4
 
-dependency_overrides:
-  analyzer: ^9.0.0
-
 dependencies:
   flutter:
     sdk: flutter
@@ -80,8 +77,10 @@ dev_dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   build_runner: ^2.10.4
   riverpod_generator: ^4.0.0
-  freezed: ^3.2.4
-  json_serializable: ^6.11.3
+  # Fix 1: Pin freezed below 3.2.4
+  freezed: ">=3.0.0 <3.2.4"
+  # Fix 2: Pin json_serializable below 6.11.3
+  json_serializable: ">=6.0.0 <6.11.3"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # TESTING

@@ -30,12 +30,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     await ref
-        .read(authNotifierProvider.notifier)
+        .read(authProvider.notifier)
         .login(_emailController.text.trim(), _passwordController.text);
 
     if (!mounted) return;
 
-    final authState = ref.read(authNotifierProvider);
+    final authState = ref.read(authProvider);
 
     authState.whenOrNull(
       error: (error, _) {
@@ -57,7 +57,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
 
     return Scaffold(
