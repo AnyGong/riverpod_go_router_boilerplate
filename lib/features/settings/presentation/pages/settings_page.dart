@@ -122,8 +122,12 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: isSelected ? Theme.of(dialogContext).colorScheme.primary : null,
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  color: isSelected
+                      ? Theme.of(dialogContext).colorScheme.primary
+                      : null,
                 ),
                 const SizedBox(width: 12),
                 Text(

@@ -198,7 +198,11 @@ class Validators {
       final hasSpecialChar = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
       final hasMinLength = value.length >= 8;
 
-      if (!hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar || !hasMinLength) {
+      if (!hasUpperCase ||
+          !hasLowerCase ||
+          !hasDigit ||
+          !hasSpecialChar ||
+          !hasMinLength) {
         return message ??
             'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
       }

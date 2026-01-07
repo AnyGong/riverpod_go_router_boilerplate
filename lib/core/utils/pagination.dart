@@ -66,7 +66,8 @@ class PaginatedResponse<T> {
     final T Function(Object? json) fromJsonT,
   ) {
     // Try to find the items array
-    final itemsJson = json['data'] as List? ?? json['items'] as List? ?? json['results'];
+    final itemsJson =
+        json['data'] as List? ?? json['items'] as List? ?? json['results'];
 
     if (itemsJson == null) {
       throw FormatException(
@@ -287,5 +288,6 @@ class PaginationState<T> {
   PaginationState<T> startLoading() => copyWith(isLoading: true, error: null);
 
   /// Set error state.
-  PaginationState<T> setError(final Object error) => copyWith(isLoading: false, error: error);
+  PaginationState<T> setError(final Object error) =>
+      copyWith(isLoading: false, error: error);
 }

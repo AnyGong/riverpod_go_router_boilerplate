@@ -67,7 +67,8 @@ Dio dio(final Ref ref) {
 typedef TokenRefreshCallback =
     Future<bool> Function(
       String? refreshToken,
-      Future<void> Function(String accessToken, String? refreshToken) saveTokens,
+      Future<void> Function(String accessToken, String? refreshToken)
+      saveTokens,
     );
 
 /// Interceptor for adding authentication headers and handling token refresh.
@@ -206,7 +207,8 @@ class RetryInterceptor extends Interceptor {
   static const _retryKey = 'retry_count';
 
   List<Duration> get _delays =>
-      retryDelays ?? const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
+      retryDelays ??
+      const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)];
 
   @override
   Future<void> onError(
