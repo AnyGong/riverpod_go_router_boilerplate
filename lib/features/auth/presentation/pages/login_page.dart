@@ -35,23 +35,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (!mounted) return;
 
-    final authState = ref.read(authProvider);
-
-    authState.whenOrNull(
-      error: (final error, _) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.toString()),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+    ref
+        .read(authProvider)
+        .whenOrNull(
+          error: (final error, _) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(error.toString()),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          },
+          data: (final user) {
+            if (user != null) {
+              context.goRoute(AppRoute.home);
+            }
+          },
         );
-      },
-      data: (final user) {
-        if (user != null) {
-          context.go(AppRoutes.home);
-        }
-      },
-    );
   }
 
   @override
