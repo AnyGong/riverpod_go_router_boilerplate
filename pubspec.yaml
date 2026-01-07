@@ -78,9 +78,12 @@ dev_dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   build_runner: ^2.10.4
   riverpod_generator: ^4.0.0
-  # Fix 1: Pin freezed below 3.2.4
+  # PINNED: freezed 3.2.4+ has conflicts with json_serializable and macros.
+  # TODO: Remove pin when freezed releases a compatible version.
+  # Tracking: https://github.com/rrousselGit/freezed/issues
   freezed: ">=3.0.0 <3.2.4"
-  # Fix 2: Pin json_serializable below 6.11.3
+  # PINNED: json_serializable 6.11.3+ requires macros (experimental in Dart 3.x).
+  # TODO: Remove pin when Dart macros become stable.
   json_serializable: ">=6.0.0 <6.11.3"
 
   # ─────────────────────────────────────────────────────────────────────────────

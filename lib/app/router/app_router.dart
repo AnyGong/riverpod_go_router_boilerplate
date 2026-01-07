@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart';
@@ -8,6 +8,8 @@ import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
+
+part 'app_router.g.dart';
 
 // ============================================================================
 // Route Definitions (Enum-based for compile-time safety)
@@ -29,6 +31,10 @@ import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 /// // Or use the extension method
 /// context.goRoute(AppRoute.home);
 ///
+/// // Dynamic routes with parameters
+/// context.go(AppRoute.productDetail.pathWith({'id': '123'}));
+/// // -> '/product/123'
+///
 /// // Check if route requires auth
 /// if (AppRoute.settings.requiresAuth) { ... }
 /// ```
@@ -39,23 +45,105 @@ enum AppRoute {
   onboarding('/onboarding', requiresAuth: false),
   maintenance('/maintenance', requiresAuth: false),
   profile('/profile', requiresAuth: true),
-  settings('/settings', requiresAuth: true)
+  settings('/settings', requiresAuth: true),
+  // Example dynamic routes (uncomment and customize as needed):
+  // productDetail('/product/:id', requiresAuth: true),
+  // userProfile('/user/:userId', requiresAuth: true),
+  // orderDetail('/order/:orderId', requiresAuth: true),
   ;
 
   const AppRoute(this.path, {required this.requiresAuth});
 
-  /// The URL path for this route.
+  /// The URL path pattern for this route.
+  /// May contain path parameters prefixed with ':' (e.g., '/product/:id').
   final String path;
 
   /// Whether this route requires authentication.
   final bool requiresAuth;
 
-  /// Get a route by its path, or null if not found.
+  /// Generate a path with the given parameters substituted.
+  ///
+  /// Example:
+  /// ```dart
+  /// // For route: productDetail('/product/:id', ...)
+  /// AppRoute.productDetail.pathWith({'id': '123'});
+  /// // Returns: '/product/123'
+  ///
+  /// // Multiple params: '/order/:orderId/item/:itemId'
+  /// route.pathWith({'orderId': '456', 'itemId': '789'});
+  /// // Returns: '/order/456/item/789'
+  /// ```
+  ///
+  /// Throws [ArgumentError] if a required parameter is missing.
+  String pathWith(final Map<String, String> params) {
+    var result = path;
+    final paramPattern = RegExp(r':(\w+)');
+    final matches = paramPattern.allMatches(path);
+
+    for (final match in matches) {
+      final paramName = match.group(1)!;
+      final value = params[paramName];
+      if (value == null) {
+        throw ArgumentError(
+          'Missing required path parameter "$paramName" for route $name',
+        );
+      }
+      result = result.replaceFirst(':$paramName', value);
+    }
+
+    return result;
+  }
+
+  /// Check if this route has path parameters.
+  bool get hasPathParams => path.contains(':');
+
+  /// Get the list of path parameter names for this route.
+  ///
+  /// Example:
+  /// ```dart
+  /// // For route: '/order/:orderId/item/:itemId'
+  /// route.pathParamNames; // ['orderId', 'itemId']
+  /// ```
+  List<String> get pathParamNames {
+    final paramPattern = RegExp(r':(\w+)');
+    return paramPattern.allMatches(path).map((final m) => m.group(1)!).toList();
+  }
+
+  /// Get a route by its path pattern, or null if not found.
+  ///
+  /// Note: For dynamic routes, pass the pattern (e.g., '/product/:id'),
+  /// not the resolved path (e.g., '/product/123').
   static AppRoute? fromPath(final String path) {
     for (final route in values) {
       if (route.path == path) return route;
     }
     return null;
+  }
+
+  /// Match a resolved path to a route, handling path parameters.
+  ///
+  /// Example:
+  /// ```dart
+  /// AppRoute.matchPath('/product/123'); // Returns AppRoute.productDetail
+  /// AppRoute.matchPath('/settings');    // Returns AppRoute.settings
+  /// ```
+  static AppRoute? matchPath(final String resolvedPath) {
+    for (final route in values) {
+      if (_matchesPattern(route.path, resolvedPath)) {
+        return route;
+      }
+    }
+    return null;
+  }
+
+  /// Check if a resolved path matches a route pattern.
+  static bool _matchesPattern(final String pattern, final String path) {
+    // Convert pattern to regex: '/product/:id' -> '^/product/([^/]+)$'
+    final regexPattern = pattern.replaceAllMapped(
+      RegExp(r':(\w+)'),
+      (final _) => r'([^/]+)',
+    );
+    return RegExp('^$regexPattern\$').hasMatch(path);
   }
 
   /// All routes that require authentication.
@@ -72,12 +160,31 @@ extension AppRouteNavigation on BuildContext {
   /// Navigate to a route using [GoRouter.go].
   void goRoute(final AppRoute route) => go(route.path);
 
+  /// Navigate to a route with parameters using [GoRouter.go].
+  ///
+  /// Example:
+  /// ```dart
+  /// context.goRouteWith(AppRoute.productDetail, {'id': '123'});
+  /// ```
+  void goRouteWith(final AppRoute route, final Map<String, String> params) =>
+      go(route.pathWith(params));
+
   /// Navigate to a route using [GoRouter.push].
   void pushRoute(final AppRoute route) => push(route.path);
+
+  /// Navigate to a route with parameters using [GoRouter.push].
+  void pushRouteWith(final AppRoute route, final Map<String, String> params) =>
+      push(route.pathWith(params));
 
   /// Replace current route using [GoRouter.pushReplacement].
   void pushReplacementRoute(final AppRoute route) =>
       pushReplacement(route.path);
+
+  /// Replace current route with parameters using [GoRouter.pushReplacement].
+  void pushReplacementRouteWith(
+    final AppRoute route,
+    final Map<String, String> params,
+  ) => pushReplacement(route.pathWith(params));
 }
 
 // Legacy alias for backwards compatibility
@@ -102,7 +209,8 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 ///
 /// Uses [appLifecycleListenableProvider] to refresh when lifecycle state changes.
 /// This enables reactive routing based on session state, maintenance mode, etc.
-final appRouterProvider = Provider<GoRouter>((final ref) {
+@Riverpod(keepAlive: true)
+GoRouter appRouter(final Ref ref) {
   // Use lifecycle listenable for refresh - this triggers re-evaluation
   // when session state changes, maintenance mode toggles, etc.
   final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
@@ -118,7 +226,7 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
     errorBuilder: (final context, final state) =>
         _ErrorPage(path: state.uri.path),
   );
-});
+}
 
 // ============================================================================
 // Redirect Guards (Chain of Responsibility Pattern)
@@ -128,7 +236,8 @@ final appRouterProvider = Provider<GoRouter>((final ref) {
 String? _handleRedirect(final Ref ref, final String path) {
   final lifecycleState = ref.read(appLifecycleNotifierProvider);
   final sessionState = ref.read(sessionStateProvider);
-  final route = AppRoute.fromPath(path);
+  // Use matchPath to handle dynamic routes (e.g., '/product/123')
+  final route = AppRoute.matchPath(path);
 
   // Apply guards in order of priority
   return _guardLoading(route, sessionState) ??
