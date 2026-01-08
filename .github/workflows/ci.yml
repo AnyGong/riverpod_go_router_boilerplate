@@ -113,7 +113,6 @@ jobs:
             build/app/outputs/flutter-apk/riverpod-boilerplate-v${{ steps.version.outputs.version }}.apk
           draft: false
           prerelease: false
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -191,6 +190,5 @@ jobs:
             build/app/outputs/flutter-apk/riverpod-boilerplate-v${{ steps.version.outputs.version }}-dev.${{ steps.build.outputs.number }}.apk
           draft: false
           prerelease: true
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
