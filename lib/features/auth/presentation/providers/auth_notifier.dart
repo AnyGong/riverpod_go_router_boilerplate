@@ -72,3 +72,21 @@ class AuthNotifier extends _$AuthNotifier {
   /// Get the current user, or null if not authenticated.
   User? get currentUser => state.value;
 }
+
+/// Convenience provider for checking if user is authenticated.
+///
+/// Usage: `ref.watch(isAuthenticatedProvider)`
+@riverpod
+bool isAuthenticated(final Ref ref) {
+  final authState = ref.watch(authProvider);
+  return authState.value != null;
+}
+
+/// Convenience provider for getting the current user.
+///
+/// Returns null if not authenticated or loading.
+/// Usage: `ref.watch(currentUserProvider)`
+@riverpod
+User? currentUser(final Ref ref) {
+  return ref.watch(authProvider).value;
+}

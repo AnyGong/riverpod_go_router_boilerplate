@@ -1,51 +1,14 @@
-import 'dart:convert';
-
 import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_database.dart';
+import 'package:riverpod_go_router_boilerplate/core/cache/cache_entry.dart';
 import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
+export 'cache_entry.dart';
+export 'cache_extensions.dart';
+
 part 'cache_service.g.dart';
-
-/// Cache entry with metadata for use in the app layer.
-class CacheEntry {
-  /// Creates a [CacheEntry] instance.
-  CacheEntry({
-    required this.data,
-    required this.timestamp,
-    required this.expiresAt,
-    this.etag,
-  });
-
-  /// Create from database row.
-  factory CacheEntry.fromData(final CacheEntryData data) {
-    return CacheEntry(
-      data: data.data,
-      timestamp: data.timestamp,
-      expiresAt: data.expiresAt,
-      etag: data.etag,
-    );
-  }
-
-  /// The cached data (JSON string).
-  final String data;
-
-  /// When this entry was cached.
-  final DateTime timestamp;
-
-  /// When this entry expires.
-  final DateTime expiresAt;
-
-  /// Optional ETag for conditional requests.
-  final String? etag;
-
-  /// Whether this cache entry has expired.
-  bool get isExpired => DateTime.now().isAfter(expiresAt);
-
-  /// Whether this cache entry is still valid.
-  bool get isValid => !isExpired;
-}
 
 /// Offline-first caching service using Drift (SQLite).
 ///
@@ -156,7 +119,7 @@ class CacheService {
     try {
       final data = await database.getEntry(key, boxName: boxName);
       if (data == null) return null;
-      return CacheEntry.fromData(data);
+      return _fromData(data);
     } catch (e, stack) {
       logger.e('Cache get error', error: e, stackTrace: stack);
       return null;
@@ -274,93 +237,14 @@ class CacheService {
   }) async {
     return database.getKeys(boxName: boxName);
   }
-}
 
-/// Cache statistics.
-class CacheStats {
-  /// Creates a [CacheStats] instance.
-  const CacheStats({
-    required this.totalEntries,
-    required this.validEntries,
-    required this.expiredEntries,
-  });
-
-  /// Total number of entries in the cache.
-  final int totalEntries;
-
-  /// Number of valid (non-expired) entries.
-  final int validEntries;
-
-  /// Number of expired entries.
-  final int expiredEntries;
-
-  @override
-  String toString() {
-    return 'CacheStats(total: $totalEntries, valid: $validEntries, '
-        'expired: $expiredEntries)';
-  }
-}
-
-/// Extension for convenient caching of typed objects.
-extension CacheServiceExtensions on CacheService {
-  /// Cache a JSON-serializable object.
-  Future<void> putObject<T>(
-    final String key,
-    final T object,
-    final Map<String, dynamic> Function(T) toJson, {
-    final Duration duration = AppConstants.cacheExpiry,
-    final String? etag,
-    final String boxName = defaultCacheBoxName,
-  }) async {
-    final json = jsonEncode(toJson(object));
-    await put(key, json, duration: duration, etag: etag, boxName: boxName);
-  }
-
-  /// Get a cached object with type conversion.
-  Future<T?> getObject<T>(
-    final String key,
-    final T Function(Map<String, dynamic>) fromJson, {
-    final String boxName = defaultCacheBoxName,
-  }) async {
-    final data = await getIfValid(key, boxName: boxName);
-    if (data == null) return null;
-
-    try {
-      return fromJson(jsonDecode(data) as Map<String, dynamic>);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /// Cache a list of JSON-serializable objects.
-  Future<void> putList<T>(
-    final String key,
-    final List<T> list,
-    final Map<String, dynamic> Function(T) toJson, {
-    final Duration duration = AppConstants.cacheExpiry,
-    final String? etag,
-    final String boxName = defaultCacheBoxName,
-  }) async {
-    final json = jsonEncode(list.map(toJson).toList());
-    await put(key, json, duration: duration, etag: etag, boxName: boxName);
-  }
-
-  /// Get a cached list with type conversion.
-  Future<List<T>?> getList<T>(
-    final String key,
-    final T Function(Map<String, dynamic>) fromJson, {
-    final String boxName = defaultCacheBoxName,
-  }) async {
-    final data = await getIfValid(key, boxName: boxName);
-    if (data == null) return null;
-
-    try {
-      final list = jsonDecode(data) as List<dynamic>;
-      return list
-          .map((final e) => fromJson(e as Map<String, dynamic>))
-          .toList();
-    } catch (_) {
-      return null;
-    }
+  /// Create CacheEntry from database row.
+  CacheEntry _fromData(final CacheEntryData data) {
+    return CacheEntry(
+      data: data.data,
+      timestamp: data.timestamp,
+      expiresAt: data.expiresAt,
+      etag: data.etag,
+    );
   }
 }

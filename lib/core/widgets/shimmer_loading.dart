@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 /// A shimmer loading wrapper for arbitrary content.
 ///
 /// Applies a shimmer effect to the given child widget.
+/// Automatically adapts colors based on theme brightness.
 class ShimmerLoading extends StatelessWidget {
   /// Creates a [ShimmerLoading] widget.
   const ShimmerLoading({
@@ -11,6 +12,7 @@ class ShimmerLoading extends StatelessWidget {
     super.key,
     this.baseColor,
     this.highlightColor,
+    this.enabled = true,
   });
 
   /// Widget to apply the shimmer effect to.
@@ -22,8 +24,13 @@ class ShimmerLoading extends StatelessWidget {
   /// Highlight color of the shimmer animation.
   final Color? highlightColor;
 
+  /// Whether the shimmer effect is enabled.
+  final bool enabled;
+
   @override
   Widget build(final BuildContext context) {
+    if (!enabled) return child;
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Shimmer.fromColors(

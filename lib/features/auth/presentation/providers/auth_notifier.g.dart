@@ -133,3 +133,109 @@ abstract class _$AuthNotifier extends $AsyncNotifier<User?> {
     element.handleCreate(ref, build);
   }
 }
+
+/// Convenience provider for checking if user is authenticated.
+///
+/// Usage: `ref.watch(isAuthenticatedProvider)`
+
+@ProviderFor(isAuthenticated)
+final isAuthenticatedProvider = IsAuthenticatedProvider._();
+
+/// Convenience provider for checking if user is authenticated.
+///
+/// Usage: `ref.watch(isAuthenticatedProvider)`
+
+final class IsAuthenticatedProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Convenience provider for checking if user is authenticated.
+  ///
+  /// Usage: `ref.watch(isAuthenticatedProvider)`
+  IsAuthenticatedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isAuthenticatedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isAuthenticatedHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return isAuthenticated(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$isAuthenticatedHash() => r'2f79849868c9490023e95e53a9fa4ea33690f61a';
+
+/// Convenience provider for getting the current user.
+///
+/// Returns null if not authenticated or loading.
+/// Usage: `ref.watch(currentUserProvider)`
+
+@ProviderFor(currentUser)
+final currentUserProvider = CurrentUserProvider._();
+
+/// Convenience provider for getting the current user.
+///
+/// Returns null if not authenticated or loading.
+/// Usage: `ref.watch(currentUserProvider)`
+
+final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
+    with $Provider<User?> {
+  /// Convenience provider for getting the current user.
+  ///
+  /// Returns null if not authenticated or loading.
+  /// Usage: `ref.watch(currentUserProvider)`
+  CurrentUserProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentUserHash();
+
+  @$internal
+  @override
+  $ProviderElement<User?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  User? create(Ref ref) {
+    return currentUser(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(User? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<User?>(value),
+    );
+  }
+}
+
+String _$currentUserHash() => r'36cbdf15f2eb87c2f99c368fa205f40a7b392b65';

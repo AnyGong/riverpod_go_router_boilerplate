@@ -12,13 +12,15 @@ const _localeKey = 'app_locale';
 /// Add new locales here as you add new ARB files.
 const supportedLocales = [
   Locale('en'), // English (default)
-  Locale('es'), // Spanish
+  Locale('bn'), // Bangla (Bengali)
   // Add more locales as needed:
+  // Locale('es'), // Spanish
   // Locale('fr'), // French
   // Locale('de'), // German
   // Locale('zh'), // Chinese
   // Locale('ar'), // Arabic
   // Locale('ja'), // Japanese
+  // Locale('hi'), // Hindi
 ];
 
 /// Provider for managing the app's locale.
@@ -84,12 +86,14 @@ class LocaleNotifier extends _$LocaleNotifier {
   String getLocaleName(final Locale locale) {
     return switch (locale.languageCode) {
       'en' => 'English',
+      'bn' => 'বাংলা',
       'es' => 'Español',
       'fr' => 'Français',
       'de' => 'Deutsch',
       'zh' => '中文',
       'ar' => 'العربية',
       'ja' => '日本語',
+      'hi' => 'हिन्दी',
       _ => locale.languageCode.toUpperCase(),
     };
   }

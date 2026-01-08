@@ -89,7 +89,7 @@ final class LocaleNotifierProvider
   }
 }
 
-String _$localeNotifierHash() => r'01cf903d4f1ddf2019c115c8cfb6c27434a68233';
+String _$localeNotifierHash() => r'edfb973ad6f4c45c2afbc92a536c6e8064bf9a39';
 
 /// Provider for managing the app's locale.
 ///
