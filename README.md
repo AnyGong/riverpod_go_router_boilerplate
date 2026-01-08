@@ -42,6 +42,7 @@
 - [Adding New Features](#-adding-new-features)
 - [Code Style Guidelines](#-code-style-guidelines)
 - [Testing](#-testing)
+- [CI/CD & Deployment](#-cicd--deployment)
 - [Scripts](#-scripts)
 - [License](#-license)
 
@@ -216,7 +217,7 @@
 
 ```bash
 # 1️⃣ Clone the repository
-git clone https://github.com/your-username/riverpod_go_router_boilerplate.git
+git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git
 cd riverpod_go_router_boilerplate
 
 # 2️⃣ Install dependencies
@@ -1001,6 +1002,162 @@ void main() {
   });
 }
 ```
+
+---
+
+## 🤖 CI/CD & Deployment
+
+This boilerplate includes a comprehensive GitHub Actions pipeline for automated testing, building, and releasing.
+
+### 🌿 Branching Strategy
+
+| Branch          | Purpose             |    Build    |    Release     | Use Case                                      |
+| :-------------- | :------------------ | :---------: | :------------: | :-------------------------------------------- |
+| **`main`**      | Production code     | Release APK | GitHub Release | Merge only when ready for production          |
+| **`develop`**   | Testing/staging     |  Debug APK  |  Pre-release   | Test latest features before production        |
+| **`feature/*`** | Feature development |     ❌      |       ❌       | `feature/auth-biometric`, `feature/dark-mode` |
+| **`bugfix/*`**  | Bug fixes           |     ❌      |       ❌       | `bugfix/login-crash`, `bugfix/cache-issue`    |
+| **`hotfix/*`**  | Urgent fixes        |     ❌      |       ❌       | `hotfix/critical-security-patch`              |
+
+### 🔄 Automated Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  PULL REQUEST / PUSH                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  1. Run Tests (All Branches)                        │  │
+│  │     • Code generation verification                  │  │
+│  │     • Dart formatting check                         │  │
+│  │     • Flutter analyze                               │  │
+│  │     • Unit tests with coverage                      │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                         │                                   │
+│                    ✅ Pass?                                 │
+│                         │                                   │
+│          ┌──────────────┴──────────────┐                   │
+│          │                             │                   │
+│      (main)                         (develop)               │
+│          │                             │                   │
+│          ▼                             ▼                   │
+│  ┌──────────────┐              ┌──────────────┐           │
+│  │ Build Release│              │ Build Debug  │           │
+│  │ APK          │              │ APK          │           │
+│  └──────────────┘              └──────────────┘           │
+│          │                             │                   │
+│          ▼                             ▼                   │
+│  ┌──────────────┐              ┌──────────────┐           │
+│  │ Create GitHub│              │ Create GitHub│           │
+│  │ Release      │              │ Pre-release  │           │
+│  └──────────────┘              └──────────────┘           │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 📦 Release Naming
+
+**Production Release (main branch):**
+
+```
+Tag:     v1.0.0+1
+APK:     riverpod-boilerplate-v1.0.0+1.apk
+Type:    GitHub Release
+```
+
+**Pre-release (develop branch):**
+
+```
+Tag:     v1.0.0+1-dev.202601081530
+APK:     riverpod-boilerplate-v1.0.0+1-dev.202601081530.apk
+Type:    GitHub Pre-release
+Note:    Timestamp included for uniqueness
+```
+
+### 🚀 Typical Development Workflow
+
+#### 1️⃣ Create Feature Branch
+
+```bash
+git checkout develop
+git checkout -b feature/new-login-screen
+```
+
+#### 2️⃣ Develop & Commit
+
+```bash
+git add .
+git commit -m "feat: implement new login screen"
+```
+
+#### 3️⃣ Push & Create PR
+
+```bash
+git push origin feature/new-login-screen
+# Create PR to develop branch
+# → Automated tests run
+```
+
+#### 4️⃣ Merge to Develop
+
+```bash
+# After PR approval, merge to develop
+git checkout develop
+git merge feature/new-login-screen
+git push origin develop
+# → Debug APK built
+# → Pre-release published to GitHub
+```
+
+#### 5️⃣ Merge to Main (Release)
+
+```bash
+git checkout main
+git merge develop
+git push origin main
+# → Release APK built
+# → Production release published to GitHub
+```
+
+### 🔐 GitHub Actions Permissions
+
+The workflow requires these permissions (auto-configured):
+
+```yaml
+permissions:
+  contents: write # Create releases and push commits
+  checks: write # Report test/check results
+```
+
+### 📥 Downloading Releases
+
+**From GitHub:**
+
+1. Go to [Releases](https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate/releases)
+2. Production APKs are under **Releases** (latest stable)
+3. Pre-release APKs are under **Pre-releases** (development builds)
+
+### ✅ What Gets Tested
+
+Every push/PR runs automated tests:
+
+- ✅ **Code Generation**: Verifies `build_runner` is up-to-date
+- ✅ **Formatting**: Ensures consistent code style
+- ✅ **Analysis**: Runs `flutter analyze` for lint issues
+- ✅ **Tests**: Runs all unit tests with coverage
+- ✅ **Coverage**: Uploads to Codecov (if configured)
+
+### 🛑 Pipeline Failures
+
+If the pipeline fails:
+
+1. Check the **Actions** tab in GitHub
+2. Click the failed workflow
+3. Review the error in the detailed logs
+4. Common issues:
+   - Outdated generated files (run `make gen`)
+   - Formatting issues (run `make format`)
+   - Test failures (run `flutter test` locally)
 
 ---
 
