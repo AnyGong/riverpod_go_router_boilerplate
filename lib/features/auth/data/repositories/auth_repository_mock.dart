@@ -20,8 +20,10 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// - "slow@test.com" - Simulates a slow network (2s delay)
 /// - Any other email - Successful login
 class AuthRepositoryMock implements AuthRepository {
+  /// Creates a [AuthRepositoryMock] instance.
   AuthRepositoryMock({required this.secureStorage});
 
+  /// Secure storage for storing mock tokens.
   final FlutterSecureStorage secureStorage;
 
   /// Simulated network delay

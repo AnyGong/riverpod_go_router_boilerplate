@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// App typography styles.
-/// Based on Material 3 typography scale.
+/// Centralized application typography definitions.
+///
+/// Based on the Material 3 typography scale.
 abstract class AppTypography {
+  /// Private constructor to prevent instantiation.
+  const AppTypography._();
+
+  /// Default font family used across the app.
   static const String fontFamily = 'Roboto';
 
-  // Display styles
+  /// Large display text style.
   static const TextStyle displayLarge = TextStyle(
     fontSize: 57,
     fontWeight: FontWeight.w400,
@@ -13,6 +18,7 @@ abstract class AppTypography {
     height: 1.12,
   );
 
+  /// Medium display text style.
   static const TextStyle displayMedium = TextStyle(
     fontSize: 45,
     fontWeight: FontWeight.w400,
@@ -20,6 +26,7 @@ abstract class AppTypography {
     height: 1.16,
   );
 
+  /// Small display text style.
   static const TextStyle displaySmall = TextStyle(
     fontSize: 36,
     fontWeight: FontWeight.w400,
@@ -27,7 +34,7 @@ abstract class AppTypography {
     height: 1.22,
   );
 
-  // Headline styles
+  /// Large headline text style.
   static const TextStyle headlineLarge = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w400,
@@ -35,6 +42,7 @@ abstract class AppTypography {
     height: 1.25,
   );
 
+  /// Medium headline text style.
   static const TextStyle headlineMedium = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w400,
@@ -42,6 +50,7 @@ abstract class AppTypography {
     height: 1.29,
   );
 
+  /// Small headline text style.
   static const TextStyle headlineSmall = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w400,
@@ -49,7 +58,7 @@ abstract class AppTypography {
     height: 1.33,
   );
 
-  // Title styles
+  /// Large title text style.
   static const TextStyle titleLarge = TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w500,
@@ -57,6 +66,7 @@ abstract class AppTypography {
     height: 1.27,
   );
 
+  /// Medium title text style.
   static const TextStyle titleMedium = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -64,6 +74,7 @@ abstract class AppTypography {
     height: 1.5,
   );
 
+  /// Small title text style.
   static const TextStyle titleSmall = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
@@ -71,7 +82,7 @@ abstract class AppTypography {
     height: 1.43,
   );
 
-  // Body styles
+  /// Large body text style.
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -79,6 +90,7 @@ abstract class AppTypography {
     height: 1.5,
   );
 
+  /// Medium body text style.
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -86,6 +98,7 @@ abstract class AppTypography {
     height: 1.43,
   );
 
+  /// Small body text style.
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
@@ -93,7 +106,7 @@ abstract class AppTypography {
     height: 1.33,
   );
 
-  // Label styles
+  /// Large label text style.
   static const TextStyle labelLarge = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
@@ -101,6 +114,7 @@ abstract class AppTypography {
     height: 1.43,
   );
 
+  /// Medium label text style.
   static const TextStyle labelMedium = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -108,6 +122,7 @@ abstract class AppTypography {
     height: 1.33,
   );
 
+  /// Small label text style.
   static const TextStyle labelSmall = TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w500,
@@ -115,7 +130,7 @@ abstract class AppTypography {
     height: 1.45,
   );
 
-  /// Create a TextTheme from these styles.
+  /// Builds a [TextTheme] using the defined typography styles.
   static TextTheme get textTheme => const TextTheme(
     displayLarge: displayLarge,
     displayMedium: displayMedium,

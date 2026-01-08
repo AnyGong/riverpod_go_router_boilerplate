@@ -20,12 +20,14 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     }
   }
 
+  /// Set the theme mode and persist the choice
   Future<void> setThemeMode(final ThemeMode mode) async {
     state = mode;
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setInt(_themeKey, mode.index);
   }
 
+  /// Toggle between light, dark, and system themes
   void toggleTheme() {
     final newMode = switch (state) {
       ThemeMode.light => ThemeMode.dark,
@@ -35,8 +37,13 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     setThemeMode(newMode);
   }
 
+  /// Convenience methods to set specific themes
   void setLight() => setThemeMode(ThemeMode.light);
+
+  /// Convenience methods to set specific themes
   void setDark() => setThemeMode(ThemeMode.dark);
+
+  /// Convenience methods to set specific themes
   void setSystem() => setThemeMode(ThemeMode.system);
 }
 

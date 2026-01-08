@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 /// ```
 @immutable
 class StartupSignals {
+  /// Creates a [StartupSignals] instance.
   const StartupSignals({
     required this.isAuthenticated,
     required this.hasCompletedOnboarding,

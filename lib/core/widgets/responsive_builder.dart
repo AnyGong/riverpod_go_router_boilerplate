@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-/// Responsive breakpoints used throughout the app.
+/// Responsive layout breakpoints used throughout the app.
 abstract class Breakpoints {
+  /// Private constructor to prevent instantiation.
+  const Breakpoints._();
+
+  /// Maximum width for mobile layouts.
   static const double mobile = 600;
+
+  /// Maximum width for tablet layouts.
   static const double tablet = 1024;
+
+  /// Minimum width for desktop layouts.
   static const double desktop = 1440;
 }
 
-/// A widget that builds different layouts based on screen size.
-///
-/// Usage:
-/// ```dart
-/// ResponsiveBuilder(
-///   mobile: (context) => MobileLayout(),
-///   tablet: (context) => TabletLayout(),
-///   desktop: (context) => DesktopLayout(),
-/// )
-/// ```
+/// A widget that builds different layouts based on screen width.
 class ResponsiveBuilder extends StatelessWidget {
+  /// Creates a [ResponsiveBuilder].
   const ResponsiveBuilder({
     required this.mobile,
     super.key,
@@ -25,8 +25,13 @@ class ResponsiveBuilder extends StatelessWidget {
     this.desktop,
   });
 
+  /// Builder for mobile layouts.
   final Widget Function(BuildContext context) mobile;
+
+  /// Optional builder for tablet layouts.
   final Widget Function(BuildContext context)? tablet;
+
+  /// Optional builder for desktop layouts.
   final Widget Function(BuildContext context)? desktop;
 
   @override
@@ -47,18 +52,9 @@ class ResponsiveBuilder extends StatelessWidget {
   }
 }
 
-/// A widget that returns different values based on screen size.
-///
-/// Usage:
-/// ```dart
-/// ResponsiveValue<int>(
-///   context: context,
-///   mobile: 2,
-///   tablet: 3,
-///   desktop: 4,
-/// ).value
-/// ```
+/// Resolves a value based on the current screen width.
 class ResponsiveValue<T> {
+  /// Creates a [ResponsiveValue].
   ResponsiveValue({
     required final BuildContext context,
     required final T mobile,
@@ -74,6 +70,7 @@ class ResponsiveValue<T> {
   final T? _desktop;
   final double _width;
 
+  /// The resolved responsive value.
   T get value {
     if (_width >= Breakpoints.desktop) {
       return _desktop ?? _tablet ?? _mobile;
@@ -85,9 +82,9 @@ class ResponsiveValue<T> {
   }
 }
 
-/// Extension for getting responsive values from context.
+/// Extensions for responsive helpers on [BuildContext].
 extension ResponsiveContextExtension on BuildContext {
-  /// Get a responsive value based on screen size
+  /// Returns a responsive value based on screen width.
   T responsiveValue<T>({
     required final T mobile,
     final T? tablet,
@@ -101,21 +98,22 @@ extension ResponsiveContextExtension on BuildContext {
     ).value;
   }
 
-  /// Check if the current screen is mobile size
+  /// Whether the current screen size is mobile.
   bool get isMobile => MediaQuery.of(this).size.width < Breakpoints.mobile;
 
-  /// Check if the current screen is tablet size
+  /// Whether the current screen size is tablet.
   bool get isTablet {
     final width = MediaQuery.of(this).size.width;
     return width >= Breakpoints.mobile && width < Breakpoints.tablet;
   }
 
-  /// Check if the current screen is desktop size
+  /// Whether the current screen size is desktop.
   bool get isDesktop => MediaQuery.of(this).size.width >= Breakpoints.tablet;
 }
 
-/// A responsive grid that adjusts columns based on screen size.
+/// A responsive grid that adapts column count to screen size.
 class ResponsiveGrid extends StatelessWidget {
+  /// Creates a [ResponsiveGrid].
   const ResponsiveGrid({
     required this.children,
     super.key,
@@ -127,12 +125,25 @@ class ResponsiveGrid extends StatelessWidget {
     this.childAspectRatio = 1,
   });
 
+  /// Grid children widgets.
   final List<Widget> children;
+
+  /// Number of columns on mobile screens.
   final int mobileColumns;
+
+  /// Number of columns on tablet screens.
   final int tabletColumns;
+
+  /// Number of columns on desktop screens.
   final int desktopColumns;
+
+  /// Horizontal spacing between grid items.
   final double spacing;
+
+  /// Vertical spacing between grid items.
   final double runSpacing;
+
+  /// Aspect ratio of grid children.
   final double childAspectRatio;
 
   @override
@@ -165,8 +176,9 @@ class ResponsiveGrid extends StatelessWidget {
   }
 }
 
-/// A widget that shows/hides content based on screen size.
+/// A widget that conditionally shows content based on screen size.
 class ResponsiveVisibility extends StatelessWidget {
+  /// Creates a [ResponsiveVisibility].
   const ResponsiveVisibility({
     required this.child,
     super.key,
@@ -176,10 +188,19 @@ class ResponsiveVisibility extends StatelessWidget {
     this.replacement,
   });
 
+  /// Widget to display when visible.
   final Widget child;
+
+  /// Whether the widget is visible on mobile screens.
   final bool visibleOnMobile;
+
+  /// Whether the widget is visible on tablet screens.
   final bool visibleOnTablet;
+
+  /// Whether the widget is visible on desktop screens.
   final bool visibleOnDesktop;
+
+  /// Widget shown when not visible.
   final Widget? replacement;
 
   @override
@@ -195,8 +216,7 @@ class ResponsiveVisibility extends StatelessWidget {
           visible = visibleOnMobile;
         }
 
-        if (visible) return child;
-        return replacement ?? const SizedBox.shrink();
+        return visible ? child : replacement ?? const SizedBox.shrink();
       },
     );
   }

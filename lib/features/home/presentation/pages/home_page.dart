@@ -9,6 +9,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/presentation/provid
 
 /// Home page shown after successful authentication.
 class HomePage extends ConsumerWidget {
+  /// Creates a [HomePage] instance.
   const HomePage({super.key});
 
   @override

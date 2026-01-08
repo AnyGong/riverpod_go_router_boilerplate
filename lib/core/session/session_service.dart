@@ -55,6 +55,7 @@ typedef InvalidateProvidersCallback = void Function(Ref ref);
 /// };
 /// ```
 class SessionService {
+  /// Creates a [SessionService].
   SessionService(this._ref);
 
   final Ref _ref;

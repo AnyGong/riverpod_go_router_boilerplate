@@ -9,6 +9,7 @@ import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboardi
 
 /// Onboarding page data model
 class OnboardingPageData {
+  /// Creates an [OnboardingPageData] instance.
   const OnboardingPageData({
     required this.title,
     required this.description,
@@ -16,9 +17,16 @@ class OnboardingPageData {
     this.color,
   });
 
+  /// Title of the onboarding page
   final String title;
+
+  /// Description of the onboarding page
   final String description;
+
+  /// Icon representing the onboarding page
   final IconData icon;
+
+  /// Optional color for the icon background
   final Color? color;
 }
 
@@ -45,6 +53,7 @@ const _pages = [
 
 /// Onboarding page shown to first-time users.
 class OnboardingPage extends HookConsumerWidget {
+  /// Creates an [OnboardingPage] instance.
   const OnboardingPage({super.key});
 
   @override

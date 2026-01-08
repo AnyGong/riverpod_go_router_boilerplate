@@ -105,6 +105,7 @@ Future<bool> biometricEnabled(final Ref ref) async {
 
 /// Biometric authentication service using local_auth.
 class BiometricService {
+  /// Creates a [BiometricService] instance.
   BiometricService(this._ref);
 
   final Ref _ref;

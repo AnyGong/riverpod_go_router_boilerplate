@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// This is a stub implementation - replace with Firebase Remote Config,
 /// LaunchDarkly, or your preferred remote config solution.
 class RemoteConfig {
+  /// Creates a [RemoteConfig] instance.
   const RemoteConfig({
     this.isMaintenanceMode = false,
     this.maintenanceMessage,
@@ -15,16 +16,27 @@ class RemoteConfig {
     this.featureFlags = const {},
   });
 
+  /// Whether the app is in maintenance mode.
   final bool isMaintenanceMode;
+
+  /// Optional maintenance message to display to users.
   final String? maintenanceMessage;
+
+  /// Minimum required app version.
   final String? minimumVersion;
+
+  /// Whether a force update is required.
   final bool forceUpdate;
+
+  /// Feature flags for enabling/disabling features.
   final Map<String, bool> featureFlags;
 
+  /// Get the value of a feature flag by key.
   bool getFlag(final String key, {final bool defaultValue = false}) {
     return featureFlags[key] ?? defaultValue;
   }
 
+  /// Returns a copy of this config with the given fields replaced.
   RemoteConfig copyWith({
     final bool? isMaintenanceMode,
     final String? maintenanceMessage,
@@ -46,12 +58,16 @@ class RemoteConfig {
 ///
 /// Stub implementation - replace internals with your remote config provider.
 class RemoteConfigService {
+  /// Creates a [RemoteConfigService] instance.
   RemoteConfigService();
 
   RemoteConfig _currentConfig = const RemoteConfig();
   final _configController = StreamController<RemoteConfig>.broadcast();
 
+  /// Current remote configuration.
   RemoteConfig get currentConfig => _currentConfig;
+
+  /// Stream of remote configuration updates.
   Stream<RemoteConfig> get configStream => _configController.stream;
 
   /// Fetch the latest configuration from remote.
@@ -106,6 +122,7 @@ class RemoteConfigService {
     updateConfig(_currentConfig.copyWith(featureFlags: newFlags));
   }
 
+  /// Dispose the service and close streams.
   void dispose() {
     _configController.close();
   }

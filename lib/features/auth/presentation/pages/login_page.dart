@@ -6,6 +6,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/presentation/provid
 
 /// Login page for user authentication.
 class LoginPage extends ConsumerStatefulWidget {
+  /// Creates a [LoginPage] instance.
   const LoginPage({super.key});
 
   @override

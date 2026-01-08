@@ -24,7 +24,7 @@ part 'secure_storage.g.dart';
 FlutterSecureStorage secureStorage(final Ref ref) {
   return const FlutterSecureStorage(
     aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
+      // encryptedSharedPreferences: true, // deprecated, isn't needed with latest versions
       // resetOnError: true, // Uncomment to reset storage on decryption errors
     ),
     iOptions: IOSOptions(
@@ -36,8 +36,15 @@ FlutterSecureStorage secureStorage(final Ref ref) {
 
 /// Storage keys used throughout the app.
 abstract class StorageKeys {
+  /// Key for storing access token
   static const String accessToken = 'access_token';
+
+  /// Key for storing refresh token
   static const String refreshToken = 'refresh_token';
+
+  /// Key for storing user ID
   static const String userId = 'user_id';
+
+  /// Key for storing onboarding completion status
   static const String onboardingCompleted = 'onboarding_completed';
 }

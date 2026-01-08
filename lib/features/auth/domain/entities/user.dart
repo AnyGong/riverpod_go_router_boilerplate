@@ -12,6 +12,7 @@ part 'user.g.dart';
 /// - JSON serialization
 @freezed
 abstract class User with _$User {
+  /// Creates a [User] instance.
   const factory User({
     required final String id,
     required final String email,
@@ -21,6 +22,7 @@ abstract class User with _$User {
     final DateTime? createdAt,
   }) = _User;
 
+  /// Creates a [User] instance from JSON.
   factory User.fromJson(final Map<String, dynamic> json) =>
       _$UserFromJson(json);
 }

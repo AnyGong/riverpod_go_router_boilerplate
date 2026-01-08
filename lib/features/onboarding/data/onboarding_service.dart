@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for managing onboarding state.
 class OnboardingService {
+  /// Creates an [OnboardingService] instance.
   OnboardingService(this._prefs);
 
   final SharedPreferences _prefs;

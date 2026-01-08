@@ -39,12 +39,25 @@ part 'app_router.g.dart';
 /// if (AppRoute.settings.requiresAuth) { ... }
 /// ```
 enum AppRoute {
+  /// Splash screen shown during app initialization.
   splash('/splash', requiresAuth: false),
+
+  /// Login screen for user authentication.
   login('/login', requiresAuth: false),
+
+  /// Home screen shown after successful login.
   home('/', requiresAuth: true),
+
+  /// Onboarding screen shown to new users.
   onboarding('/onboarding', requiresAuth: false),
+
+  /// Maintenance screen shown during downtime.
   maintenance('/maintenance', requiresAuth: false),
+
+  /// User profile screen.
   profile('/profile', requiresAuth: true),
+
+  /// Settings screen for user preferences.
   settings('/settings', requiresAuth: true),
   // Example dynamic routes (uncomment and customize as needed):
   // productDetail('/product/:id', requiresAuth: true),

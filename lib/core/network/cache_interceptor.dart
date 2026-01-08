@@ -39,6 +39,7 @@ import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 /// dio.get('/users', options: Options(extra: {'forceRefresh': true}));
 /// ```
 class CacheInterceptor extends Interceptor {
+  /// Creates a [CacheInterceptor] instance.
   CacheInterceptor({
     required this.cacheService,
     required this.connectivityService,
@@ -47,10 +48,19 @@ class CacheInterceptor extends Interceptor {
     this.cacheBoxName = apiCacheBoxName,
   });
 
+  /// Cache service for storing/retrieving cached responses.
   final CacheService cacheService;
+
+  /// Connectivity service to check online/offline status.
   final ConnectivityService connectivityService;
+
+  /// Optional logger for debugging.
   final AppLogger? logger;
+
+  /// Default cache duration if not specified per request.
   final Duration defaultDuration;
+
+  /// Name of the cache box/category to use.
   final String cacheBoxName;
 
   /// Extra key to disable caching for a request.

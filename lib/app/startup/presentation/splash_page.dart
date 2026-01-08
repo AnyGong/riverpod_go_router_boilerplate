@@ -17,6 +17,7 @@ import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.
 /// - Onboarding state
 /// - Auth state resolution
 class SplashPage extends ConsumerStatefulWidget {
+  /// Creates the [SplashPage] widget.
   const SplashPage({super.key});
 
   @override

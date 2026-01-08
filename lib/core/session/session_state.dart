@@ -21,6 +21,7 @@ sealed class SessionState {
 
 /// Session is being restored or validated
 final class SessionLoading extends SessionState {
+  /// Creates a [SessionLoading] instance.
   const SessionLoading();
 
   @override
@@ -29,11 +30,16 @@ final class SessionLoading extends SessionState {
 
 /// User has an active, valid session
 final class SessionActive extends SessionState {
+  /// Creates a [SessionActive] instance.
   const SessionActive({required this.userId, this.expiresAt});
 
+  /// The ID of the authenticated user.
   final String userId;
+
+  /// The optional expiration time of the session.
   final DateTime? expiresAt;
 
+  /// Whether the session is expiring soon (within 5 minutes).
   bool get isExpiringSoon {
     if (expiresAt == null) return false;
     final timeUntilExpiry = expiresAt!.difference(DateTime.now());
@@ -46,6 +52,7 @@ final class SessionActive extends SessionState {
 
 /// No active session (user logged out or never logged in)
 final class SessionInactive extends SessionState {
+  /// Creates a [SessionInactive] instance.
   const SessionInactive();
 
   @override
@@ -54,8 +61,10 @@ final class SessionInactive extends SessionState {
 
 /// Session expired and needs re-authentication
 final class SessionExpired extends SessionState {
+  /// Creates a [SessionExpired] instance.
   const SessionExpired({this.reason});
 
+  /// The reason why the session expired, if available.
   final String? reason;
 
   @override

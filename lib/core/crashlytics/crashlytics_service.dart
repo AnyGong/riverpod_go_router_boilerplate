@@ -54,6 +54,7 @@ CrashlyticsService crashlyticsService(final Ref ref) {
 
 /// Firebase Crashlytics wrapper service.
 class CrashlyticsService {
+  /// Creates a [CrashlyticsService] instance.
   CrashlyticsService(this._ref);
 
   final Ref _ref;

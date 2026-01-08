@@ -1,35 +1,26 @@
 /// Environment configuration for the app.
-/// Configure different settings for dev, staging, and production.
 ///
-/// Supports both runtime switching and compile-time configuration via `--dart-define`.
+/// Configure different settings for `dev`, `staging`, and `prod`. Values can
+/// be provided at compile-time through `--dart-define` or at runtime via
+/// `EnvConfig.initialize` for development/testing.
 ///
-/// ## Compile-time Configuration (Recommended for Production)
-///
-/// Use `--dart-define` to set values at compile time, keeping secrets out of source:
+/// Example (compile-time):
 /// ```bash
 /// flutter build apk \
 ///   --dart-define=ENV=prod \
 ///   --dart-define=BASE_URL=https://api.myapp.com \
 ///   --dart-define=API_KEY=your_secret_key
 /// ```
-///
-/// Or in your launch.json / VS Code configuration:
-/// ```json
-/// {
-///   "args": [
-///     "--dart-define=ENV=prod",
-///     "--dart-define=BASE_URL=https://api.myapp.com"
-///   ]
-/// }
-/// ```
-///
-/// ## Runtime Configuration (For Development)
-///
-/// Call [initialize] in main() for development/testing:
-/// ```dart
-/// EnvConfig.initialize(environment: Environment.dev);
-/// ```
-enum Environment { dev, staging, prod }
+enum Environment {
+  /// Development environment. Uses development backend and mocks by default.
+  dev,
+
+  /// Staging environment. Useful for pre-release testing against staging APIs.
+  staging,
+
+  /// Production environment. Use when building release artifacts.
+  prod,
+}
 
 /// Runtime environment configuration.
 ///
@@ -38,9 +29,10 @@ enum Environment { dev, staging, prod }
 ///
 /// **Priority:** Compile-time values (`--dart-define`) take precedence over runtime values.
 class EnvConfig {
+  /// Private constructor to prevent instantiation.
   EnvConfig._();
 
-  // Compile-time constants from --dart-define
+  // Compile-time constants sourced from `--dart-define`.
   static const String _dartDefineEnv = String.fromEnvironment('ENV');
   static const String _dartDefineBaseUrl = String.fromEnvironment('BASE_URL');
   static const String _dartDefineApiKey = String.fromEnvironment('API_KEY');
@@ -64,8 +56,10 @@ class EnvConfig {
 
   /// Initialize the environment configuration.
   ///
-  /// Call this in main() before runApp().
-  /// Compile-time values from `--dart-define` take precedence.
+  /// Call this in `main()` before `runApp()` for runtime configuration in
+  /// development. When compile-time values are provided via `--dart-define`,
+  /// they take precedence and will be used instead of the runtime
+  /// `environment` parameter.
   ///
   /// Example:
   /// ```dart
@@ -103,6 +97,7 @@ class EnvConfig {
     _isInitialized = true;
   }
 
+  /// Parse a string into an [Environment]. Accepts common aliases.
   static Environment _parseEnvironment(final String env) {
     return switch (env.toLowerCase()) {
       'prod' || 'production' => Environment.prod,
@@ -111,6 +106,7 @@ class EnvConfig {
     };
   }
 
+  /// Resolve the default base URL for a given [Environment].
   static String _getBaseUrl(final Environment env) {
     return switch (env) {
       Environment.dev => 'https://dev-api.example.com',
@@ -119,7 +115,7 @@ class EnvConfig {
     };
   }
 
-  /// Current environment.
+  /// Current environment. This value is set after calling [initialize].
   static Environment get environment => _environment;
 
   /// Whether the app is running in development mode.
@@ -131,17 +127,21 @@ class EnvConfig {
   /// Whether the app is running in production mode.
   static bool get isProd => _environment == Environment.prod;
 
-  /// Base URL for API calls.
+  /// Base URL for API calls. Derived from environment or `--dart-define`.
   static String get baseUrl => _baseUrl;
 
   /// API key for authenticated requests.
-  /// Will be empty string if not configured via --dart-define.
+  ///
+  /// This will be an empty string when not provided via `--dart-define`.
   static String get apiKey => _apiKey;
 
-  /// Whether logging is enabled.
+  /// Whether logging is enabled. Determined by `--dart-define` or enabled
+  /// by default for non-production environments.
   static bool get enableLogging => _enableLogging;
 
   /// Whether to use mock repositories instead of remote ones.
-  /// Returns true for dev and staging, false for production.
+  ///
+  /// Defaults to `true` for dev/staging when not overridden by
+  /// `--dart-define=USE_MOCKS`.
   static bool get useMockRepositories => _useMockRepositories;
 }

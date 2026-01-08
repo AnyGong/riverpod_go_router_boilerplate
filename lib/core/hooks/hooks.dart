@@ -92,6 +92,7 @@ T useDebounced<T>(final T value, final Duration delay) {
 /// asyncState.execute(() => fetchUser());
 /// ```
 class AsyncState<T> {
+  /// Creates an [AsyncState] instance.
   AsyncState({
     required this.data,
     required this.isLoading,
@@ -100,13 +101,23 @@ class AsyncState<T> {
     required this.reset,
   });
 
+  /// Current data value.
   final T? data;
+
+  /// Whether the async operation is in progress.
   final bool isLoading;
+
+  /// Error object if the operation failed.
   final Object? error;
+
+  /// Executes the given async operation and manages state.
   final Future<void> Function(Future<T> Function() operation) execute;
+
+  /// Resets the state to initial values.
   final VoidCallback reset;
 }
 
+/// Hook for managing async operations with loading/error states.
 AsyncState<T> useAsyncState<T>() {
   final data = useState<T?>(null);
   final isLoading = useState(false);
@@ -207,6 +218,7 @@ PageController usePageController({final int initialPage = 0}) {
 /// countdown.start();
 /// ```
 class CountdownState {
+  /// Creates a [CountdownState] instance.
   CountdownState({
     required this.remaining,
     required this.isRunning,
@@ -215,13 +227,23 @@ class CountdownState {
     required this.reset,
   });
 
+  /// Seconds remaining in the countdown.
   final int remaining;
+
+  /// Whether the countdown is currently running.
   final bool isRunning;
+
+  /// Starts the countdown.
   final VoidCallback start;
+
+  /// Pauses the countdown.
   final VoidCallback pause;
+
+  /// Resets the countdown to the initial value or a new value.
   final void Function([int?]) reset;
 }
 
+/// Hook for counting down from a value.
 CountdownState useCountdown(final int initialSeconds) {
   final remaining = useState(initialSeconds);
   final isRunning = useState(false);

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// A primary button with consistent styling.
+/// A configurable button with consistent app styling.
 class AppButton extends StatelessWidget {
+  /// Creates an [AppButton].
   const AppButton({
     required this.onPressed,
     required this.label,
@@ -13,12 +14,25 @@ class AppButton extends StatelessWidget {
     this.size = AppButtonSize.medium,
   });
 
+  /// Callback invoked when the button is pressed.
   final VoidCallback? onPressed;
+
+  /// Text label displayed on the button.
   final String label;
+
+  /// Optional icon displayed before the label.
   final IconData? icon;
+
+  /// Whether to show a loading indicator instead of content.
   final bool isLoading;
+
+  /// Whether the button expands to full available width.
   final bool isExpanded;
+
+  /// Visual style variant of the button.
   final AppButtonVariant variant;
+
+  /// Size configuration of the button.
   final AppButtonSize size;
 
   @override
@@ -68,10 +82,9 @@ class AppButton extends StatelessWidget {
       ),
     };
 
-    if (isExpanded) {
-      return SizedBox(width: double.infinity, child: button);
-    }
-    return button;
+    return isExpanded
+        ? SizedBox(width: double.infinity, child: button)
+        : button;
   }
 
   double get _iconSize => switch (size) {
@@ -109,12 +122,33 @@ class AppButton extends StatelessWidget {
   };
 }
 
-enum AppButtonVariant { primary, secondary, text }
+/// Visual variants for [AppButton].
+enum AppButtonVariant {
+  /// Primary filled button.
+  primary,
 
-enum AppButtonSize { small, medium, large }
+  /// Secondary outlined button.
+  secondary,
 
-/// An icon button with consistent styling.
+  /// Text-only button.
+  text,
+}
+
+/// Size options for [AppButton].
+enum AppButtonSize {
+  /// Small button size.
+  small,
+
+  /// Medium button size.
+  medium,
+
+  /// Large button size.
+  large,
+}
+
+/// An icon-only button with consistent styling.
 class AppIconButton extends StatelessWidget {
+  /// Creates an [AppIconButton].
   const AppIconButton({
     required this.icon,
     required this.onPressed,
@@ -125,16 +159,27 @@ class AppIconButton extends StatelessWidget {
     this.isLoading = false,
   });
 
+  /// Icon displayed inside the button.
   final IconData icon;
+
+  /// Callback invoked when the button is pressed.
   final VoidCallback? onPressed;
+
+  /// Optional tooltip text.
   final String? tooltip;
+
+  /// Visual style variant of the icon button.
   final AppIconButtonVariant variant;
+
+  /// Icon size.
   final double size;
+
+  /// Whether to show a loading indicator instead of the icon.
   final bool isLoading;
 
   @override
   Widget build(final BuildContext context) {
-    final button = switch (variant) {
+    return switch (variant) {
       AppIconButtonVariant.standard => IconButton(
         onPressed: isLoading ? null : onPressed,
         icon: _buildIcon(context),
@@ -160,8 +205,6 @@ class AppIconButton extends StatelessWidget {
         tooltip: tooltip,
       ),
     };
-
-    return button;
   }
 
   Widget _buildIcon(final BuildContext context) {
@@ -176,4 +219,17 @@ class AppIconButton extends StatelessWidget {
   }
 }
 
-enum AppIconButtonVariant { standard, filled, outlined, filledTonal }
+/// Visual variants for [AppIconButton].
+enum AppIconButtonVariant {
+  /// Standard icon button.
+  standard,
+
+  /// Filled icon button.
+  filled,
+
+  /// Outlined icon button.
+  outlined,
+
+  /// Filled tonal icon button.
+  filledTonal,
+}

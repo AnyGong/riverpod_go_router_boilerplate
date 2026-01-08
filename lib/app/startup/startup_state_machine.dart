@@ -18,6 +18,7 @@ sealed class StartupState {
 /// App is under maintenance – nothing else is accessible.
 /// This state always takes priority over all other states.
 final class MaintenanceState extends StartupState {
+  /// Creates a [MaintenanceState] instance.
   const MaintenanceState();
 
   @override
@@ -27,6 +28,7 @@ final class MaintenanceState extends StartupState {
 /// User must complete onboarding before accessing the app.
 /// Takes priority over authentication states.
 final class OnboardingState extends StartupState {
+  /// Creates an [OnboardingState] instance.
   const OnboardingState();
 
   @override
@@ -35,6 +37,7 @@ final class OnboardingState extends StartupState {
 
 /// User must authenticate before accessing protected features.
 final class UnauthenticatedState extends StartupState {
+  /// Creates an [UnauthenticatedState] instance.
   const UnauthenticatedState();
 
   @override
@@ -43,6 +46,7 @@ final class UnauthenticatedState extends StartupState {
 
 /// User is authenticated and can access protected features.
 final class AuthenticatedState extends StartupState {
+  /// Creates an [AuthenticatedState] instance.
   const AuthenticatedState();
 
   @override
@@ -52,6 +56,7 @@ final class AuthenticatedState extends StartupState {
 /// App does not require authentication at all.
 /// For apps that are fully public.
 final class PublicState extends StartupState {
+  /// Creates a [PublicState] instance.
   const PublicState();
 
   @override

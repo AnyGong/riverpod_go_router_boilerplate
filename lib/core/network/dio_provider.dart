@@ -108,6 +108,7 @@ typedef TokenRefreshCallback =
 /// )
 /// ```
 class AuthInterceptor extends QueuedInterceptor {
+  /// Creates an [AuthInterceptor] instance.
   AuthInterceptor(
     this._ref, {
     required this.parentDio,
@@ -217,14 +218,20 @@ class AuthInterceptor extends QueuedInterceptor {
 
 /// Interceptor for retrying failed requests.
 class RetryInterceptor extends Interceptor {
+  /// Creates a [RetryInterceptor] instance.
   RetryInterceptor(
     this._dio, {
     this.maxRetries = AppConstants.maxRetryAttempts,
     this.retryDelays,
   });
 
+  /// The Dio instance used to retry requests.
   final Dio _dio;
+
+  /// Maximum number of retry attempts.
   final int maxRetries;
+
+  /// Optional list of delays between retries.
   final List<Duration>? retryDelays;
 
   static const _retryKey = 'retry_count';
@@ -272,6 +279,7 @@ class RetryInterceptor extends Interceptor {
 
 /// Interceptor for logging requests and responses.
 class LoggingInterceptor extends Interceptor {
+  /// Creates a [LoggingInterceptor] instance.
   LoggingInterceptor(this._ref);
   final Ref _ref;
 

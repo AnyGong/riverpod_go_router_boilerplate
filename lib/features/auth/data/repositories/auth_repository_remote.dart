@@ -28,12 +28,15 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// }
 /// ```
 class AuthRepositoryRemote implements AuthRepository {
+  /// Creates a [AuthRepositoryRemote] instance.
   AuthRepositoryRemote({
     required final ApiClient apiClient,
     required this.secureStorage,
   }) : _apiClient = apiClient;
 
   final ApiClient _apiClient;
+
+  /// Secure storage for storing tokens.
   final FlutterSecureStorage secureStorage;
 
   @override

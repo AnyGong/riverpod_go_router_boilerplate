@@ -2,17 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// A cached network image widget with loading and error states.
+/// A cached network image widget with built-in loading and error states.
 ///
-/// Usage:
-/// ```dart
-/// AppCachedImage(
-///   imageUrl: 'https://example.com/image.jpg',
-///   width: 100,
-///   height: 100,
-/// )
-/// ```
+/// Displays a shimmer placeholder while loading and a fallback
+/// widget when the image fails to load.
 class AppCachedImage extends StatelessWidget {
+  /// Creates an [AppCachedImage].
   const AppCachedImage({
     required this.imageUrl,
     super.key,
@@ -24,12 +19,25 @@ class AppCachedImage extends StatelessWidget {
     this.errorWidget,
   });
 
+  /// URL of the image to load.
   final String imageUrl;
+
+  /// Optional width of the image.
   final double? width;
+
+  /// Optional height of the image.
   final double? height;
+
+  /// How the image should be inscribed into the space.
   final BoxFit fit;
+
+  /// Optional border radius applied to the image.
   final BorderRadius? borderRadius;
+
+  /// Optional custom placeholder widget.
   final Widget? placeholder;
+
+  /// Optional custom error widget.
   final Widget? errorWidget;
 
   @override
@@ -90,8 +98,12 @@ class _ErrorPlaceholder extends StatelessWidget {
   }
 }
 
-/// A circular cached avatar image.
+/// A circular cached avatar image widget.
+///
+/// Falls back to a placeholder avatar when the image URL is null,
+/// empty, or fails to load.
 class AppCachedAvatar extends StatelessWidget {
+  /// Creates an [AppCachedAvatar].
   const AppCachedAvatar({
     required this.imageUrl,
     super.key,
@@ -99,8 +111,15 @@ class AppCachedAvatar extends StatelessWidget {
     this.placeholder,
   });
 
+  /// URL of the avatar image.
+  ///
+  /// If null or empty, a fallback avatar is shown.
   final String? imageUrl;
+
+  /// Radius of the avatar.
   final double radius;
+
+  /// Optional widget displayed when no image is available.
   final Widget? placeholder;
 
   @override

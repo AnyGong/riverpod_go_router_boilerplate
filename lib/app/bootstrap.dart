@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Bootstrap the application.
 /// Handles initialization, error handling, and app startup.
 class AppBootstrap extends StatelessWidget {
+  /// Creates the [AppBootstrap] widget.
   const AppBootstrap({super.key});
 
   /// Initialize the app before running.

@@ -9,6 +9,7 @@ import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.
 
 /// The root application widget.
 class App extends ConsumerWidget {
+  /// Creates the root [App] widget.
   const App({super.key});
 
   @override

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// A widget that displays loading, error, or data states for an [AsyncValue].
+/// A widget that renders loading, error, or data states
+/// for a Riverpod [AsyncValue].
 ///
-/// Example:
-/// ```dart
-/// AsyncValueWidget<User>(
-///   value: ref.watch(userProvider),
-///   data: (user) => Text(user.name),
-/// )
-/// ```
+/// Simplifies handling common async UI patterns.
 class AsyncValueWidget<T> extends StatelessWidget {
+  /// Creates an [AsyncValueWidget].
   const AsyncValueWidget({
     required this.value,
     required this.data,
@@ -21,24 +17,22 @@ class AsyncValueWidget<T> extends StatelessWidget {
     this.skipLoadingOnReload = false,
   });
 
-  /// The [AsyncValue] to display.
+  /// The async value to render.
   final AsyncValue<T> value;
 
   /// Builder for the data state.
   final Widget Function(T data) data;
 
   /// Optional builder for the loading state.
-  /// Defaults to a centered [CircularProgressIndicator].
   final Widget Function()? loading;
 
   /// Optional builder for the error state.
-  /// Defaults to a centered error message with retry option.
   final Widget Function(Object error, StackTrace stackTrace)? error;
 
-  /// Whether to skip showing loading indicator on refresh.
+  /// Whether to skip the loading indicator during refresh.
   final bool skipLoadingOnRefresh;
 
-  /// Whether to skip showing loading indicator on reload.
+  /// Whether to skip the loading indicator during reload.
   final bool skipLoadingOnReload;
 
   @override
@@ -53,8 +47,9 @@ class AsyncValueWidget<T> extends StatelessWidget {
   }
 }
 
-/// A widget that displays a loading indicator.
+/// A widget that displays a centered loading indicator.
 class LoadingWidget extends StatelessWidget {
+  /// Creates a [LoadingWidget].
   const LoadingWidget({
     super.key,
     this.size = 40.0,
@@ -62,8 +57,13 @@ class LoadingWidget extends StatelessWidget {
     this.message,
   });
 
+  /// Size of the loading indicator.
   final double size;
+
+  /// Stroke width of the loading indicator.
   final double strokeWidth;
+
+  /// Optional message displayed below the indicator.
   final String? message;
 
   @override
@@ -92,8 +92,9 @@ class LoadingWidget extends StatelessWidget {
   }
 }
 
-/// A widget that displays an error message with optional retry action.
+/// A widget that displays an error message with an optional retry action.
 class ErrorWidget extends StatelessWidget {
+  /// Creates an [ErrorWidget].
   const ErrorWidget({
     required this.message,
     super.key,
@@ -101,7 +102,7 @@ class ErrorWidget extends StatelessWidget {
     this.icon = Icons.error_outline,
   });
 
-  /// Build an error widget from an exception.
+  /// Builds an [ErrorWidget] from an error object.
   factory ErrorWidget.builder({
     required final Object error,
     final VoidCallback? onRetry,
@@ -109,8 +110,13 @@ class ErrorWidget extends StatelessWidget {
     return ErrorWidget(message: error.toString(), onRetry: onRetry);
   }
 
+  /// Error message to display.
   final String message;
+
+  /// Optional retry callback.
   final VoidCallback? onRetry;
+
+  /// Icon displayed above the message.
   final IconData icon;
 
   @override
@@ -125,7 +131,10 @@ class ErrorWidget extends StatelessWidget {
           children: [
             Icon(icon, size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text('Something went wrong', style: theme.textTheme.titleMedium),
+            Text(
+              'Something went wrong',
+              style: theme.textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             Text(
               message,
@@ -147,8 +156,9 @@ class ErrorWidget extends StatelessWidget {
   }
 }
 
-/// A widget that displays an empty state.
+/// A widget that displays an empty or no-content state.
 class EmptyWidget extends StatelessWidget {
+  /// Creates an [EmptyWidget].
   const EmptyWidget({
     required this.message,
     super.key,
@@ -157,9 +167,16 @@ class EmptyWidget extends StatelessWidget {
     this.actionLabel,
   });
 
+  /// Message describing the empty state.
   final String message;
+
+  /// Icon displayed above the message.
   final IconData icon;
+
+  /// Optional action callback.
   final VoidCallback? action;
+
+  /// Label for the optional action button.
   final String? actionLabel;
 
   @override
@@ -181,7 +198,10 @@ class EmptyWidget extends StatelessWidget {
             ),
             if (action != null && actionLabel != null) ...[
               const SizedBox(height: 24),
-              ElevatedButton(onPressed: action, child: Text(actionLabel!)),
+              ElevatedButton(
+                onPressed: action,
+                child: Text(actionLabel!),
+              ),
             ],
           ],
         ),

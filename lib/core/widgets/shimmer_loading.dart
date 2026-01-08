@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// A shimmer loading placeholder for content.
+/// A shimmer loading wrapper for arbitrary content.
 ///
-/// Usage:
-/// ```dart
-/// ShimmerLoading(
-///   child: Container(
-///     width: 100,
-///     height: 100,
-///     color: Colors.white,
-///   ),
-/// )
-/// ```
+/// Applies a shimmer effect to the given child widget.
 class ShimmerLoading extends StatelessWidget {
+  /// Creates a [ShimmerLoading] widget.
   const ShimmerLoading({
     required this.child,
     super.key,
@@ -21,8 +13,13 @@ class ShimmerLoading extends StatelessWidget {
     this.highlightColor,
   });
 
+  /// Widget to apply the shimmer effect to.
   final Widget child;
+
+  /// Base color of the shimmer animation.
   final Color? baseColor;
+
+  /// Highlight color of the shimmer animation.
   final Color? highlightColor;
 
   @override
@@ -38,8 +35,9 @@ class ShimmerLoading extends StatelessWidget {
   }
 }
 
-/// A shimmer loading placeholder for a single line of text.
+/// A shimmer loading placeholder representing a single line of text.
 class ShimmerLine extends StatelessWidget {
+  /// Creates a [ShimmerLine].
   const ShimmerLine({
     super.key,
     this.width,
@@ -47,8 +45,13 @@ class ShimmerLine extends StatelessWidget {
     this.borderRadius = 4,
   });
 
+  /// Optional width of the line.
   final double? width;
+
+  /// Height of the line.
   final double height;
+
+  /// Border radius applied to the line.
   final double borderRadius;
 
   @override
@@ -66,10 +69,12 @@ class ShimmerLine extends StatelessWidget {
   }
 }
 
-/// A shimmer loading placeholder for a circle (avatar).
+/// A shimmer loading placeholder representing a circular avatar.
 class ShimmerCircle extends StatelessWidget {
+  /// Creates a [ShimmerCircle].
   const ShimmerCircle({super.key, this.size = 48});
 
+  /// Diameter of the circle.
   final double size;
 
   @override
@@ -87,12 +92,23 @@ class ShimmerCircle extends StatelessWidget {
   }
 }
 
-/// A shimmer loading placeholder for a card/container.
+/// A shimmer loading placeholder for rectangular content.
 class ShimmerBox extends StatelessWidget {
-  const ShimmerBox({super.key, this.width, this.height, this.borderRadius = 8});
+  /// Creates a [ShimmerBox].
+  const ShimmerBox({
+    super.key,
+    this.width,
+    this.height,
+    this.borderRadius = 8,
+  });
 
+  /// Optional width of the box.
   final double? width;
+
+  /// Optional height of the box.
   final double? height;
+
+  /// Border radius applied to the box.
   final double borderRadius;
 
   @override
@@ -110,8 +126,9 @@ class ShimmerBox extends StatelessWidget {
   }
 }
 
-/// A shimmer loading placeholder for a list tile.
+/// A shimmer loading placeholder resembling a list tile.
 class ShimmerListTile extends StatelessWidget {
+  /// Creates a [ShimmerListTile].
   const ShimmerListTile({
     super.key,
     this.hasLeading = true,
@@ -119,8 +136,13 @@ class ShimmerListTile extends StatelessWidget {
     this.lines = 2,
   });
 
+  /// Whether to display a leading avatar placeholder.
   final bool hasLeading;
+
+  /// Whether to display a trailing placeholder.
   final bool hasTrailing;
+
+  /// Number of text lines to display.
   final int lines;
 
   @override
@@ -129,7 +151,10 @@ class ShimmerListTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         children: [
-          if (hasLeading) ...[const ShimmerCircle(), const SizedBox(width: 16)],
+          if (hasLeading) ...[
+            const ShimmerCircle(),
+            const SizedBox(width: 16),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,11 +184,19 @@ class ShimmerListTile extends StatelessWidget {
   }
 }
 
-/// A shimmer loading placeholder for a card with image and text.
+/// A shimmer loading placeholder for a card layout.
 class ShimmerCard extends StatelessWidget {
-  const ShimmerCard({super.key, this.width, this.imageHeight = 120});
+  /// Creates a [ShimmerCard].
+  const ShimmerCard({
+    super.key,
+    this.width,
+    this.imageHeight = 120,
+  });
 
+  /// Optional width of the card.
   final double? width;
+
+  /// Height of the image placeholder.
   final double imageHeight;
 
   @override
@@ -204,8 +237,9 @@ class ShimmerCard extends StatelessWidget {
   }
 }
 
-/// A list of shimmer loading placeholders.
+/// A non-scrollable list of shimmer loading placeholders.
 class ShimmerList extends StatelessWidget {
+  /// Creates a [ShimmerList].
   const ShimmerList({
     super.key,
     this.itemCount = 5,
@@ -214,9 +248,16 @@ class ShimmerList extends StatelessWidget {
     this.lines = 2,
   });
 
+  /// Number of list items to display.
   final int itemCount;
+
+  /// Whether each item shows a leading placeholder.
   final bool hasLeading;
+
+  /// Whether each item shows a trailing placeholder.
   final bool hasTrailing;
+
+  /// Number of text lines per item.
   final int lines;
 
   @override

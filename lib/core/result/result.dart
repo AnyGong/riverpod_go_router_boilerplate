@@ -141,7 +141,10 @@ sealed class Result<T> {
 /// Represents a successful result with data.
 @immutable
 final class Success<T> extends Result<T> {
+  /// Creates a [Success] instance with the given data.
   const Success(this.data);
+
+  /// The successful data value.
   final T data;
 
   @override
@@ -161,7 +164,10 @@ final class Success<T> extends Result<T> {
 /// Represents a failed result with an error.
 @immutable
 final class Failure<T> extends Result<T> {
+  /// Creates a [Failure] instance with the given error.
   const Failure(this.error);
+
+  /// The error that caused the failure.
   final AppException error;
 
   @override
@@ -183,8 +189,13 @@ final class Failure<T> extends Result<T> {
 sealed class AppException implements Exception {
   const AppException({required this.message, this.code, this.stackTrace});
 
+  /// Human-readable error message.
   final String message;
+
+  /// Optional error code for categorization.
   final String? code;
+
+  /// Optional stack trace for debugging.
   final StackTrace? stackTrace;
 
   @override
@@ -194,6 +205,7 @@ sealed class AppException implements Exception {
 
 /// Network-related exceptions.
 final class NetworkException extends AppException {
+  /// Creates a [NetworkException] instance.
   const NetworkException({
     required super.message,
     super.code,
@@ -201,14 +213,17 @@ final class NetworkException extends AppException {
     this.statusCode,
   });
 
+  /// Common factory constructors for typical network errors.
   factory NetworkException.noConnection() => const NetworkException(
     message: 'No internet connection',
     code: 'NO_CONNECTION',
   );
 
+  /// Timeout error
   factory NetworkException.timeout() =>
       const NetworkException(message: 'Request timed out', code: 'TIMEOUT');
 
+  /// Server error (5xx)
   factory NetworkException.serverError([final int? statusCode]) =>
       NetworkException(
         message: 'Server error occurred',
@@ -216,35 +231,42 @@ final class NetworkException extends AppException {
         statusCode: statusCode,
       );
 
+  /// Unauthorized (401)
   factory NetworkException.unauthorized() => const NetworkException(
     message: 'Unauthorized access',
     code: 'UNAUTHORIZED',
     statusCode: 401,
   );
 
+  /// Forbidden (403)
   final int? statusCode;
 }
 
 /// Authentication-related exceptions.
 final class AuthException extends AppException {
+  /// Creates an [AuthException] instance.
   const AuthException({required super.message, super.code, super.stackTrace});
 
+  /// Common factory constructors for typical auth errors.
   factory AuthException.invalidCredentials() => const AuthException(
     message: 'Invalid email or password',
     code: 'INVALID_CREDENTIALS',
   );
 
+  /// Session expired
   factory AuthException.sessionExpired() => const AuthException(
     message: 'Session expired. Please login again',
     code: 'SESSION_EXPIRED',
   );
 
+  /// No active session
   factory AuthException.noSession() =>
       const AuthException(message: 'No active session', code: 'NO_SESSION');
 }
 
 /// Validation-related exceptions.
 final class ValidationException extends AppException {
+  /// Creates a [ValidationException] instance.
   const ValidationException({
     required super.message,
     super.code,
@@ -252,16 +274,19 @@ final class ValidationException extends AppException {
     this.field,
   });
 
+  /// The field that failed validation, if applicable.
   final String? field;
 }
 
 /// Cache/Storage-related exceptions.
 final class CacheException extends AppException {
+  /// Creates a [CacheException] instance.
   const CacheException({required super.message, super.code, super.stackTrace});
 }
 
 /// Generic unexpected exception.
 final class UnexpectedException extends AppException {
+  /// Creates an [UnexpectedException] instance.
   const UnexpectedException({
     required super.message,
     super.code,
@@ -269,5 +294,6 @@ final class UnexpectedException extends AppException {
     this.originalError,
   });
 
+  /// The original error object, if available.
   final Object? originalError;
 }

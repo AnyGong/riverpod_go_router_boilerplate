@@ -58,6 +58,7 @@ abstract interface class ErrorConverter {
 /// - `{"error": "Error message"}`
 /// - `{"errors": ["Error 1", "Error 2"]}`
 class DefaultErrorConverter implements ErrorConverter {
+  /// Creates a [DefaultErrorConverter] instance.
   const DefaultErrorConverter();
 
   @override

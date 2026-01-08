@@ -3,26 +3,31 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Connectivity status representing network state
-enum ConnectivityStatus { connected, disconnected }
+/// Represents the current network connectivity state.
+enum ConnectivityStatus {
+  /// Device has an active network connection.
+  connected,
 
-/// Service for monitoring network connectivity.
+  /// Device has no network connection.
+  disconnected,
+}
+
+/// Service for monitoring network connectivity changes.
 ///
-/// Usage:
-/// ```dart
-/// final isOnline = ref.watch(isOnlineProvider);
-/// final status = ref.watch(connectivityStatusProvider);
-/// ```
+/// Exposes a stream of [ConnectivityStatus] and utility methods
+/// for checking the current connection state.
 class ConnectivityService {
+  /// Creates a [ConnectivityService] instance.
   ConnectivityService() : _connectivity = Connectivity();
 
   final Connectivity _connectivity;
   StreamSubscription<List<ConnectivityResult>>? _subscription;
   final _statusController = StreamController<ConnectivityStatus>.broadcast();
 
+  /// Stream emitting connectivity status updates.
   Stream<ConnectivityStatus> get statusStream => _statusController.stream;
 
-  /// Initialize connectivity monitoring
+  /// Initializes connectivity monitoring and emits the initial status.
   Future<void> initialize() async {
     final results = await _connectivity.checkConnectivity();
     _emitStatus(results);
@@ -41,27 +46,27 @@ class ConnectivityService {
     );
   }
 
-  /// Check current connectivity status
+  /// Returns whether the device is currently connected to a network.
   Future<bool> isConnected() async {
     final results = await _connectivity.checkConnectivity();
     return results.any((final result) => result != ConnectivityResult.none);
   }
 
-  /// Dispose the service
+  /// Disposes resources used by this service.
   void dispose() {
     _subscription?.cancel();
     _statusController.close();
   }
 }
 
-/// Provider for connectivity service
+/// Provides a singleton [ConnectivityService] instance.
 final connectivityServiceProvider = Provider<ConnectivityService>((final ref) {
   final service = ConnectivityService();
   ref.onDispose(service.dispose);
   return service;
 });
 
-/// Provider for connectivity status stream
+/// Provides a stream of [ConnectivityStatus] updates.
 final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((
   final ref,
 ) {
@@ -69,11 +74,14 @@ final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((
   return service.statusStream;
 });
 
-/// Provider for checking if device is online
+/// Indicates whether the device is currently online.
+///
+/// Defaults to `true` while the connectivity state is loading
+/// or unavailable.
 final isOnlineProvider = Provider<bool>((final ref) {
   final status = ref.watch(connectivityStatusProvider);
   return status.maybeWhen(
     data: (final s) => s == ConnectivityStatus.connected,
-    orElse: () => true, // Assume connected if unknown
+    orElse: () => true,
   );
 });

@@ -62,6 +62,7 @@ ApiClient apiClient(final Ref ref) {
 /// - `Map<String, dynamic>` (raw JSON)
 /// - `List<dynamic>` (raw JSON array)
 class ApiClient {
+  /// Creates an [ApiClient] instance.
   ApiClient(this._dio, {final ErrorConverter? errorConverter})
     : _errorConverter = errorConverter ?? const DefaultErrorConverter();
 

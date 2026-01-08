@@ -129,17 +129,22 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState>
   }
 
   // --- Convenience methods ---
+  /// Called when a user successfully logs in.
   Future<void> onUserLoggedIn(final String userId) async =>
       processEvent(UserAuthenticated(userId: userId));
 
+  /// Called when a user logs out.
   Future<void> onUserLoggedOut() async => processEvent(const UserLoggedOut());
 
+  /// Called when a user session expires.
   Future<void> onSessionExpired({final String? reason}) async =>
       processEvent(SessionExpiredEvent(reason: reason));
 
+  /// Called when onboarding is completed.
   Future<void> onOnboardingCompleted() async =>
       processEvent(const OnboardingCompleted());
 
+  /// Called when maintenance mode is enabled or disabled.
   Future<void> onMaintenanceModeChanged({
     required final bool isEnabled,
   }) async => processEvent(

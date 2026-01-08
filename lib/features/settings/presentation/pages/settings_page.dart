@@ -11,6 +11,7 @@ final packageInfoProvider = FutureProvider<PackageInfo>((final ref) async {
 
 /// Settings page demonstrating theme switching and app info.
 class SettingsPage extends ConsumerWidget {
+  /// Creates a [SettingsPage] instance.
   const SettingsPage({super.key});
 
   @override

@@ -10,6 +10,7 @@ part 'cache_service.g.dart';
 
 /// Cache entry with metadata for use in the app layer.
 class CacheEntry {
+  /// Creates a [CacheEntry] instance.
   CacheEntry({
     required this.data,
     required this.timestamp,
@@ -98,12 +99,16 @@ const String imageCacheBoxName = 'image_cache';
 
 /// Drift-based caching service for offline-first support.
 class CacheService {
+  /// Creates a [CacheService] instance.
   CacheService({
     required this.database,
     required this.logger,
   });
 
+  /// Drift database instance.
   final CacheDatabase database;
+
+  /// Logger for cache operations
   final AppLogger logger;
 
   /// Store data in the cache with expiration.
@@ -273,14 +278,20 @@ class CacheService {
 
 /// Cache statistics.
 class CacheStats {
+  /// Creates a [CacheStats] instance.
   const CacheStats({
     required this.totalEntries,
     required this.validEntries,
     required this.expiredEntries,
   });
 
+  /// Total number of entries in the cache.
   final int totalEntries;
+
+  /// Number of valid (non-expired) entries.
   final int validEntries;
+
+  /// Number of expired entries.
   final int expiredEntries;
 
   @override

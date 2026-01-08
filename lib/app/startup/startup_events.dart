@@ -8,6 +8,7 @@ sealed class StartupEvent {
 
 /// App just launched, need initial evaluation
 final class AppLaunched extends StartupEvent {
+  /// Creates an [AppLaunched] event.
   const AppLaunched();
 
   @override
@@ -16,8 +17,10 @@ final class AppLaunched extends StartupEvent {
 
 /// Session was restored from storage
 final class SessionRestored extends StartupEvent {
+  /// Creates a [SessionRestored] event.
   const SessionRestored({required this.userId});
 
+  /// The ID of the restored user session.
   final String userId;
 
   @override
@@ -26,8 +29,10 @@ final class SessionRestored extends StartupEvent {
 
 /// User successfully authenticated
 final class UserAuthenticated extends StartupEvent {
+  /// Creates a [UserAuthenticated] event.
   const UserAuthenticated({required this.userId});
 
+  /// The ID of the authenticated user.
   final String userId;
 
   @override
@@ -36,6 +41,7 @@ final class UserAuthenticated extends StartupEvent {
 
 /// User logged out intentionally
 final class UserLoggedOut extends StartupEvent {
+  /// Creates a [UserLoggedOut] event.
   const UserLoggedOut();
 
   @override
@@ -44,8 +50,10 @@ final class UserLoggedOut extends StartupEvent {
 
 /// Session expired (token invalid, etc.)
 final class SessionExpiredEvent extends StartupEvent {
+  /// Creates a [SessionExpiredEvent].
   const SessionExpiredEvent({this.reason});
 
+  /// Optional reason for session expiration.
   final String? reason;
 
   @override
@@ -54,6 +62,7 @@ final class SessionExpiredEvent extends StartupEvent {
 
 /// Onboarding was completed
 final class OnboardingCompleted extends StartupEvent {
+  /// Creates an [OnboardingCompleted] event.
   const OnboardingCompleted();
 
   @override
@@ -62,8 +71,10 @@ final class OnboardingCompleted extends StartupEvent {
 
 /// Maintenance mode was enabled
 final class MaintenanceEnabled extends StartupEvent {
+  /// Creates a [MaintenanceEnabled] event.
   const MaintenanceEnabled({this.message});
 
+  /// Optional maintenance message to display.
   final String? message;
 
   @override
@@ -72,6 +83,7 @@ final class MaintenanceEnabled extends StartupEvent {
 
 /// Maintenance mode was disabled
 final class MaintenanceDisabled extends StartupEvent {
+  /// Creates a [MaintenanceDisabled] event.
   const MaintenanceDisabled();
 
   @override
@@ -80,6 +92,7 @@ final class MaintenanceDisabled extends StartupEvent {
 
 /// Remote config was updated
 final class RemoteConfigUpdated extends StartupEvent {
+  /// Creates a [RemoteConfigUpdated] event.
   const RemoteConfigUpdated();
 
   @override
@@ -88,8 +101,10 @@ final class RemoteConfigUpdated extends StartupEvent {
 
 /// Deep link received that requires navigation
 final class DeepLinkReceived extends StartupEvent {
+  /// Creates a [DeepLinkReceived] event.
   const DeepLinkReceived({required this.path});
 
+  /// The deep link path that was received.
   final String path;
 
   @override

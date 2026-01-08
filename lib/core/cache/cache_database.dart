@@ -36,6 +36,7 @@ class CacheEntries extends Table {
 /// Drift database for offline caching.
 @DriftDatabase(tables: [CacheEntries])
 class CacheDatabase extends _$CacheDatabase {
+  /// Default constructor that opens the database connection.
   CacheDatabase() : super(_openConnection());
 
   /// Constructor for testing with a custom executor.
