@@ -1168,7 +1168,7 @@ The CI/CD pipeline automatically includes changelog content in release notes. Fo
 Before creating a release, update [CHANGELOG.md](CHANGELOG.md) with new changes:
 
 ```markdown
-## [1.0.0] - 2025-01-15
+## [1.0.0] - 2026-01-15
 
 ### Added
 
