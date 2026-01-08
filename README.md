@@ -1038,6 +1038,6 @@ If you find this boilerplate useful, please give it a ⭐️!
 
 **Built with ❤️ for Flutter developers who value quality and maintainability.**
 
-[Report Bug](https://github.com/your-username/riverpod_go_router_boilerplate/issues) • [Request Feature](https://github.com/your-username/riverpod_go_router_boilerplate/issues) • [Contribute](https://github.com/your-username/riverpod_go_router_boilerplate/pulls)
+[Report Bug](https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate/issues) • [Request Feature](https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate/issues) • [Contribute](https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate/pulls)
 
 </div>
