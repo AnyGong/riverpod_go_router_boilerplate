@@ -223,6 +223,7 @@ cd riverpod_go_router_boilerplate
 flutter pub get
 
 # 3️⃣ Generate code (freezed, json_serializable, riverpod_generator, drift)
+# Note: You can also use 'make gen' if you have make installed
 dart run build_runner build --delete-conflicting-outputs
 
 # 4️⃣ Run the app
@@ -496,16 +497,16 @@ class LoginPage extends ConsumerWidget {
 #### Route Definition
 
 ```dart
-// Route paths are defined as an enum for type-safety
+// Route paths are defined as an enum for type-safety and auth control
 enum AppRoute {
-  splash('/'),
-  login('/login'),
-  home('/home'),
-  settings('/settings'),
-  profile('/profile/:userId');  // Dynamic parameter
+  splash('/splash', requiresAuth: false),
+  login('/login', requiresAuth: false),
+  home('/', requiresAuth: true),
+  profile('/profile', requiresAuth: true);
 
-  const AppRoute(this.path);
+  const AppRoute(this.path, {required this.requiresAuth});
   final String path;
+  final bool requiresAuth;
 }
 
 // Router configuration
@@ -514,24 +515,10 @@ GoRouter appRouter(Ref ref) {
     initialLocation: AppRoute.splash.path,
     refreshListenable: ref.watch(appLifecycleListenableProvider),
     redirect: (context, state) {
-      // Global redirect logic (auth guards)
-      final isLoggedIn = ref.read(sessionStateProvider).isAuthenticated;
-      final isAuthRoute = state.matchedLocation == AppRoute.login.path;
-
-      if (!isLoggedIn && !isAuthRoute) return AppRoute.login.path;
-      if (isLoggedIn && isAuthRoute) return AppRoute.home.path;
-      return null; // No redirect
+      // Global redirect logic is handled via the startup state machine
+      // and redirect guards in app_router.dart
     },
-    routes: [
-      GoRoute(
-        path: AppRoute.login.path,
-        builder: (context, state) => const LoginPage(),
-      ),
-      GoRoute(
-        path: AppRoute.home.path,
-        builder: (context, state) => const HomePage(),
-      ),
-    ],
+    // ...
   );
 }
 ```
@@ -540,13 +527,13 @@ GoRouter appRouter(Ref ref) {
 
 ```dart
 // Navigate to a route
-context.go(AppRoute.home.path);
+context.goRoute(AppRoute.home);
 
-// Navigate with parameters
-context.go('/profile/123');
+// Navigate with parameters (using extension method)
+context.goRouteWith(AppRoute.productDetail, {'id': '123'});
 
 // Push onto navigation stack (can go back)
-context.push(AppRoute.settings.path);
+context.pushRoute(AppRoute.settings);
 
 // Go back
 context.pop();
@@ -697,14 +684,10 @@ The startup system uses an **event-driven state machine** to manage app lifecycl
 The caching system uses **Drift (SQLite)** to store API responses locally:
 
 ```dart
-// Make a cacheable request
+// Make a request (interceptors handle caching automatically)
 final result = await apiClient.get<List<Product>>(
   '/products',
   fromJson: (json) => (json as List).map((e) => Product.fromJson(e)).toList(),
-  cachePolicy: CachePolicy(
-    maxAge: const Duration(hours: 1),  // Cache expires after 1 hour
-    staleWhileRevalidate: true,        // Return stale data while fetching
-  ),
 );
 ```
 
@@ -1031,10 +1014,11 @@ void main() {
 **Makefile Commands:**
 
 ```bash
-make build     # Run build_runner
+make prepare   # Clean + Gen
+make gen       # Run build_runner
 make watch     # Run build_runner in watch mode
+make format    # Format + Fix lint issues
 make test      # Run all tests
-make analyze   # Run flutter analyze
 make clean     # Clean project
 ```
 
