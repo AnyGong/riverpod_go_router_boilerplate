@@ -1159,6 +1159,143 @@ If the pipeline fails:
    - Formatting issues (run `make format`)
    - Test failures (run `flutter test` locally)
 
+### 📝 Managing Changelog
+
+The CI/CD pipeline automatically includes changelog content in release notes. Follow these steps:
+
+#### 1. Update CHANGELOG.md
+
+Before creating a release, update [CHANGELOG.md](CHANGELOG.md) with new changes:
+
+```markdown
+## [1.0.0] - 2025-01-15
+
+### Added
+
+- New login screen with biometric support
+- Dark mode theme support
+- Offline caching for user profiles
+
+### Fixed
+
+- Memory leak in network interceptor
+- Login timeout on slow connections
+
+### Changed
+
+- Updated Dio to latest stable version
+- Improved error messages for better UX
+```
+
+**Format Rules:**
+
+- Use semantic versioning (`[1.0.0]`)
+- Include date in ISO format (`YYYY-MM-DD`)
+- Use sections: `Added`, `Fixed`, `Changed`, `Removed`, `Security`
+- Keep entries concise and user-friendly
+
+#### 2. Update Version in pubspec.yaml
+
+```yaml
+version: 1.0.0+1 # Format: version+build_number
+```
+
+#### 3. Commit and Push to Main
+
+```bash
+git add CHANGELOG.md pubspec.yaml
+git commit -m "chore: prepare v1.0.0 release"
+git push origin main
+```
+
+#### 4. Automatic Release
+
+The GitHub Actions pipeline will:
+
+- ✅ Validate that version doesn't contain `-dev` suffix
+- ✅ Extract changelog entry for your version
+- ✅ Build release APK
+- ✅ Create GitHub Release with changelog content
+- ✅ Attach APK as downloadable asset
+
+**Release notes will look like:**
+
+```
+## 🚀 Release v1.0.0
+
+### What's New
+[Extracted from CHANGELOG.md automatically]
+
+### Installation
+Download the APK and install it on your Android device:
+adb install riverpod-boilerplate-v1.0.0.apk
+```
+
+#### 5. Pre-Release Validation (Automatic)
+
+The CI/CD workflow has **built-in guardrails** to prevent human error:
+
+| Check                  | Purpose                         | Prevents                          |
+| ---------------------- | ------------------------------- | --------------------------------- |
+| **Version format**     | Validates semantic versioning   | Invalid version numbers           |
+| **Dev suffix block**   | Rejects `-dev` versions on main | Accidentally shipping test builds |
+| **Changelog check**    | Ensures CHANGELOG.md exists     | Missing release notes             |
+| **Branch enforcement** | Strict branch→action mapping    | Releasing from wrong branch       |
+
+### 🚫 CI Guardrails: What Gets Blocked
+
+**Example 1: Accidental dev version**
+
+```bash
+# ❌ BLOCKED: This will fail on main branch
+version: 1.0.0-dev.202501081530
+
+# GitHub Actions error:
+# ::error::❌ Cannot publish dev version '1.0.0-dev.202501081530' to main branch
+# Dev versions can only be published to develop branch
+```
+
+**Example 2: Missing changelog entry**
+
+```bash
+# ❌ BLOCKED: Version not in CHANGELOG.md
+# GitHub Actions: sed command returns empty string
+# Release notes will be empty and clearly visible as a problem
+```
+
+### 📋 Release Checklist (Before Pushing)
+
+Use this checklist every time you prepare a release:
+
+- [ ] All features merged to `main` branch
+- [ ] All tests passing: `flutter test`
+- [ ] Code analysis clean: `flutter analyze`
+- [ ] **CHANGELOG.md updated** with version `[X.Y.Z]`
+- [ ] **pubspec.yaml version updated** to `X.Y.Z+N`
+- [ ] No `-dev` suffix in version string
+- [ ] Commit message follows: `chore: prepare vX.Y.Z release`
+- [ ] Ready to push to main: `git push origin main`
+
+**Pro tip:** Create a `RELEASE.md` file in your repo with this checklist for team visibility.
+
+### 🎯 Versioning Philosophy
+
+This boilerplate uses **human-controlled, CI-enforced** versioning (not auto-bumped). Why?
+
+**Benefits:**
+
+- ✅ Clear intent: Every version change is deliberate
+- ✅ Semantic meaning: Humans decide major.minor.patch
+- ✅ No conflicts: PRs don't fight over version numbers
+- ✅ Audit trail: Git history shows who released what
+
+**CI's role:** Enforce policy, not make decisions
+
+- ✅ Validate version format
+- ✅ Block unsafe patterns (e.g., -dev on main)
+- ✅ Require CHANGELOG updates
+- ✅ Build & deploy only when rules pass
+
 ---
 
 ## 🛠️ Scripts
