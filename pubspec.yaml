@@ -29,7 +29,7 @@ dependencies:
   # NETWORKING & API
   # ─────────────────────────────────────────────────────────────────────────────
   dio: ^5.9.0
-  native_dio_adapter: ^1.3.0 # Uses Cronet (Android) / NSURLSession (iOS) for HTTP/3 & Brotli
+  native_dio_adapter: ^1.5.0 # Uses Cronet (Android) / NSURLSession (iOS) for HTTP/3 & Brotli
   connectivity_plus: ^7.0.0
   retry: ^3.1.2
 
@@ -49,7 +49,7 @@ dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   # DATABASE & OFFLINE CACHING (Drift - SQLite)
   # ─────────────────────────────────────────────────────────────────────────────
-  drift: ^2.22.1
+  drift: ^2.30.0
   sqlite3_flutter_libs: ^0.5.41
 
   # ─────────────────────────────────────────────────────────────────────────────
