@@ -7,18 +7,28 @@ import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart'
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
 import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/notifications/local_notification_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Notifier that manages the app lifecycle and state transitions.
-class AppLifecycleNotifier extends Notifier<AppLifecycleState>
-    with ChangeNotifier {
+class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifier {
   @override
   AppLifecycleState build() => const AppLifecycleState.initial();
 
   /// Initialize the app lifecycle by processing the launch event.
   Future<void> initialize() async {
     if (state.isInitialized) return;
+
+    // Initialize local notifications service
+    try {
+      final notificationService = ref.read(localNotificationServiceProvider);
+      await notificationService.initialize();
+      await notificationService.requestPermissions();
+    } catch (e) {
+      // Notification service initialization is non-critical
+      // Continue even if it fails
+    }
 
     await processEvent(const AppLaunched());
     state = state.copyWith(isInitialized: true);
@@ -141,8 +151,7 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState>
       processEvent(SessionExpiredEvent(reason: reason));
 
   /// Called when onboarding is completed.
-  Future<void> onOnboardingCompleted() async =>
-      processEvent(const OnboardingCompleted());
+  Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
 
   /// Called when maintenance mode is enabled or disabled.
   Future<void> onMaintenanceModeChanged({
@@ -153,10 +162,9 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState>
 }
 
 /// Provider for the AppLifecycleNotifier.
-final appLifecycleNotifierProvider =
-    NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
-      AppLifecycleNotifier.new,
-    );
+final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
+  AppLifecycleNotifier.new,
+);
 
 /// Listenable for GoRouter refresh.
 final appLifecycleListenableProvider = Provider<Listenable>((final ref) {
