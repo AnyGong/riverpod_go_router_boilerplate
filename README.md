@@ -1054,7 +1054,7 @@ This boilerplate includes a comprehensive GitHub Actions pipeline for automated 
 | Branch          | Purpose             |    Build    |    Release     | Use Case                                      |
 | :-------------- | :------------------ | :---------: | :------------: | :-------------------------------------------- |
 | **`main`**      | Production code     | Release APK | GitHub Release | Merge only when ready for production          |
-| **`develop`**   | Testing/staging     |  Debug APK  |  Pre-release   | Test latest features before production        |
+| **`dev`**       | Testing/staging     |  Debug APK  |  Pre-release   | Test latest features before production        |
 | **`feature/*`** | Feature development |     ❌      |       ❌       | `feature/auth-biometric`, `feature/dark-mode` |
 | **`bugfix/*`**  | Bug fixes           |     ❌      |       ❌       | `bugfix/login-crash`, `bugfix/cache-issue`    |
 | **`hotfix/*`**  | Urgent fixes        |     ❌      |       ❌       | `hotfix/critical-security-patch`              |
@@ -1078,7 +1078,7 @@ This boilerplate includes a comprehensive GitHub Actions pipeline for automated 
 │                         │                                   │
 │          ┌──────────────┴──────────────┐                   │
 │          │                             │                   │
-│      (main)                         (develop)               │
+│      (main)                         (dev)               │
 │          │                             │                   │
 │          ▼                             ▼                   │
 │  ┌──────────────┐              ┌──────────────┐           │
@@ -1105,7 +1105,7 @@ APK:     riverpod-boilerplate-v1.0.0+1.apk
 Type:    GitHub Release
 ```
 
-**Pre-release (develop branch):**
+**Pre-release (dev branch):**
 
 ```
 Tag:     v1.0.0+1-dev.202601081530
@@ -1119,7 +1119,7 @@ Note:    Timestamp included for uniqueness
 #### 1️⃣ Create Feature Branch
 
 ```bash
-git checkout develop
+git checkout dev
 git checkout -b feature/new-login-screen
 ```
 
@@ -1134,17 +1134,19 @@ git commit -m "feat: implement new login screen"
 
 ```bash
 git push origin feature/new-login-screen
-# Create PR to develop branch
+# Create PR to dev branch
 # → Automated tests run
 ```
 
-#### 4️⃣ Merge to Develop
+#
+
+#### 4️⃣ Merge to Dev
 
 ```bash
-# After PR approval, merge to develop
-git checkout develop
+# After PR approval, merge to dev
+git checkout dev
 git merge feature/new-login-screen
-git push origin develop
+git push origin dev
 # → Debug APK built
 # → Pre-release published to GitHub
 ```
@@ -1153,7 +1155,7 @@ git push origin develop
 
 ```bash
 git checkout main
-git merge develop
+git merge dev
 git push origin main
 # → Release APK built
 # → Production release published to GitHub
@@ -1292,7 +1294,7 @@ version: 1.0.0-dev.202501081530
 
 # GitHub Actions error:
 # ::error::❌ Cannot publish dev version '1.0.0-dev.202501081530' to main branch
-# Dev versions can only be published to develop branch
+# Dev versions can only be published to dev branch
 ```
 
 **Example 2: Missing changelog entry**
