@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/notifications/notifications.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
@@ -34,11 +37,10 @@ class HomePage extends ConsumerWidget {
             return const Center(child: Text('No user data'));
           }
 
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // User avatar
                   CircleAvatar(
@@ -99,6 +101,10 @@ class HomePage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 48),
 
+                  // Demo: Notification with Deep Linking & Badges
+                  _NotificationDeepLinkDemo(),
+                  const SizedBox(height: 48),
+
                   // Logout button
                   OutlinedButton.icon(
                     onPressed: () => _handleLogout(context, ref),
@@ -150,6 +156,166 @@ class HomePage extends ConsumerWidget {
       // Notify lifecycle of logout event for proper state transition
       final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
       await lifecycleNotifier.onUserLoggedOut();
+    }
+  }
+}
+
+/// Demo widget showcasing notification deep linking and badge functionality.
+class _NotificationDeepLinkDemo extends ConsumerWidget {
+  const _NotificationDeepLinkDemo();
+
+  @override
+  Widget build(final BuildContext context, final WidgetRef ref) {
+    final badgeCount = ref.watch(badgeCountProvider);
+    final theme = Theme.of(context);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title
+            Row(
+              children: [
+                Icon(
+                  Icons.notifications_active,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Notifications & Deep Linking',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Badge counter display
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: badgeCount.when(
+                loading: () => const Text('Loading badge count...'),
+                error: (final e, final st) => const Text('Badge count unavailable'),
+                data: (final count) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Badge Count: $count',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    if (count > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.error,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '$count',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onError,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Demo buttons
+            Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _sendNotificationWithDeepLink(context, ref),
+                  icon: const Icon(Icons.send),
+                  label: const Text('Send Notification with Deep Link'),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  onPressed: () => _incrementBadgeCount(ref),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Increment Badge'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => _clearBadge(ref),
+                  icon: const Icon(Icons.clear),
+                  label: const Text('Clear Badge'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Info text
+            Text(
+              'Send a notification that routes to Settings when tapped.',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sendNotificationWithDeepLink(
+    final BuildContext context,
+    final WidgetRef ref,
+  ) async {
+    final feedbackService = ref.read(feedbackServiceProvider);
+    final notificationService = ref.read(localNotificationServiceProvider);
+
+    try {
+      // Send notification with deep link to settings
+      await notificationService.show(
+        LocalNotificationConfig(
+          id: DateTime.now().millisecond,
+          title: 'Check Settings',
+          body: 'Tap to navigate to Settings page',
+          payload: '/settings', // Deep link path
+          importance: Importance.high,
+          channelId: 'high_priority_channel',
+        ),
+      );
+
+      // Increment badge and show feedback
+      await ref.read(badgeCountProvider.notifier).onNewNotification();
+      feedbackService.showSuccess(
+        'Notification sent! (will route to /settings on tap)',
+      );
+    } catch (e) {
+      feedbackService.showError('Failed to send notification: $e');
+    }
+  }
+
+  Future<void> _incrementBadgeCount(final WidgetRef ref) async {
+    try {
+      await ref.read(badgeCountProvider.notifier).increment();
+    } catch (e) {
+      ref.read(feedbackServiceProvider).showError('Failed to update badge: $e');
+    }
+  }
+
+  Future<void> _clearBadge(final WidgetRef ref) async {
+    try {
+      await ref.read(badgeCountProvider.notifier).clearBadge();
+      ref.read(feedbackServiceProvider).showSuccess('Badge cleared');
+    } catch (e) {
+      ref.read(feedbackServiceProvider).showError('Failed to clear badge: $e');
     }
   }
 }

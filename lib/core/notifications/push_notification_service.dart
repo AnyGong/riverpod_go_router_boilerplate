@@ -151,8 +151,8 @@ class PushNotificationService {
       //   ));
       // });
       //
-      // // Handle background messages (requires top-level function)
-      // FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
+      // // SETUP INTERACTED MESSAGES (Deep Link Routing)
+      // _setupInteractedMessage();
       // ```
       //
       // ════════════════════════════════════════════════════════════════════
@@ -175,6 +175,23 @@ class PushNotificationService {
       return false;
     }
   }
+
+  /// Handle notification taps when app is in background or terminated.
+  ///
+  /// This method is called during initialization to set up listeners
+  /// for when users tap notifications.
+  ///
+  /// Uncomment in your actual Firebase implementation:
+  /// ```dart
+  /// Future<void> _setupInteractedMessage() async {
+  ///   final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  ///   if (initialMessage != null) {
+  ///     _handleMessage(initialMessage);
+  ///   }
+  ///
+  ///   FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  /// }
+  /// ```
 
   /// Get the current FCM token.
   ///

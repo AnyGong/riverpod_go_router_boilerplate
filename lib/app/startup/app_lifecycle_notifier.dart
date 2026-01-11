@@ -12,8 +12,7 @@ import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Notifier that manages the app lifecycle and state transitions.
-class AppLifecycleNotifier extends Notifier<AppLifecycleState>
-    with ChangeNotifier {
+class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifier {
   @override
   AppLifecycleState build() => const AppLifecycleState.initial();
 
@@ -152,8 +151,7 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState>
       processEvent(SessionExpiredEvent(reason: reason));
 
   /// Called when onboarding is completed.
-  Future<void> onOnboardingCompleted() async =>
-      processEvent(const OnboardingCompleted());
+  Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
 
   /// Called when maintenance mode is enabled or disabled.
   Future<void> onMaintenanceModeChanged({
@@ -161,13 +159,30 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState>
   }) async => processEvent(
     isEnabled ? const MaintenanceEnabled() : const MaintenanceDisabled(),
   );
+
+  /// Handle app lifecycle state changes (foreground/background).
+  ///
+  /// Called when the app is resumed from background.
+  /// Clears the notification badge when the user actively engages with the app.
+  Future<void> onAppResumed() async {
+    try {
+      final notificationService = ref.read(localNotificationServiceProvider);
+      await notificationService.removeBadge();
+    } catch (e) {
+      // Badge clearing is non-critical
+    }
+  }
+
+  /// Handle app going to background.
+  Future<void> onAppPaused() async {
+    // You can implement background tasks here if needed
+  }
 }
 
 /// Provider for the AppLifecycleNotifier.
-final appLifecycleNotifierProvider =
-    NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
-      AppLifecycleNotifier.new,
-    );
+final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
+  AppLifecycleNotifier.new,
+);
 
 /// Listenable for GoRouter refresh.
 final appLifecycleListenableProvider = Provider<Listenable>((final ref) {
