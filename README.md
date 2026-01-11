@@ -213,7 +213,47 @@
 - Dart SDK **3.x** (included with Flutter)
 - A code editor (VS Code or Android Studio recommended)
 
-### Installation
+### 🆕 Creating a New Project from This Template
+
+The **recommended way** to use this boilerplate is with the included rename script:
+
+```bash
+# 1️⃣ Clone or use as GitHub template
+git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git my_app
+cd my_app
+
+# 2️⃣ Remove git history (start fresh)
+rm -rf .git
+git init
+
+# 3️⃣ Rename the project (updates package name, bundle IDs, imports, etc.)
+./scripts/rename_project.sh my_app com.mycompany "My App"
+
+# Or using make:
+make rename NAME=my_app ORG=com.mycompany DISPLAY="My App"
+
+# 4️⃣ Setup the project
+make prepare
+# Or manually:
+# flutter pub get
+# dart run build_runner build --delete-conflicting-outputs
+
+# 5️⃣ Run the app
+flutter run
+```
+
+**What the rename script updates:**
+
+| Location           | What Changes                                                  |
+| :----------------- | :------------------------------------------------------------ |
+| `pubspec.yaml`     | Package name                                                  |
+| All `*.dart` files | Import statements (`package:old_name/` → `package:new_name/`) |
+| Android            | `applicationId`, `namespace`, package directories             |
+| iOS/macOS          | `PRODUCT_BUNDLE_IDENTIFIER`, display names                    |
+| Linux/Windows      | Application IDs, binary names                                 |
+| Web                | App name in `manifest.json` and `index.html`                  |
+
+### Installation (Development on This Boilerplate)
 
 ```bash
 # 1️⃣ Clone the repository
@@ -1300,10 +1340,11 @@ This boilerplate uses **human-controlled, CI-enforced** versioning (not auto-bum
 
 ## 🛠️ Scripts
 
-| Script                   | Description           |
-| :----------------------- | :-------------------- |
-| `./scripts/bootstrap.sh` | Initial project setup |
-| `./scripts/clean.sh`     | Clean build artifacts |
+| Script                        | Description                 |
+| :---------------------------- | :-------------------------- |
+| `./scripts/bootstrap.sh`      | Initial project setup       |
+| `./scripts/clean.sh`          | Clean build artifacts       |
+| `./scripts/rename_project.sh` | Rename project for new apps |
 
 **Makefile Commands:**
 
@@ -1314,6 +1355,7 @@ make watch     # Run build_runner in watch mode
 make format    # Format + Fix lint issues
 make test      # Run all tests
 make clean     # Clean project
+make rename    # Rename project (NAME=xxx ORG=xxx DISPLAY="xxx")
 ```
 
 ---

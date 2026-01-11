@@ -1,4 +1,4 @@
-.PHONY: clean format gen watch test prepare
+.PHONY: clean format gen watch test prepare rename
 
 # 🧹 Clean everything (delete build artifacts and fetch fresh deps)
 clean:
@@ -24,3 +24,13 @@ test:
 
 # 🚀 Fresh setup (Good for new team members or CI)
 prepare: clean gen
+
+# 🏷️ Rename project (Usage: make rename NAME=my_app ORG=com.company DISPLAY="My App")
+rename:
+ifndef NAME
+	$(error NAME is required. Usage: make rename NAME=my_app ORG=com.company DISPLAY="My App")
+endif
+ifndef ORG
+	$(error ORG is required. Usage: make rename NAME=my_app ORG=com.company DISPLAY="My App")
+endif
+	./scripts/rename_project.sh $(NAME) $(ORG) "$(DISPLAY)"
