@@ -15,7 +15,8 @@ final protectedRoutes = [
   GoRoute(
     path: AppRoute.profile.path,
     name: AppRoute.profile.name,
-    builder: (final context, final state) => const _PlaceholderPage(title: 'Profile'),
+    builder: (final context, final state) =>
+        const _PlaceholderPage(title: 'Profile'),
   ),
   GoRoute(
     path: AppRoute.settings.path,
