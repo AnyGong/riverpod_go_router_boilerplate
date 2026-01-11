@@ -13,6 +13,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -24,12 +25,16 @@ android {
         applicationId = "com.example.riverpod_go_router_boilerplate"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        
         // Minimum SDK 23 required for flutter_secure_storage (Android Keystore)
         // and native_dio_adapter (Cronet requires API 23+)
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Recommended: Enable multidex if your app grows large (optional but good for boilerplates)
+        multiDexEnabled = true 
     }
 
     buildTypes {
@@ -43,4 +48,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

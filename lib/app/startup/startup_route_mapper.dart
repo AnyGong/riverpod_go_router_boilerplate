@@ -9,6 +9,7 @@ class StartupRouteMapper {
   static String map(final StartupState state) {
     return switch (state) {
       MaintenanceState() => AppRoute.maintenance.path,
+      ForceUpdateState() => AppRoute.forceUpdate.path,
       OnboardingState() => AppRoute.onboarding.path,
       UnauthenticatedState() => AppRoute.login.path,
       AuthenticatedState() => AppRoute.home.path,

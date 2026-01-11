@@ -54,6 +54,9 @@ enum AppRoute {
   /// Maintenance screen shown during downtime.
   maintenance('/maintenance', requiresAuth: false),
 
+  /// Force update screen shown when app version is too old.
+  forceUpdate('/force-update', requiresAuth: false),
+
   /// User profile screen.
   profile('/profile', requiresAuth: true),
 

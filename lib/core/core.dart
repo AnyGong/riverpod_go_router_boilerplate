@@ -14,6 +14,8 @@ export 'crashlytics/crashlytics.dart';
 export 'deep_link/deep_link.dart';
 // Extensions
 export 'extensions/extensions.dart';
+// Feedback (Dialogs, Snackbars)
+export 'feedback/feedback.dart';
 // Hooks
 export 'hooks/hooks.dart';
 // Localization
@@ -23,8 +25,14 @@ export 'network/api_client.dart';
 export 'network/cache_interceptor.dart';
 export 'network/dio_provider.dart';
 export 'network/error_converter.dart';
+// Notifications
+export 'notifications/notifications.dart';
+// Permissions
+export 'permissions/permissions.dart';
 // Result
 export 'result/result.dart';
+// Review (In-App Review)
+export 'review/review.dart';
 // Session
 export 'session/session.dart';
 // Storage
@@ -36,10 +44,13 @@ export 'theme/app_typography.dart';
 export 'theme/theme_notifier.dart';
 // Utils
 export 'utils/utils.dart';
+// Version (Force Update)
+export 'version/version.dart';
 // Widgets
 export 'widgets/async_value_widget.dart';
 export 'widgets/buttons.dart';
 export 'widgets/cached_image.dart';
+export 'widgets/connectivity_wrapper.dart';
 export 'widgets/responsive_builder.dart';
 export 'widgets/shimmer_loading.dart';
 export 'widgets/spacing.dart';

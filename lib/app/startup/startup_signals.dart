@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 ///   isAuthenticated: sessionState.isAuthenticated,
 ///   hasCompletedOnboarding: await storage.read(key: 'onboarding_completed') == 'true',
 ///   isInMaintenance: remoteConfig.getBool('maintenance_enabled'),
+///   requiresForceUpdate: versionInfo.requiresForceUpdate,
 ///   isOnboardingEnabled: AppConfig.onboardingEnabled,
 ///   isAuthEnabled: AppConfig.authEnabled,
 /// );
@@ -22,6 +23,10 @@ class StartupSignals {
     required this.isAuthenticated,
     required this.hasCompletedOnboarding,
     required this.isInMaintenance,
+    this.maintenanceMessage,
+    this.requiresForceUpdate = false,
+    this.currentVersion,
+    this.minimumVersion,
     required this.isOnboardingEnabled,
     required this.isAuthEnabled,
   });
@@ -37,6 +42,19 @@ class StartupSignals {
   /// Whether the app is in maintenance mode.
   /// Usually controlled by remote config/feature flags.
   final bool isInMaintenance;
+
+  /// Optional maintenance message to display.
+  final String? maintenanceMessage;
+
+  /// Whether a force update is required.
+  /// Determined by comparing app version to remote config minimum version.
+  final bool requiresForceUpdate;
+
+  /// Current app version.
+  final String? currentVersion;
+
+  /// Minimum required app version from remote config.
+  final String? minimumVersion;
 
   /// Whether onboarding is enabled for this app.
   /// Static configuration from [AppConfig].
@@ -54,6 +72,10 @@ class StartupSignals {
           isAuthenticated == other.isAuthenticated &&
           hasCompletedOnboarding == other.hasCompletedOnboarding &&
           isInMaintenance == other.isInMaintenance &&
+          maintenanceMessage == other.maintenanceMessage &&
+          requiresForceUpdate == other.requiresForceUpdate &&
+          currentVersion == other.currentVersion &&
+          minimumVersion == other.minimumVersion &&
           isOnboardingEnabled == other.isOnboardingEnabled &&
           isAuthEnabled == other.isAuthEnabled;
 
@@ -62,6 +84,10 @@ class StartupSignals {
     isAuthenticated,
     hasCompletedOnboarding,
     isInMaintenance,
+    maintenanceMessage,
+    requiresForceUpdate,
+    currentVersion,
+    minimumVersion,
     isOnboardingEnabled,
     isAuthEnabled,
   );
@@ -72,6 +98,7 @@ class StartupSignals {
       'isAuthenticated: $isAuthenticated, '
       'hasCompletedOnboarding: $hasCompletedOnboarding, '
       'isInMaintenance: $isInMaintenance, '
+      'requiresForceUpdate: $requiresForceUpdate, '
       'isOnboardingEnabled: $isOnboardingEnabled, '
       'isAuthEnabled: $isAuthEnabled)';
 }

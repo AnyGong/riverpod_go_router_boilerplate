@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
+import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 
 /// Callback type for token refresh logic.
 /// Returns true if refresh was successful, false otherwise.
@@ -15,10 +16,16 @@ typedef TokenRefreshCallback =
       saveTokens,
     );
 
+/// Callback type for handling authentication failures.
+/// Called when token refresh fails and the user needs to re-authenticate.
+typedef OnAuthFailureCallback = void Function();
+
 /// Interceptor for adding authentication headers and handling token refresh.
 ///
 /// The refresh logic is injectable via [onRefreshToken] callback, allowing
 /// you to customize the refresh behavior for your specific backend.
+///
+/// When refresh fails, [onAuthFailure] is called to trigger logout/redirect.
 ///
 /// Example:
 /// ```dart
@@ -30,6 +37,10 @@ typedef TokenRefreshCallback =
 ///     await saveTokens(response.data['access_token'], response.data['refresh_token']);
 ///     return true;
 ///   },
+///   onAuthFailure: () {
+///     // Trigger logout, this will update session state and redirect to login
+///     ref.read(authProvider.notifier).logout();
+///   },
 /// )
 /// ```
 class AuthInterceptor extends QueuedInterceptor {
@@ -38,6 +49,7 @@ class AuthInterceptor extends QueuedInterceptor {
     this._ref, {
     required this.parentDio,
     this.onRefreshToken,
+    this.onAuthFailure,
   });
 
   final Ref _ref;
@@ -47,6 +59,10 @@ class AuthInterceptor extends QueuedInterceptor {
 
   /// Optional callback for custom token refresh logic.
   final TokenRefreshCallback? onRefreshToken;
+
+  /// Optional callback triggered when authentication fails permanently.
+  /// Use this to logout the user and redirect to login.
+  final OnAuthFailureCallback? onAuthFailure;
 
   bool _isRefreshing = false;
 
@@ -81,7 +97,8 @@ class AuthInterceptor extends QueuedInterceptor {
           return handler.resolve(response);
         }
       } catch (e) {
-        await _clearTokens();
+        // Refresh failed, clear tokens and notify
+        await _handleAuthFailure();
       }
 
       _isRefreshing = false;
@@ -95,6 +112,8 @@ class AuthInterceptor extends QueuedInterceptor {
     final refreshToken = await storage.read(key: StorageKeys.refreshToken);
 
     if (refreshToken == null || onRefreshToken == null) {
+      // No refresh token or no refresh callback, treat as auth failure
+      await _handleAuthFailure();
       return false;
     }
 
@@ -121,6 +140,18 @@ class AuthInterceptor extends QueuedInterceptor {
     final token = await storage.read(key: StorageKeys.accessToken);
     options.headers['Authorization'] = 'Bearer $token';
     return parentDio.fetch(options);
+  }
+
+  Future<void> _handleAuthFailure() async {
+    await _clearTokens();
+
+    // Notify about auth failure (triggers logout and redirect)
+    if (onAuthFailure != null) {
+      onAuthFailure!();
+    } else {
+      // Default behavior: invalidate auth provider
+      _ref.invalidate(authProvider);
+    }
   }
 
   Future<void> _clearTokens() async {
