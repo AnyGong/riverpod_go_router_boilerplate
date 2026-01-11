@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  FLUTTER_VERSION: "3.38.5"
+  FLUTTER_VERSION: "3.38.6"
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
