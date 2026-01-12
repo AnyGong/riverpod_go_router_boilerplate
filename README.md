@@ -11,7 +11,7 @@
 
 **Clone → Build → Ship.** No architecture debates. No rewrites at scale.
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Documentation](#-documentation)
+[Features](#-features) • [Quick Start](#-quick-start) • [Developer Guide](DEVELOPER_GUIDE.md) • [Architecture](#-architecture)
 
 </div>
 
@@ -246,19 +246,26 @@ We use `make` to simplify common tasks.
 | `make feature` | Create a new feature (requires NAME)   |
 | `make help`    | Show all commands                      |
 
-### Adding a New Feature
+---
 
-You can use the `make` command to scaffold a new feature:
+## 👨‍💻 Developer Workflow
+
+_For a deep dive into reusable components (Widgets, Utils) and best practices, strictly read the [Developer Guide](DEVELOPER_GUIDE.md)._
+
+### 1. Scaffolding Features ⚡
+
+**Stop!** Don't create folders manually. Use the generator to ensure Clean Architecture compliance (`Data` / `Domain` / `Presentation`).
 
 ```bash
 make feature NAME=profile
 ```
 
-Or use the script directly:
+### 2. State Management Patterns (Riverpod)
 
-```bash
-./scripts/create_feature.sh profile
-```
+| Type                  | Annotation                                        | Use Case                      |
+| :-------------------- | :------------------------------------------------ | :---------------------------- |
+| **Read-Only / Async** | `@riverpod Future<T> fetch(Ref ref)`              | API calls, Data fetching      |
+| **Mutable Logic**     | `@riverpod class MyNotifier extends _$MyNotifier` | Forms, Toggles, Complex Logic |
 
 ---
 
