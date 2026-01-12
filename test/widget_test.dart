@@ -6,6 +6,11 @@ import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:mocktail/mocktail.dart';
+
+class MockLocalNotificationService extends Mock
+    implements LocalNotificationService {}
+
 void main() {
   setUpAll(() async {
     // Initialize environment before tests
@@ -15,13 +20,24 @@ void main() {
   });
 
   testWidgets('App boots without crashing', (final tester) async {
+    // Create mock notification service
+    final mockNotificationService = MockLocalNotificationService();
+    when(
+      () => mockNotificationService.initialize(),
+    ).thenAnswer((_) async => true);
+
     // Use runAsync to handle real async operations (like timers in SplashPage)
     await tester.runAsync(() async {
       final prefs = await SharedPreferences.getInstance();
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            localNotificationServiceProvider.overrideWithValue(
+              mockNotificationService,
+            ),
+          ],
           child: const App(),
         ),
       );

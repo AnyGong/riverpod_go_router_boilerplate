@@ -44,6 +44,8 @@ export 'theme/app_typography.dart';
 export 'theme/theme_notifier.dart';
 // Utils
 export 'utils/utils.dart';
+// Forms (Reactive Forms)
+export 'forms/forms.dart';
 // Version (Force Update)
 export 'version/version.dart';
 // Widgets

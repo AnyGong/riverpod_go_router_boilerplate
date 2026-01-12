@@ -4,4 +4,5 @@
 /// managing runtime permissions with rationale dialogs.
 library;
 
+export 'permission_config.dart';
 export 'permission_service.dart';

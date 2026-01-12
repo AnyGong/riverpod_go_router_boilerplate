@@ -8,86 +8,12 @@ part of 'biometric_service.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Service for biometric authentication (fingerprint, Face ID).
-///
-/// ## Setup Required:
-///
-/// ### iOS
-/// Add to `Info.plist` (already added):
-/// ```xml
-/// <key>NSFaceIDUsageDescription</key>
-/// <string>Use Face ID to securely authenticate and access the app.</string>
-/// ```
-///
-/// ### Android
-/// Add to `AndroidManifest.xml`:
-/// ```xml
-/// <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-/// ```
-///
-/// ## Usage:
-///
-/// ```dart
-/// // Check if biometric auth is available
-/// final isAvailable = await ref.read(biometricServiceProvider).isAvailable();
-///
-/// // Authenticate user
-/// final result = await ref.read(biometricServiceProvider).authenticate(
-///   reason: 'Please authenticate to access your account',
-/// );
-///
-/// if (result == BiometricResult.success) {
-///   // User authenticated successfully
-/// }
-///
-/// // Enable/disable biometric auth preference
-/// await ref.read(biometricServiceProvider).setBiometricEnabled(true);
-///
-/// // Check if user has enabled biometric auth
-/// final isEnabled = await ref.read(biometricServiceProvider).isBiometricEnabled();
-/// ```
+/// Provider for BiometricService.
 
 @ProviderFor(biometricService)
 final biometricServiceProvider = BiometricServiceProvider._();
 
-/// Service for biometric authentication (fingerprint, Face ID).
-///
-/// ## Setup Required:
-///
-/// ### iOS
-/// Add to `Info.plist` (already added):
-/// ```xml
-/// <key>NSFaceIDUsageDescription</key>
-/// <string>Use Face ID to securely authenticate and access the app.</string>
-/// ```
-///
-/// ### Android
-/// Add to `AndroidManifest.xml`:
-/// ```xml
-/// <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-/// ```
-///
-/// ## Usage:
-///
-/// ```dart
-/// // Check if biometric auth is available
-/// final isAvailable = await ref.read(biometricServiceProvider).isAvailable();
-///
-/// // Authenticate user
-/// final result = await ref.read(biometricServiceProvider).authenticate(
-///   reason: 'Please authenticate to access your account',
-/// );
-///
-/// if (result == BiometricResult.success) {
-///   // User authenticated successfully
-/// }
-///
-/// // Enable/disable biometric auth preference
-/// await ref.read(biometricServiceProvider).setBiometricEnabled(true);
-///
-/// // Check if user has enabled biometric auth
-/// final isEnabled = await ref.read(biometricServiceProvider).isBiometricEnabled();
-/// ```
+/// Provider for BiometricService.
 
 final class BiometricServiceProvider
     extends
@@ -97,44 +23,7 @@ final class BiometricServiceProvider
           BiometricService
         >
     with $Provider<BiometricService> {
-  /// Service for biometric authentication (fingerprint, Face ID).
-  ///
-  /// ## Setup Required:
-  ///
-  /// ### iOS
-  /// Add to `Info.plist` (already added):
-  /// ```xml
-  /// <key>NSFaceIDUsageDescription</key>
-  /// <string>Use Face ID to securely authenticate and access the app.</string>
-  /// ```
-  ///
-  /// ### Android
-  /// Add to `AndroidManifest.xml`:
-  /// ```xml
-  /// <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-  /// ```
-  ///
-  /// ## Usage:
-  ///
-  /// ```dart
-  /// // Check if biometric auth is available
-  /// final isAvailable = await ref.read(biometricServiceProvider).isAvailable();
-  ///
-  /// // Authenticate user
-  /// final result = await ref.read(biometricServiceProvider).authenticate(
-  ///   reason: 'Please authenticate to access your account',
-  /// );
-  ///
-  /// if (result == BiometricResult.success) {
-  ///   // User authenticated successfully
-  /// }
-  ///
-  /// // Enable/disable biometric auth preference
-  /// await ref.read(biometricServiceProvider).setBiometricEnabled(true);
-  ///
-  /// // Check if user has enabled biometric auth
-  /// final isEnabled = await ref.read(biometricServiceProvider).isBiometricEnabled();
-  /// ```
+  /// Provider for BiometricService.
   BiometricServiceProvider._()
     : super(
         from: null,
@@ -168,7 +57,7 @@ final class BiometricServiceProvider
   }
 }
 
-String _$biometricServiceHash() => r'97a0917f07808518fe8e358cf85ce90f15a9b539';
+String _$biometricServiceHash() => r'edc1f982bb228f561a4f4cfe11f91bcc8aad8cbe';
 
 /// Provider for checking available biometric types.
 
@@ -215,7 +104,7 @@ final class AvailableBiometricsProvider
 }
 
 String _$availableBiometricsHash() =>
-    r'f34985b5348c5ab879a2f310b6aaa8c6fbbb33cd';
+    r'878fd95f8024c11ff8345acc34d121a2cf147ce6';
 
 /// Provider for checking if biometric auth is available and enrolled.
 
@@ -253,7 +142,7 @@ final class CanUseBiometricsProvider
   }
 }
 
-String _$canUseBiometricsHash() => r'8496c8e2e53f0450ac3e37f25ca843ae19e74fa7';
+String _$canUseBiometricsHash() => r'27277c6a39873214b5151246733d1aadaeeed3df';
 
 /// Provider for checking if user has enabled biometric auth in settings.
 
@@ -291,4 +180,4 @@ final class BiometricEnabledProvider
   }
 }
 
-String _$biometricEnabledHash() => r'61965eb869f167c7b8c72cc044a1c8634f2c6777';
+String _$biometricEnabledHash() => r'cf942e48be6b1f6aefd57a5f1c69832cd3971993';

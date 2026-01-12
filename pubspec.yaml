@@ -83,10 +83,18 @@ dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   flutter_local_notifications: ^19.5.0
   timezone: ^0.10.1 # Required for scheduled notifications
-  flutter_app_badge: ^2.0.2 # App badge (notification count) - AGP 8 compatible
+  # Note: App icon badges are handled via:
+  # - iOS: APNS payload from server (badge field in push notification)
+  # - Android: Notification dots (automatic with Android 8.0+)
+  # - In-app: BadgeCount Riverpod provider for UI badges (inbox icon, etc.)
   # Firebase Messaging - optional, requires Firebase setup
   # Uncomment after adding google-services.json / GoogleService-Info.plist
   # firebase_messaging: ^15.0.0
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # FORMS (Model-Driven Form Management)
+  # ─────────────────────────────────────────────────────────────────────────────
+  reactive_forms: ^18.2.2
 
   # ─────────────────────────────────────────────────────────────────────────────
   # UI & UX

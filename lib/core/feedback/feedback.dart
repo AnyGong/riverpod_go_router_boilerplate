@@ -4,4 +4,5 @@
 /// from ViewModels, Notifiers, or Services without passing BuildContext.
 library;
 
+export 'feedback_config.dart';
 export 'feedback_service.dart';

@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/notifications/notifications.dart';
 import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
-
-/// Provider for package info
-final packageInfoProvider = FutureProvider<PackageInfo>((final ref) async {
-  return PackageInfo.fromPlatform();
-});
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/providers/package_info_provider.dart';
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/notification_badge_settings.dart';
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/settings_section_header.dart';
 
 /// Settings page demonstrating theme switching and app info.
 class SettingsPage extends ConsumerWidget {
@@ -26,7 +20,7 @@ class SettingsPage extends ConsumerWidget {
       body: ListView(
         children: [
           // Appearance section
-          const _SectionHeader(title: 'Appearance'),
+          const SettingsSectionHeader(title: 'Appearance'),
           ListTile(
             leading: const Icon(Icons.palette_outlined),
             title: const Text('Theme'),
@@ -38,13 +32,13 @@ class SettingsPage extends ConsumerWidget {
           const Divider(),
 
           // Notifications section
-          const _SectionHeader(title: 'Notifications'),
-          _NotificationBadgeSettings(),
+          const SettingsSectionHeader(title: 'Notifications'),
+          const NotificationBadgeSettings(),
 
           const Divider(),
 
           // About section
-          const _SectionHeader(title: 'About'),
+          const SettingsSectionHeader(title: 'About'),
           packageInfo.when(
             data: (final info) => Column(
               children: [
@@ -75,7 +69,7 @@ class SettingsPage extends ConsumerWidget {
           const Divider(),
 
           // Legal section
-          const _SectionHeader(title: 'Legal'),
+          const SettingsSectionHeader(title: 'Legal'),
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: const Text('Terms of Service'),
@@ -106,13 +100,11 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  String _themeModeLabel(final ThemeMode mode) {
-    return switch (mode) {
-      ThemeMode.light => 'Light',
-      ThemeMode.dark => 'Dark',
-      ThemeMode.system => 'System default',
-    };
-  }
+  String _themeModeLabel(final ThemeMode mode) => switch (mode) {
+    ThemeMode.light => 'Light',
+    ThemeMode.dark => 'Dark',
+    ThemeMode.system => 'System default',
+  };
 
   void _showThemeDialog(final BuildContext context, final WidgetRef ref) {
     final currentMode = ref.read(themeNotifierProvider);
@@ -131,8 +123,12 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: isSelected ? Theme.of(dialogContext).colorScheme.primary : null,
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  color: isSelected
+                      ? Theme.of(dialogContext).colorScheme.primary
+                      : null,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -150,141 +146,5 @@ class SettingsPage extends ConsumerWidget {
         }).toList(),
       ),
     );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-/// Widget for managing notification badge settings.
-class _NotificationBadgeSettings extends ConsumerWidget {
-  const _NotificationBadgeSettings();
-
-  @override
-  Widget build(final BuildContext context, final WidgetRef ref) {
-    final badgeCount = ref.watch(badgeCountProvider);
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        badgeCount.when(
-          loading: () => ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Badge Count'),
-            subtitle: const Text('Loading...'),
-          ),
-          error: (final e, final st) => ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Badge Count'),
-            subtitle: const Text('Error'),
-          ),
-          data: (final count) => ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Badge Count'),
-            subtitle: Row(
-              children: [
-                Text('$count notification${count != 1 ? 's' : ''}'),
-                const SizedBox(width: 8),
-                if (count > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.error,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '$count',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onError,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            trailing: PopupMenuButton<int>(
-              itemBuilder: (final context) => [
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: const Text('Add 1'),
-                  onTap: () => _incrementBadge(ref),
-                ),
-                PopupMenuItem<int>(
-                  value: 5,
-                  child: const Text('Add 5'),
-                  onTap: () => _addMultipleBadges(ref, 5),
-                ),
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: const Text('Clear'),
-                  onTap: () => _clearBadge(ref),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            'Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.',
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _incrementBadge(final WidgetRef ref) async {
-    try {
-      await ref.read(badgeCountProvider.notifier).increment();
-      ref.read(feedbackServiceProvider).showSuccess('Badge incremented');
-    } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
-    }
-  }
-
-  Future<void> _addMultipleBadges(final WidgetRef ref, final int count) async {
-    try {
-      await ref.read(badgeCountProvider.notifier).addNotifications(count);
-      ref.read(feedbackServiceProvider).showSuccess('Added $count notifications');
-    } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
-    }
-  }
-
-  Future<void> _clearBadge(final WidgetRef ref) async {
-    try {
-      await ref.read(badgeCountProvider.notifier).clearBadge();
-      ref.read(feedbackServiceProvider).showSuccess('Badge cleared');
-    } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
-    }
   }
 }

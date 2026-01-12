@@ -1,18 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
+import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_events.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_signals.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_machine.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_state_resolver.dart';
 import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/notifications/badge_counter.dart';
 import 'package:riverpod_go_router_boilerplate/core/notifications/local_notification_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Notifier that manages the app lifecycle and state transitions.
-class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifier {
+class AppLifecycleNotifier extends Notifier<AppLifecycleState>
+    with ChangeNotifier {
   @override
   AppLifecycleState build() => const AppLifecycleState.initial();
 
@@ -151,7 +154,8 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
       processEvent(SessionExpiredEvent(reason: reason));
 
   /// Called when onboarding is completed.
-  Future<void> onOnboardingCompleted() async => processEvent(const OnboardingCompleted());
+  Future<void> onOnboardingCompleted() async =>
+      processEvent(const OnboardingCompleted());
 
   /// Called when maintenance mode is enabled or disabled.
   Future<void> onMaintenanceModeChanged({
@@ -163,13 +167,28 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
   /// Handle app lifecycle state changes (foreground/background).
   ///
   /// Called when the app is resumed from background.
-  /// Clears the notification badge when the user actively engages with the app.
+  /// Clears the in-app badge count and processes any pending deep links.
   Future<void> onAppResumed() async {
+    // Clear in-app badge state when user opens the app
+    try {
+      await ref.read(badgeCountProvider.notifier).clearBadge();
+    } catch (_) {
+      // Badge clearing is non-critical
+    }
+
+    // Handle pending deep link from cold start (if any)
     try {
       final notificationService = ref.read(localNotificationServiceProvider);
-      await notificationService.removeBadge();
-    } catch (e) {
-      // Badge clearing is non-critical
+      final pendingLink = notificationService.consumePendingDeepLink();
+      if (pendingLink != null) {
+        // Navigate to the pending deep link destination
+        // Use a slight delay to ensure the router is fully ready
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        final router = ref.read(appRouterProvider);
+        router.go(pendingLink);
+      }
+    } catch (_) {
+      // Deep link processing is non-critical
     }
   }
 
@@ -180,9 +199,10 @@ class AppLifecycleNotifier extends Notifier<AppLifecycleState> with ChangeNotifi
 }
 
 /// Provider for the AppLifecycleNotifier.
-final appLifecycleNotifierProvider = NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
-  AppLifecycleNotifier.new,
-);
+final appLifecycleNotifierProvider =
+    NotifierProvider<AppLifecycleNotifier, AppLifecycleState>(
+      AppLifecycleNotifier.new,
+    );
 
 /// Listenable for GoRouter refresh.
 final appLifecycleListenableProvider = Provider<Listenable>((final ref) {

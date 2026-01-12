@@ -3,133 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
-
-/// Types of snackbar messages.
-enum SnackbarType {
-  /// Success message (green).
-  success,
-
-  /// Error message (red).
-  error,
-
-  /// Warning message (orange).
-  warning,
-
-  /// Informational message (blue).
-  info,
-}
-
-/// Configuration for a snackbar message.
-class SnackbarConfig {
-  /// Creates a [SnackbarConfig] instance.
-  const SnackbarConfig({
-    required this.message,
-    this.type = SnackbarType.info,
-    this.duration = const Duration(seconds: 3),
-    this.action,
-    this.actionLabel,
-    this.dismissible = true,
-  });
-
-  /// The message to display.
-  final String message;
-
-  /// The type of snackbar (affects styling).
-  final SnackbarType type;
-
-  /// How long to show the snackbar.
-  final Duration duration;
-
-  /// Callback when action button is pressed.
-  final VoidCallback? action;
-
-  /// Label for the action button.
-  final String? actionLabel;
-
-  /// Whether the snackbar can be dismissed by swiping.
-  final bool dismissible;
-}
-
-/// Configuration for a dialog.
-class DialogConfig {
-  /// Creates a [DialogConfig] instance.
-  const DialogConfig({
-    required this.title,
-    this.message,
-    this.content,
-    this.confirmLabel = 'OK',
-    this.cancelLabel,
-    this.onConfirm,
-    this.onCancel,
-    this.barrierDismissible = true,
-    this.isDestructive = false,
-  });
-
-  /// Dialog title.
-  final String title;
-
-  /// Simple text message (alternative to content).
-  final String? message;
-
-  /// Custom content widget (alternative to message).
-  final Widget? content;
-
-  /// Label for confirm button.
-  final String confirmLabel;
-
-  /// Label for cancel button (null = no cancel button).
-  final String? cancelLabel;
-
-  /// Callback when confirm is pressed.
-  final VoidCallback? onConfirm;
-
-  /// Callback when cancel is pressed.
-  final VoidCallback? onCancel;
-
-  /// Whether tapping outside dismisses the dialog.
-  final bool barrierDismissible;
-
-  /// Whether the action is destructive (affects confirm button styling).
-  final bool isDestructive;
-}
+import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_config.dart';
 
 /// Service for showing dialogs and snackbars without BuildContext.
 ///
 /// Uses the global [rootNavigatorKey] from GoRouter to access the overlay.
-///
-/// Example:
-/// ```dart
-/// // In a notifier or service (no BuildContext needed)
-/// final feedbackService = ref.read(feedbackServiceProvider);
-///
-/// // Show a success message
-/// feedbackService.showSuccess('Item saved successfully!');
-///
-/// // Show an error
-/// feedbackService.showError('Failed to save item');
-///
-/// // Show a confirmation dialog
-/// final confirmed = await feedbackService.showConfirmDialog(
-///   title: 'Delete Item?',
-///   message: 'This action cannot be undone.',
-///   isDestructive: true,
-/// );
-/// if (confirmed) {
-///   // Proceed with deletion
-/// }
-/// ```
 class FeedbackService {
   /// Creates a [FeedbackService] instance.
   FeedbackService();
 
-  /// Get the current overlay state from the navigator key.
   ScaffoldMessengerState? get _scaffoldMessenger {
     final context = rootNavigatorKey.currentContext;
     if (context == null) return null;
     return ScaffoldMessenger.maybeOf(context);
   }
 
-  /// Get the navigator state for showing dialogs.
   NavigatorState? get _navigator => rootNavigatorKey.currentState;
 
   /// Show a snackbar with the given configuration.
@@ -160,30 +48,23 @@ class FeedbackService {
   }
 
   /// Show a success snackbar.
-  void showSuccess(
-    final String message, {
-    final Duration duration = const Duration(seconds: 3),
-  }) {
+  void showSuccess(final String message, {final Duration? duration}) {
     showSnackbar(
       SnackbarConfig(
         message: message,
         type: SnackbarType.success,
-        duration: duration,
+        duration: duration ?? const Duration(seconds: 3),
       ),
     );
   }
 
   /// Show an error snackbar.
-  void showError(
-    final String message, {
-    final Duration duration = const Duration(seconds: 4),
-    final VoidCallback? onRetry,
-  }) {
+  void showError(final String message, {final VoidCallback? onRetry}) {
     showSnackbar(
       SnackbarConfig(
         message: message,
         type: SnackbarType.error,
-        duration: duration,
+        duration: const Duration(seconds: 4),
         action: onRetry,
         actionLabel: onRetry != null ? 'Retry' : null,
       ),
@@ -191,37 +72,17 @@ class FeedbackService {
   }
 
   /// Show a warning snackbar.
-  void showWarning(
-    final String message, {
-    final Duration duration = const Duration(seconds: 3),
-  }) {
-    showSnackbar(
-      SnackbarConfig(
-        message: message,
-        type: SnackbarType.warning,
-        duration: duration,
-      ),
-    );
+  void showWarning(final String message) {
+    showSnackbar(SnackbarConfig(message: message, type: SnackbarType.warning));
   }
 
   /// Show an info snackbar.
-  void showInfo(
-    final String message, {
-    final Duration duration = const Duration(seconds: 3),
-  }) {
-    showSnackbar(
-      SnackbarConfig(
-        message: message,
-        type: SnackbarType.info,
-        duration: duration,
-      ),
-    );
+  void showInfo(final String message) {
+    showSnackbar(SnackbarConfig(message: message, type: SnackbarType.info));
   }
 
   /// Hide the current snackbar.
-  void hideCurrentSnackbar() {
-    _scaffoldMessenger?.hideCurrentSnackBar();
-  }
+  void hideCurrentSnackbar() => _scaffoldMessenger?.hideCurrentSnackBar();
 
   /// Show a dialog with the given configuration.
   Future<bool> showDialog(final DialogConfig config) async {
@@ -263,8 +124,6 @@ class FeedbackService {
   }
 
   /// Show a simple confirmation dialog.
-  ///
-  /// Returns true if user confirmed, false otherwise.
   Future<bool> showConfirmDialog({
     required final String title,
     final String? message,
@@ -290,17 +149,11 @@ class FeedbackService {
     final String buttonLabel = 'OK',
   }) async {
     await showDialog(
-      DialogConfig(
-        title: title,
-        message: message,
-        confirmLabel: buttonLabel,
-      ),
+      DialogConfig(title: title, message: message, confirmLabel: buttonLabel),
     );
   }
 
-  /// Show a loading dialog that can be dismissed programmatically.
-  ///
-  /// Returns a function to dismiss the dialog.
+  /// Show a loading dialog. Returns a function to dismiss it.
   VoidCallback showLoading({final String? message}) {
     final navigator = _navigator;
     if (navigator == null) return () {};
@@ -356,23 +209,15 @@ class FeedbackService {
     );
   }
 
-  Color _getBackgroundColor(final SnackbarType type) {
-    switch (type) {
-      case SnackbarType.success:
-        return Colors.green.shade700;
-      case SnackbarType.error:
-        return Colors.red.shade700;
-      case SnackbarType.warning:
-        return Colors.orange.shade700;
-      case SnackbarType.info:
-        return Colors.blue.shade700;
-    }
-  }
+  Color _getBackgroundColor(final SnackbarType type) => switch (type) {
+    SnackbarType.success => Colors.green.shade700,
+    SnackbarType.error => Colors.red.shade700,
+    SnackbarType.warning => Colors.orange.shade700,
+    SnackbarType.info => Colors.blue.shade700,
+  };
 }
 
 /// Provider for [FeedbackService].
-///
-/// Use this to show dialogs and snackbars from anywhere without context.
 final feedbackServiceProvider = Provider<FeedbackService>((final ref) {
   return FeedbackService();
 });
