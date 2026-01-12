@@ -5,11 +5,8 @@ import 'package:riverpod_go_router_boilerplate/app/app.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:mocktail/mocktail.dart';
-
-class MockLocalNotificationService extends Mock
-    implements LocalNotificationService {}
+import 'helpers/mocks.dart';
 
 void main() {
   setUpAll(() async {

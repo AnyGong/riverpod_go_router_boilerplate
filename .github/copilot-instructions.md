@@ -101,10 +101,16 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 ### Testing
 
-- **Unit Tests**: For Logic/Repositories (`flutter test`). Use `mocktail` for mocks.
+- **Unit Tests**: For Logic/Repositories (`flutter test`).
 - **Widget Tests**: For UI Components.
 - **Golden Tests**: For visual regression (optional).
 - **Pattern**: Arrange-Act-Assert.
+
+### Mocking Guidelines
+
+- **Shared Mocks**: Place reusable mocks in `test/helpers/mocks.dart`.
+- **Library**: Use `mocktail` for all mocking.
+- **Result<void>**: When mocking `Result<void>`, return `const Success(null)`.
 
 ---
 
