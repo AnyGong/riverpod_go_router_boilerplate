@@ -5,8 +5,12 @@ clean:
 	./scripts/clean.sh
 	flutter pub get
 
-# 🔨 Run code generation (build_runner) once
-gen:
+# 🌐 Generate localization files
+l10n:
+	flutter gen-l10n
+
+# 🔨 Run code generation (build_runner + l10n)
+gen: l10n
 	dart run build_runner build --delete-conflicting-outputs
 
 # 👀 Run code generation in watch mode (updates as you save)
@@ -28,7 +32,7 @@ test:
 	flutter test
 
 # 🚀 Fresh setup (Good for new team members)
-prepare: clean gen
+prepare: clean l10n gen
 
 # ⬆️ Upgrade dependencies
 upgrade:
@@ -59,12 +63,13 @@ endif
 help:
 	@echo "Available commands:"
 	@echo "  make clean    - Clean project and dependencies"
-	@echo "  make gen      - Run code generation once"
+	@echo "  make gen      - Run code generation (build_runner + l10n)"
+	@echo "  make l10n     - Generate localization files only"
 	@echo "  make watch    - Run code generation in watch mode"
 	@echo "  make format   - Format code and fix lint issues"
 	@echo "  make lint     - Run static analysis"
 	@echo "  make test     - Run all tests"
-	@echo "  make prepare  - Full setup (clean + gen)"
+	@echo "  make prepare  - Full setup (clean + l10n + gen)"
 	@echo "  make upgrade  - Upgrade dependencies"
 	@echo "  make ci       - Run CI checks (lint + test)"
 	@echo "  make rename   - Rename project (requires NAME, ORG, DISPLAY)"

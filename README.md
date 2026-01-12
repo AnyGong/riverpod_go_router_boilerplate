@@ -231,19 +231,20 @@ lib/
 
 We use `make` to simplify common tasks.
 
-| Command        | Description                             |
-| :------------- | :-------------------------------------- |
-| `make prepare` | Full setup: Clean + Get Deps + Gen Code |
-| `make gen`     | Run `build_runner build` once           |
-| `make watch`   | Run `build_runner watch` (Development)  |
-| `make clean`   | Clean build artifacts & deps            |
-| `make format`  | Format code & Apply fixes               |
-| `make lint`    | Run static analysis                     |
-| `make test`    | Run all tests                           |
-| `make upgrade` | Upgrade dependencies                    |
-| `make ci`      | Run CI checks (Lint + Test)             |
-| `make feature` | Create a new feature (requires NAME)    |
-| `make help`    | Show all commands                       |
+| Command        | Description                            |
+| :------------- | :------------------------------------- |
+| `make prepare` | Full setup: Clean + L10n + Gen Code    |
+| `make gen`     | Run code gen (build_runner + l10n)     |
+| `make l10n`    | Generate localization files only       |
+| `make watch`   | Run `build_runner watch` (Development) |
+| `make clean`   | Clean build artifacts & deps           |
+| `make format`  | Format code & Apply fixes              |
+| `make lint`    | Run static analysis                    |
+| `make test`    | Run all tests                          |
+| `make upgrade` | Upgrade dependencies                   |
+| `make ci`      | Run CI checks (Lint + Test)            |
+| `make feature` | Create a new feature (requires NAME)   |
+| `make help`    | Show all commands                      |
 
 ### Adding a New Feature
 
