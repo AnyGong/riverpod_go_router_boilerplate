@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
 
 /// Login page for user authentication.
@@ -69,7 +69,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               constraints: const BoxConstraints(maxWidth: 400),
               child: Form(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+                autovalidateMode: AutovalidateMode.onUnfocus,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -118,15 +118,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (final value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
+                      validator: Validators.compose([
+                        Validators.required('Email is required'),
+                        Validators.email('Please enter a valid email'),
+                      ]),
                     ),
                     const VerticalSpace.md(),
 
@@ -153,44 +148,39 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           },
                         ),
                       ),
-                      validator: (final value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                      validator: Validators.compose([
+                        Validators.required('Password is required'),
+                        Validators.minLength(
+                          6,
+                          'Password must be at least 6 characters',
+                        ),
+                        Validators.strongPassword(
+                          'Strong password required (0-9, A-Z, a-z, special char)',
+                        ),
+                      ]),
                     ),
                     const VerticalSpace.lg(),
 
                     // Login button
-                    FilledButton(
+                    AppButton(
+                      variant: .primary,
+                      size: .large,
+                      isExpanded: true,
+                      isLoading: isLoading,
                       onPressed: isLoading ? null : _handleLogin,
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : const Text('Sign In'),
+                      label: 'Sign In',
                     ),
                     const VerticalSpace.md(),
 
                     // Forgot password
-                    TextButton(
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              // TODO: Navigate to forgot password
-                            },
-                      child: const Text('Forgot Password?'),
+                    AppButton(
+                      variant: .text,
+                      size: .medium,
+                      isExpanded: true,
+                      onPressed: () {
+                        // TODO: Navigate to forgot password
+                      },
+                      label: 'Forgot Password?',
                     ),
                   ],
                 ),

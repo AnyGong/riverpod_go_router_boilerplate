@@ -11,13 +11,7 @@ class SettingsSectionHeader extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
+    return ResponsivePadding(
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(

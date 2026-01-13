@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/notifications/notifications.dart';
 
@@ -74,8 +75,8 @@ class NotificationBadgeSettings extends ConsumerWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ResponsivePadding(
+          vertical: AppSpacing.sm,
           child: Text(
             'Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.',
             style: theme.textTheme.labelSmall?.copyWith(
@@ -99,9 +100,7 @@ class NotificationBadgeSettings extends ConsumerWidget {
   Future<void> _addMultipleBadges(final WidgetRef ref, final int count) async {
     try {
       await ref.read(badgeCountProvider.notifier).addNotifications(count);
-      ref
-          .read(feedbackServiceProvider)
-          .showSuccess('Added $count notifications');
+      ref.read(feedbackServiceProvider).showSuccess('Added $count notifications');
     } catch (e) {
       ref.read(feedbackServiceProvider).showError('Failed: $e');
     }

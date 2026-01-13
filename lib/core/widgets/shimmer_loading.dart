@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A shimmer loading wrapper for arbitrary content.
@@ -35,8 +36,7 @@ class ShimmerLoading extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
-      highlightColor:
-          highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
+      highlightColor: highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
       child: child,
     );
   }
@@ -154,13 +154,14 @@ class ShimmerListTile extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    return ResponsivePadding(
+      vertical: AppSpacing.sm,
+      horizontal: AppSpacing.md,
       child: Row(
         children: [
           if (hasLeading) ...[
             const ShimmerCircle(),
-            const SizedBox(width: 16),
+            const HorizontalSpace.md(),
           ],
           Expanded(
             child: Column(
@@ -168,11 +169,11 @@ class ShimmerListTile extends StatelessWidget {
               children: [
                 const ShimmerLine(width: 120, height: 14),
                 if (lines > 1) ...[
-                  const SizedBox(height: 8),
+                  const VerticalSpace.sm(),
                   const ShimmerLine(height: 12),
                 ],
                 if (lines > 2) ...[
-                  const SizedBox(height: 6),
+                  const VerticalSpace.sm(),
                   ShimmerLine(
                     width: MediaQuery.of(context).size.width * 0.6,
                     height: 12,
@@ -182,7 +183,7 @@ class ShimmerListTile extends StatelessWidget {
             ),
           ),
           if (hasTrailing) ...[
-            const SizedBox(width: 16),
+            const HorizontalSpace.md(),
             const ShimmerBox(width: 24, height: 24),
           ],
         ],
@@ -222,15 +223,14 @@ class ShimmerCard extends StatelessWidget {
             height: imageHeight,
             borderRadius: 12,
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
+          ResponsivePadding(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShimmerLine(width: width != null ? width! * 0.7 : 150),
-                const SizedBox(height: 8),
+                const VerticalSpace.sm(),
                 const ShimmerLine(height: 12),
-                const SizedBox(height: 4),
+                const VerticalSpace.xs(),
                 ShimmerLine(
                   width: width != null ? width! * 0.5 : 100,
                   height: 12,

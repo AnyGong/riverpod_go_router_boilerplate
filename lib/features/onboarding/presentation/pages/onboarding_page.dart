@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Onboarding page data model
@@ -34,14 +35,12 @@ class OnboardingPageData {
 const _pages = [
   OnboardingPageData(
     title: 'Welcome',
-    description:
-        'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
+    description: 'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
     icon: Icons.flutter_dash,
   ),
   OnboardingPageData(
     title: 'Modern Architecture',
-    description:
-        'Built with Riverpod, GoRouter, and clean architecture principles.',
+    description: 'Built with Riverpod, GoRouter, and clean architecture principles.',
     icon: Icons.architecture,
   ),
   OnboardingPageData(
@@ -89,8 +88,7 @@ class OnboardingPage extends HookConsumerWidget {
             ),
 
             // Page indicators
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+            ResponsivePadding(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -104,8 +102,7 @@ class OnboardingPage extends HookConsumerWidget {
             ),
 
             // Navigation buttons
-            Padding(
-              padding: const EdgeInsets.all(24),
+            ResponsivePadding(
               child: Row(
                 children: [
                   if (currentPage.value > 0)
@@ -121,12 +118,10 @@ class OnboardingPage extends HookConsumerWidget {
                         },
                       ),
                     ),
-                  if (currentPage.value > 0) const SizedBox(width: 16),
+                  if (currentPage.value > 0) const HorizontalSpace.md(),
                   Expanded(
                     child: AppButton(
-                      label: currentPage.value == _pages.length - 1
-                          ? 'Get Started'
-                          : 'Next',
+                      label: currentPage.value == _pages.length - 1 ? 'Get Started' : 'Next',
                       onPressed: () {
                         if (currentPage.value == _pages.length - 1) {
                           _completeOnboarding(context, ref);
@@ -178,8 +173,7 @@ class _OnboardingPageContent extends StatelessWidget {
   Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return ResponsivePadding(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -198,7 +192,7 @@ class _OnboardingPageContent extends StatelessWidget {
               color: page.color ?? theme.colorScheme.primary,
             ),
           ),
-          const SizedBox(height: 48),
+          const VerticalSpace.lg(),
           Text(
             page.title,
             style: theme.textTheme.headlineMedium?.copyWith(
@@ -206,7 +200,7 @@ class _OnboardingPageContent extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const VerticalSpace.md(),
           Text(
             page.description,
             style: theme.textTheme.bodyLarge?.copyWith(
@@ -230,7 +224,7 @@ class _PageIndicator extends StatelessWidget {
   Widget build(final BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(

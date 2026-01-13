@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/notifications/notifications.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 /// Demo widget showcasing notification deep linking and badge functionality.
 class NotificationDeepLinkDemo extends ConsumerWidget {
@@ -15,10 +14,10 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: ResponsivePadding(
+        horizontal: AppSpacing.sm,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Title
             Row(
@@ -28,7 +27,7 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
                   color: theme.colorScheme.primary,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                const HorizontalSpace.sm(),
                 Text(
                   'Notifications & Deep Linking',
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -37,20 +36,19 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
 
             // Badge counter display
             _BadgeCountDisplay(badgeCount: badgeCount, theme: theme),
-            const SizedBox(height: 12),
+            const VerticalSpace.md(),
 
             // Demo buttons
             _DemoButtons(
-              onSendNotification: () =>
-                  _sendNotificationWithDeepLink(context, ref),
+              onSendNotification: () => _sendNotificationWithDeepLink(context, ref),
               onIncrement: () => _incrementBadgeCount(ref),
               onClear: () => _clearBadge(ref),
             ),
-            const SizedBox(height: 12),
+            const VerticalSpace.md(),
 
             // Info text
             Text(
@@ -123,7 +121,7 @@ class _BadgeCountDisplay extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
@@ -137,7 +135,10 @@ class _BadgeCountDisplay extends StatelessWidget {
             Text('Badge Count: $count', style: theme.textTheme.bodyMedium),
             if (count > 0)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.error,
                   borderRadius: BorderRadius.circular(4),
@@ -172,22 +173,28 @@ class _DemoButtons extends StatelessWidget {
   Widget build(final BuildContext context) {
     return Column(
       children: [
-        ElevatedButton.icon(
-          onPressed: onSendNotification,
-          icon: const Icon(Icons.send),
-          label: const Text('Send Notification with Deep Link'),
-        ),
-        const SizedBox(height: 8),
-        FilledButton.icon(
+        AppButton(
+          variant: .secondary,
+          size: .medium,
           onPressed: onIncrement,
-          icon: const Icon(Icons.add),
-          label: const Text('Increment Badge'),
+          icon: Icons.add,
+          label: 'Increment Badge',
         ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
+        const VerticalSpace.sm(),
+        AppButton(
+          variant: .primary,
+          size: .large,
+          onPressed: onSendNotification,
+          icon: Icons.send,
+          label: 'Send Notification with Deep Link',
+        ),
+        const VerticalSpace.sm(),
+        AppButton(
+          variant: .text,
+          size: .medium,
           onPressed: onClear,
-          icon: const Icon(Icons.clear),
-          label: const Text('Clear Badge'),
+          icon: Icons.clear,
+          label: 'Clear Badge',
         ),
       ],
     );

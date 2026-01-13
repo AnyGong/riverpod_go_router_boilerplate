@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
-import 'package:riverpod_go_router_boilerplate/core/localization/locale_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/core/theme/app_theme.dart';
-import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// The root application widget.
@@ -43,6 +41,13 @@ class App extends ConsumerWidget {
       // Scroll behavior for consistent scrolling across platforms
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         physics: const BouncingScrollPhysics(),
+      ),
+
+      // Connectivity wrapper - shows offline banner
+      builder: (final context, final child) => ConnectivityWrapper(
+        bannerPosition: .top,
+        showBanner: true,
+        child: child ?? const SizedBox.shrink(),
       ),
     );
   }

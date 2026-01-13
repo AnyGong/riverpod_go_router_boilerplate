@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Maintenance page shown when the app is under maintenance.
 ///
@@ -16,15 +17,14 @@ class MaintenancePage extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: ResponsivePadding(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
               // Maintenance icon
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.secondaryContainer,
                   shape: BoxShape.circle,
@@ -35,7 +35,7 @@ class MaintenancePage extends ConsumerWidget {
                   color: theme.colorScheme.secondary,
                 ),
               ),
-              const SizedBox(height: 32),
+              const VerticalSpace.xl(),
               // Title
               Text(
                 'Under Maintenance',
@@ -44,7 +44,7 @@ class MaintenancePage extends ConsumerWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const VerticalSpace.md(),
               // Description
               Text(
                 maintenanceMessage ??
@@ -64,11 +64,11 @@ class MaintenancePage extends ConsumerWidget {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Try Again'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const VerticalSpace.md(),
             ],
           ),
         ),

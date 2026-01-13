@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/features/home/presentation/widgets/notification_demo.dart';
@@ -22,8 +21,9 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Home'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
+          const ConnectivityIndicator(),
+          AppIconButton(
+            icon: Icons.settings_outlined,
             onPressed: () => context.pushRoute(AppRoute.settings),
           ),
         ],
@@ -49,8 +49,7 @@ class _HomeContent extends ConsumerWidget {
 
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
+    return ResponsivePadding(
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -65,7 +64,7 @@ class _HomeContent extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const VerticalSpace.md(),
 
             // User info
             Text(
@@ -74,29 +73,31 @@ class _HomeContent extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const VerticalSpace.sm(),
             Text(
               user.email,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 48),
-
+            const VerticalSpace.md(),
             // Welcome message
             _WelcomeCard(theme: theme),
-            const SizedBox(height: 48),
+            const VerticalSpace.md(),
 
             // Demo: Notification with Deep Linking & Badges
             const NotificationDeepLinkDemo(),
-            const SizedBox(height: 48),
-
+            const VerticalSpace.md(),
             // Logout button
-            OutlinedButton.icon(
+            AppButton(
+              variant: .secondary,
+              size: .large,
+              isExpanded: true,
               onPressed: () => _handleLogout(context, ref),
-              icon: const Icon(Icons.logout),
-              label: const Text('Sign Out'),
+              icon: Icons.logout,
+              label: 'Sign Out',
             ),
+            const VerticalSpace.md(),
           ],
         ),
       ),
@@ -113,19 +114,17 @@ class _HomeContent extends ConsumerWidget {
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
-          TextButton(
+          AppButton(
+            variant: .text,
+            isExpanded: false,
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            label: 'Cancel',
           ),
-          FilledButton(
+          AppButton(
+            variant: .primary,
+            isExpanded: false,
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(
-              'Sign Out',
-              style: TextStyle(color: Theme.of(context).colorScheme.onError),
-            ),
+            label: 'Sign Out',
           ),
         ],
       ),
@@ -149,8 +148,7 @@ class _WelcomeCard extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+      child: ResponsivePadding(
         child: Column(
           children: [
             Icon(
@@ -158,9 +156,9 @@ class _WelcomeCard extends StatelessWidget {
               size: 48,
               color: theme.colorScheme.primary,
             ),
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
             Text("You're all set!", style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
+            const VerticalSpace.sm(),
             Text(
               'Start building your amazing app.',
               style: theme.textTheme.bodyMedium?.copyWith(
