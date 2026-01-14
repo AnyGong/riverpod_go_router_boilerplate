@@ -166,4 +166,127 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backOnline => 'You\'re back online';
+
+  @override
+  String get badgeCount => 'Badge Count';
+
+  @override
+  String notificationCountLabel(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString notifications',
+      one: '1 notification',
+      zero: 'No notifications',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addOne => 'Add 1';
+
+  @override
+  String get addFive => 'Add 5';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get badgeCountDescription =>
+      'Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.';
+
+  @override
+  String get badgeIncremented => 'Badge incremented';
+
+  @override
+  String get badgeCleared => 'Badge cleared';
+
+  @override
+  String notificationsAddedFormat(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return 'Added $countString notifications';
+  }
+
+  @override
+  String failedFormat(String error) {
+    return 'Failed: $error';
+  }
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get packageName => 'Package Name';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get openSourceLicenses => 'Open Source Licenses';
+
+  @override
+  String get chooseTheme => 'Choose Theme';
+
+  @override
+  String get lightMode => 'Light';
+
+  @override
+  String get darkModeOption => 'Dark';
+
+  @override
+  String get systemDefault => 'System default';
+
+  @override
+  String get welcomeBack => 'Welcome Back';
+
+  @override
+  String get signInToContinue => 'Sign in to continue';
+
+  @override
+  String get notificationsDeepLinking => 'Notifications & Deep Linking';
+
+  @override
+  String get sendNotificationInstruction =>
+      'Send a notification that routes to Settings when tapped.';
+
+  @override
+  String get badgeCountUnavailable => 'Badge count unavailable';
+
+  @override
+  String badgeCountLabel(int count) {
+    return 'Badge Count: $count';
+  }
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get legal => 'Legal';
+
+  @override
+  String get versionLabel => 'Version';
+
+  @override
+  String get chooseLanguage => 'Choose Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get bengali => 'Bengali (বাংলা)';
 }

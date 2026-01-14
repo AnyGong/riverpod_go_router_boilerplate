@@ -170,7 +170,7 @@ abstract class AppLocalizations {
   /// **'Dark Mode'**
   String get darkMode;
 
-  /// Language selection label
+  /// Language settings label
   ///
   /// In en, this message translates to:
   /// **'Language'**
@@ -367,6 +367,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'re back online'**
   String get backOnline;
+
+  /// Badge count settings label
+  ///
+  /// In en, this message translates to:
+  /// **'Badge Count'**
+  String get badgeCount;
+
+  /// Notification count label with pluralization
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No notifications} =1{1 notification} other{{count} notifications}}'**
+  String notificationCountLabel(int count);
+
+  /// Add 1 notification button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add 1'**
+  String get addOne;
+
+  /// Add 5 notifications button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add 5'**
+  String get addFive;
+
+  /// Clear badge button text
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// Badge count feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.'**
+  String get badgeCountDescription;
+
+  /// Success message when badge is incremented
+  ///
+  /// In en, this message translates to:
+  /// **'Badge incremented'**
+  String get badgeIncremented;
+
+  /// Success message when badge is cleared
+  ///
+  /// In en, this message translates to:
+  /// **'Badge cleared'**
+  String get badgeCleared;
+
+  /// Success message when notifications are added
+  ///
+  /// In en, this message translates to:
+  /// **'Added {count} notifications'**
+  String notificationsAddedFormat(int count);
+
+  /// Error message format
+  ///
+  /// In en, this message translates to:
+  /// **'Failed: {error}'**
+  String failedFormat(String error);
+
+  /// Theme settings label
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// App package name label
+  ///
+  /// In en, this message translates to:
+  /// **'Package Name'**
+  String get packageName;
+
+  /// Terms of Service link text
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// Privacy Policy link text
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// Open source licenses link text
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get openSourceLicenses;
+
+  /// Theme selection dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Theme'**
+  String get chooseTheme;
+
+  /// Light theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightMode;
+
+  /// Dark theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkModeOption;
+
+  /// System default theme option
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get systemDefault;
+
+  /// Login page welcome message
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get welcomeBack;
+
+  /// Login page subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get signInToContinue;
+
+  /// Notification demo section title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications & Deep Linking'**
+  String get notificationsDeepLinking;
+
+  /// Notification demo instruction text
+  ///
+  /// In en, this message translates to:
+  /// **'Send a notification that routes to Settings when tapped.'**
+  String get sendNotificationInstruction;
+
+  /// Error message when badge count cannot be loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Badge count unavailable'**
+  String get badgeCountUnavailable;
+
+  /// Badge count display label
+  ///
+  /// In en, this message translates to:
+  /// **'Badge Count: {count}'**
+  String badgeCountLabel(int count);
+
+  /// Appearance settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// About app section
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// Legal section in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get legal;
+
+  /// Version label in settings (without version number)
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get versionLabel;
+
+  /// Language selection dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Language'**
+  String get chooseLanguage;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// Bengali language option
+  ///
+  /// In en, this message translates to:
+  /// **'Bengali (বাংলা)'**
+  String get bengali;
 }
 
 class _AppLocalizationsDelegate

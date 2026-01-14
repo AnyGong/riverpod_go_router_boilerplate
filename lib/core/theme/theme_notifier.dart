@@ -8,16 +8,9 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   @override
   ThemeMode build() {
-    _loadTheme();
-    return ThemeMode.system;
-  }
-
-  Future<void> _loadTheme() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final themeIndex = prefs.getInt(_themeKey);
-    if (themeIndex != null) {
-      state = ThemeMode.values[themeIndex];
-    }
+    return themeIndex != null ? ThemeMode.values[themeIndex] : ThemeMode.system;
   }
 
   /// Set the theme mode and persist the choice

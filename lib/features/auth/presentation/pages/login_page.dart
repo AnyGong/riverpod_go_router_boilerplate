@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Login page for user authentication.
 class LoginPage extends ConsumerStatefulWidget {
@@ -54,6 +55,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final theme = context.theme;
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -76,7 +78,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       margin: const EdgeInsets.only(bottom: AppSpacing.xl),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(AppConstants.borderRadiusXXL),
                       ),
                       child: Icon(
                         Icons.flutter_dash,
@@ -87,7 +89,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     // Title
                     Text(
-                      'Welcome Back',
+                      l10n.welcomeBack,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -95,7 +97,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const VerticalSpace.sm(),
                     Text(
-                      'Sign in to continue',
+                      l10n.signInToContinue,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -109,9 +111,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       enabled: !isLoading,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.email,
+                        prefixIcon: const Icon(Icons.email_outlined),
                       ),
                       validator: Validators.compose([
                         Validators.required('Email is required'),
@@ -128,7 +130,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       enabled: !isLoading,
                       onFieldSubmitted: (_) => _handleLogin(),
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: l10n.password,
                         prefixIcon: const Icon(Icons.lock_outlined),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -163,7 +165,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       isExpanded: true,
                       isLoading: isLoading,
                       onPressed: isLoading ? null : _handleLogin,
-                      label: 'Sign In',
+                      label: l10n.login,
                     ),
                     const VerticalSpace.md(),
 
@@ -177,7 +179,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           : () {
                               // TODO: Navigate to forgot password
                             },
-                      label: 'Forgot Password?',
+                      label: l10n.forgotPassword,
                     ),
                   ],
                 ),

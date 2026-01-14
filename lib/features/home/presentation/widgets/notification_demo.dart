@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
+import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Demo widget showcasing notification deep linking and badge functionality.
 class NotificationDeepLinkDemo extends ConsumerWidget {
@@ -12,6 +13,7 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
   Widget build(final BuildContext context, final WidgetRef ref) {
     final badgeCount = ref.watch(badgeCountProvider);
     final theme = context.theme;
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       child: ResponsivePadding(
@@ -29,7 +31,7 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
                 ),
                 const HorizontalSpace.sm(),
                 Text(
-                  'Notifications & Deep Linking',
+                  l10n.notificationsDeepLinking,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -39,13 +41,12 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
             const VerticalSpace.md(),
 
             // Badge counter display
-            _BadgeCountDisplay(badgeCount: badgeCount, theme: theme),
+            _BadgeCountDisplay(badgeCount: badgeCount, theme: theme, l10n: l10n),
             const VerticalSpace.md(),
 
             // Demo buttons
             _DemoButtons(
-              onSendNotification: () =>
-                  _sendNotificationWithDeepLink(context, ref),
+              onSendNotification: () => _sendNotificationWithDeepLink(context, ref),
               onIncrement: () => _incrementBadgeCount(ref),
               onClear: () => _clearBadge(ref),
             ),
@@ -53,7 +54,7 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
 
             // Info text
             Text(
-              'Send a notification that routes to Settings when tapped.',
+              l10n.sendNotificationInstruction,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -114,10 +115,12 @@ class _BadgeCountDisplay extends StatelessWidget {
   const _BadgeCountDisplay({
     required this.badgeCount,
     required this.theme,
+    required this.l10n,
   });
 
   final AsyncValue<int> badgeCount;
   final ThemeData theme;
+  final AppLocalizations l10n;
 
   @override
   Widget build(final BuildContext context) {
@@ -125,15 +128,15 @@ class _BadgeCountDisplay extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusMD),
       ),
       child: badgeCount.when(
-        loading: () => const Text('Loading badge count...'),
-        error: (final e, final st) => const Text('Badge count unavailable'),
+        loading: () => Text(l10n.loading),
+        error: (final e, final st) => Text(l10n.badgeCountUnavailable),
         data: (final count) => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Badge Count: $count', style: theme.textTheme.bodyMedium),
+            Text(l10n.badgeCountLabel(count), style: theme.textTheme.bodyMedium),
             if (count > 0)
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -142,7 +145,7 @@ class _BadgeCountDisplay extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.error,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
                 ),
                 child: Text(
                   '$count',

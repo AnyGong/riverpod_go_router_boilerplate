@@ -33,14 +33,12 @@ class OnboardingPageData {
 const _pages = [
   OnboardingPageData(
     title: 'Welcome',
-    description:
-        'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
+    description: 'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
     icon: Icons.flutter_dash,
   ),
   OnboardingPageData(
     title: 'Modern Architecture',
-    description:
-        'Built with Riverpod, GoRouter, and clean architecture principles.',
+    description: 'Built with Riverpod, GoRouter, and clean architecture principles.',
     icon: Icons.architecture,
   ),
   OnboardingPageData(
@@ -68,9 +66,10 @@ class OnboardingPage extends HookConsumerWidget {
             // Skip button
             Align(
               alignment: Alignment.topRight,
-              child: TextButton(
+              child: AppButton(
+                variant: .text,
                 onPressed: () => _completeOnboarding(context, ref),
-                child: const Text('Skip'),
+                label: 'Skip',
               ),
             ),
 
@@ -121,9 +120,7 @@ class OnboardingPage extends HookConsumerWidget {
                   if (currentPage.value > 0) const HorizontalSpace.md(),
                   Expanded(
                     child: AppButton(
-                      label: currentPage.value == _pages.length - 1
-                          ? 'Get Started'
-                          : 'Next',
+                      label: currentPage.value == _pages.length - 1 ? 'Get Started' : 'Next',
                       onPressed: () {
                         if (currentPage.value == _pages.length - 1) {
                           _completeOnboarding(context, ref);
@@ -186,7 +183,7 @@ class _OnboardingPageContent extends StatelessWidget {
               color: (page.color ?? theme.colorScheme.primary).withValues(
                 alpha: 0.1,
               ),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusXXL),
             ),
             child: Icon(
               page.icon,
@@ -231,7 +228,7 @@ class _PageIndicator extends StatelessWidget {
       height: 8,
       decoration: BoxDecoration(
         color: isActive ? color : color.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
       ),
     );
   }

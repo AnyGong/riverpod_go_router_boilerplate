@@ -243,5 +243,194 @@
   "backOnline": "You're back online",
   "@backOnline": {
     "description": "Message shown when connection is restored"
+  },
+
+  "badgeCount": "Badge Count",
+  "@badgeCount": {
+    "description": "Badge count settings label"
+  },
+
+  "notificationCountLabel": "{count, plural, =0{No notifications} =1{1 notification} other{{count} notifications}}",
+  "@notificationCountLabel": {
+    "description": "Notification count label with pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+
+  "addOne": "Add 1",
+  "@addOne": {
+    "description": "Add 1 notification button text"
+  },
+
+  "addFive": "Add 5",
+  "@addFive": {
+    "description": "Add 5 notifications button text"
+  },
+
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear badge button text"
+  },
+
+  "badgeCountDescription": "Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.",
+  "@badgeCountDescription": {
+    "description": "Badge count feature description"
+  },
+
+  "badgeIncremented": "Badge incremented",
+  "@badgeIncremented": {
+    "description": "Success message when badge is incremented"
+  },
+
+  "badgeCleared": "Badge cleared",
+  "@badgeCleared": {
+    "description": "Success message when badge is cleared"
+  },
+
+  "notificationsAddedFormat": "Added {count} notifications",
+  "@notificationsAddedFormat": {
+    "description": "Success message when notifications are added",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+
+  "failedFormat": "Failed: {error}",
+  "@failedFormat": {
+    "description": "Error message format",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme settings label"
+  },
+
+  "packageName": "Package Name",
+  "@packageName": {
+    "description": "App package name label"
+  },
+
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of Service link text"
+  },
+
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy Policy link text"
+  },
+
+  "openSourceLicenses": "Open Source Licenses",
+  "@openSourceLicenses": {
+    "description": "Open source licenses link text"
+  },
+
+  "chooseTheme": "Choose Theme",
+  "@chooseTheme": {
+    "description": "Theme selection dialog title"
+  },
+
+  "lightMode": "Light",
+  "@lightMode": {
+    "description": "Light theme option"
+  },
+
+  "darkModeOption": "Dark",
+  "@darkModeOption": {
+    "description": "Dark theme option"
+  },
+
+  "systemDefault": "System default",
+  "@systemDefault": {
+    "description": "System default theme option"
+  },
+
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "Login page welcome message"
+  },
+
+  "signInToContinue": "Sign in to continue",
+  "@signInToContinue": {
+    "description": "Login page subtitle"
+  },
+
+  "notificationsDeepLinking": "Notifications & Deep Linking",
+  "@notificationsDeepLinking": {
+    "description": "Notification demo section title"
+  },
+
+  "sendNotificationInstruction": "Send a notification that routes to Settings when tapped.",
+  "@sendNotificationInstruction": {
+    "description": "Notification demo instruction text"
+  },
+
+  "badgeCountUnavailable": "Badge count unavailable",
+  "@badgeCountUnavailable": {
+    "description": "Error message when badge count cannot be loaded"
+  },
+
+  "badgeCountLabel": "Badge Count: {count}",
+  "@badgeCountLabel": {
+    "description": "Badge count display label",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "appearance": "Appearance",
+  "@appearance": {
+    "description": "Appearance settings section"
+  },
+
+  "about": "About",
+  "@about": {
+    "description": "About app section"
+  },
+
+  "legal": "Legal",
+  "@legal": {
+    "description": "Legal section in settings"
+  },
+
+  "versionLabel": "Version",
+  "@versionLabel": {
+    "description": "Version label in settings (without version number)"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Language settings label"
+  },
+
+  "chooseLanguage": "Choose Language",
+  "@chooseLanguage": {
+    "description": "Language selection dialog title"
+  },
+
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+
+  "bengali": "Bengali (বাংলা)",
+  "@bengali": {
+    "description": "Bengali language option"
   }
 }

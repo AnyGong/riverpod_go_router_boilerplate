@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
 import 'package:riverpod_go_router_boilerplate/app/app.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
+import 'package:riverpod_go_router_boilerplate/core/storage/fresh_install_handler.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -159,6 +161,19 @@ Future<void> runGuardedApp({
       final sharedPreferences = await SharedPreferences.getInstance();
       final connectivityService = ConnectivityService();
       await connectivityService.initialize();
+
+      // Handle fresh install - clear stale Keychain data on iOS
+      // This prevents the issue where auth tokens survive app reinstall
+      const secureStorage = FlutterSecureStorage(
+        aOptions: AndroidOptions(),
+        iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock_this_device,
+        ),
+      );
+      await FreshInstallHandler.handleFreshInstall(
+        prefs: sharedPreferences,
+        secureStorage: secureStorage,
+      );
 
       // Run the app with initialized services
       runApp(appBuilder(sharedPreferences, connectivityService));

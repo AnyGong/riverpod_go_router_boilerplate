@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
+import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Widget for managing notification badge settings.
 class NotificationBadgeSettings extends ConsumerWidget {
@@ -11,26 +12,27 @@ class NotificationBadgeSettings extends ConsumerWidget {
   Widget build(final BuildContext context, final WidgetRef ref) {
     final badgeCount = ref.watch(badgeCountProvider);
     final theme = context.theme;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
         badgeCount.when(
-          loading: () => const ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Badge Count'),
-            subtitle: Text('Loading...'),
+          loading: () => ListTile(
+            leading: const Icon(Icons.notifications),
+            title: Text(l10n.badgeCount),
+            subtitle: Text(l10n.loading),
           ),
-          error: (final e, final st) => const ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Badge Count'),
-            subtitle: Text('Error'),
+          error: (final e, final st) => ListTile(
+            leading: const Icon(Icons.notifications),
+            title: Text(l10n.badgeCount),
+            subtitle: Text(l10n.errorGeneric),
           ),
           data: (final count) => ListTile(
             leading: const Icon(Icons.notifications),
-            title: const Text('Badge Count'),
+            title: Text(l10n.badgeCount),
             subtitle: Row(
               children: [
-                Text('$count notification${count != 1 ? 's' : ''}'),
+                Text(l10n.notificationCountLabel(count)),
                 const HorizontalSpace.sm(),
                 if (count > 0)
                   Container(
@@ -40,7 +42,7 @@ class NotificationBadgeSettings extends ConsumerWidget {
                     ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.error,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
                     ),
                     child: Text(
                       '$count',
@@ -52,31 +54,29 @@ class NotificationBadgeSettings extends ConsumerWidget {
                   ),
               ],
             ),
-            trailing: PopupMenuButton<int>(
+            trailing: PopupMenuButton<_BadgeAction>(
+              onSelected: (final action) => _handleBadgeAction(ref, action, l10n),
               itemBuilder: (final context) => [
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: const Text('Add 1'),
-                  onTap: () => _incrementBadge(ref),
+                PopupMenuItem<_BadgeAction>(
+                  value: _BadgeAction.incrementOne,
+                  child: Text(l10n.addOne),
                 ),
-                PopupMenuItem<int>(
-                  value: 5,
-                  child: const Text('Add 5'),
-                  onTap: () => _addMultipleBadges(ref, 5),
+                PopupMenuItem<_BadgeAction>(
+                  value: _BadgeAction.addFive,
+                  child: Text(l10n.addFive),
                 ),
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: const Text('Clear'),
-                  onTap: () => _clearBadge(ref),
+                PopupMenuItem<_BadgeAction>(
+                  value: _BadgeAction.clear,
+                  child: Text(l10n.clear),
                 ),
               ],
             ),
           ),
         ),
-        ResponsivePadding(
-          vertical: AppSpacing.sm,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           child: Text(
-            'Tap the menu to manage badge count. This demonstrates how to track notification count across app restarts.',
+            l10n.badgeCountDescription,
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -86,32 +86,67 @@ class NotificationBadgeSettings extends ConsumerWidget {
     );
   }
 
-  Future<void> _incrementBadge(final WidgetRef ref) async {
+  void _handleBadgeAction(
+    final WidgetRef ref,
+    final _BadgeAction action,
+    final AppLocalizations l10n,
+  ) {
+    switch (action) {
+      case _BadgeAction.incrementOne:
+        _incrementBadge(ref, l10n);
+      case _BadgeAction.addFive:
+        _addMultipleBadges(ref, 5, l10n);
+      case _BadgeAction.clear:
+        _clearBadge(ref, l10n);
+    }
+  }
+
+  Future<void> _incrementBadge(
+    final WidgetRef ref,
+    final AppLocalizations l10n,
+  ) async {
     try {
       await ref.read(badgeCountProvider.notifier).increment();
-      ref.read(feedbackServiceProvider).showSuccess('Badge incremented');
+      ref.read(feedbackServiceProvider).showSuccess(l10n.badgeIncremented);
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
+      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
     }
   }
 
-  Future<void> _addMultipleBadges(final WidgetRef ref, final int count) async {
+  Future<void> _addMultipleBadges(
+    final WidgetRef ref,
+    final int count,
+    final AppLocalizations l10n,
+  ) async {
     try {
       await ref.read(badgeCountProvider.notifier).addNotifications(count);
-      ref
-          .read(feedbackServiceProvider)
-          .showSuccess('Added $count notifications');
+      ref.read(feedbackServiceProvider).showSuccess(l10n.notificationsAddedFormat(count));
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
+      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
     }
   }
 
-  Future<void> _clearBadge(final WidgetRef ref) async {
+  Future<void> _clearBadge(
+    final WidgetRef ref,
+    final AppLocalizations l10n,
+  ) async {
     try {
       await ref.read(badgeCountProvider.notifier).clearBadge();
-      ref.read(feedbackServiceProvider).showSuccess('Badge cleared');
+      ref.read(feedbackServiceProvider).showSuccess(l10n.badgeCleared);
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError('Failed: $e');
+      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
     }
   }
+}
+
+/// Enum for badge management actions.
+enum _BadgeAction {
+  /// Increment badge count by 1.
+  incrementOne,
+
+  /// Add 5 notifications to badge count.
+  addFive,
+
+  /// Clear all badge notifications.
+  clear,
 }
