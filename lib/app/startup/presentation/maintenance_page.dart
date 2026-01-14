@@ -64,7 +64,9 @@ class MaintenancePage extends ConsumerWidget {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Try Again'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.md,
+                    ),
                   ),
                 ),
               ),

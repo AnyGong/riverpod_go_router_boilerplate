@@ -44,7 +44,8 @@ class NotificationDeepLinkDemo extends ConsumerWidget {
 
             // Demo buttons
             _DemoButtons(
-              onSendNotification: () => _sendNotificationWithDeepLink(context, ref),
+              onSendNotification: () =>
+                  _sendNotificationWithDeepLink(context, ref),
               onIncrement: () => _incrementBadgeCount(ref),
               onClear: () => _clearBadge(ref),
             ),

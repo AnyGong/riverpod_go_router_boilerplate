@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
-import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/notifications/notifications.dart';
 
 /// Widget for managing notification badge settings.
 class NotificationBadgeSettings extends ConsumerWidget {
@@ -100,7 +98,9 @@ class NotificationBadgeSettings extends ConsumerWidget {
   Future<void> _addMultipleBadges(final WidgetRef ref, final int count) async {
     try {
       await ref.read(badgeCountProvider.notifier).addNotifications(count);
-      ref.read(feedbackServiceProvider).showSuccess('Added $count notifications');
+      ref
+          .read(feedbackServiceProvider)
+          .showSuccess('Added $count notifications');
     } catch (e) {
       ref.read(feedbackServiceProvider).showError('Failed: $e');
     }
