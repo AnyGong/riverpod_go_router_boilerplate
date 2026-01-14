@@ -103,7 +103,8 @@ extension NumExtensions on num {
   EdgeInsets get padding => EdgeInsets.all(toDouble());
 
   /// Creates symmetric horizontal EdgeInsets.
-  EdgeInsets get paddingHorizontal => EdgeInsets.symmetric(horizontal: toDouble());
+  EdgeInsets get paddingHorizontal =>
+      EdgeInsets.symmetric(horizontal: toDouble());
 
   /// Creates symmetric vertical EdgeInsets.
   EdgeInsets get paddingVertical => EdgeInsets.symmetric(vertical: toDouble());

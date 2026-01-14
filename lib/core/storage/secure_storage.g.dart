@@ -25,6 +25,13 @@ part of 'secure_storage.dart';
 ///
 /// **Important:** Never store unencrypted sensitive data. Always use this
 /// provider for tokens, passwords, and other credentials.
+///
+/// **Usage:**
+/// ```dart
+/// final storage = ref.read(secureStorageProvider);
+/// await storage.write(key: StorageKeys.accessToken, value: token);
+/// final token = await storage.read(key: StorageKeys.accessToken);
+/// ```
 
 @ProviderFor(secureStorage)
 final secureStorageProvider = SecureStorageProvider._();
@@ -46,6 +53,13 @@ final secureStorageProvider = SecureStorageProvider._();
 ///
 /// **Important:** Never store unencrypted sensitive data. Always use this
 /// provider for tokens, passwords, and other credentials.
+///
+/// **Usage:**
+/// ```dart
+/// final storage = ref.read(secureStorageProvider);
+/// await storage.write(key: StorageKeys.accessToken, value: token);
+/// final token = await storage.read(key: StorageKeys.accessToken);
+/// ```
 
 final class SecureStorageProvider
     extends
@@ -72,6 +86,13 @@ final class SecureStorageProvider
   ///
   /// **Important:** Never store unencrypted sensitive data. Always use this
   /// provider for tokens, passwords, and other credentials.
+  ///
+  /// **Usage:**
+  /// ```dart
+  /// final storage = ref.read(secureStorageProvider);
+  /// await storage.write(key: StorageKeys.accessToken, value: token);
+  /// final token = await storage.read(key: StorageKeys.accessToken);
+  /// ```
   SecureStorageProvider._()
     : super(
         from: null,

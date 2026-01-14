@@ -31,7 +31,9 @@ class FeedbackService {
       duration: config.duration,
       backgroundColor: _getBackgroundColor(config.type),
       behavior: SnackBarBehavior.floating,
-      dismissDirection: config.dismissible ? DismissDirection.horizontal : DismissDirection.none,
+      dismissDirection: config.dismissible
+          ? DismissDirection.horizontal
+          : DismissDirection.none,
       action: config.action != null && config.actionLabel != null
           ? SnackBarAction(
               label: config.actionLabel!,
@@ -93,7 +95,9 @@ class FeedbackService {
       barrierDismissible: config.barrierDismissible,
       builder: (final context) => AlertDialog.adaptive(
         title: Text(config.title),
-        content: config.content ?? (config.message != null ? Text(config.message!) : null),
+        content:
+            config.content ??
+            (config.message != null ? Text(config.message!) : null),
         actions: [
           if (config.cancelLabel != null)
             TextButton(
@@ -108,7 +112,9 @@ class FeedbackService {
               config.onConfirm?.call();
               Navigator.of(context).pop(true);
             },
-            style: config.isDestructive ? TextButton.styleFrom(foregroundColor: Colors.red) : null,
+            style: config.isDestructive
+                ? TextButton.styleFrom(foregroundColor: Colors.red)
+                : null,
             child: Text(config.confirmLabel),
           ),
         ],

@@ -13,7 +13,8 @@ import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 typedef TokenRefreshCallback =
     Future<bool> Function(
       String? refreshToken,
-      Future<void> Function(String accessToken, String? refreshToken) saveTokens,
+      Future<void> Function(String accessToken, String? refreshToken)
+      saveTokens,
     );
 
 /// Callback type for handling authentication failures.

@@ -163,10 +163,12 @@ enum AppRoute {
   }
 
   /// All routes that require authentication.
-  static List<AppRoute> get protectedRoutes => values.where((final r) => r.requiresAuth).toList();
+  static List<AppRoute> get protectedRoutes =>
+      values.where((final r) => r.requiresAuth).toList();
 
   /// All public routes (no auth required).
-  static List<AppRoute> get publicRoutes => values.where((final r) => !r.requiresAuth).toList();
+  static List<AppRoute> get publicRoutes =>
+      values.where((final r) => !r.requiresAuth).toList();
 }
 
 /// Extension for convenient navigation with [AppRoute] enum.
@@ -191,7 +193,8 @@ extension AppRouteNavigation on BuildContext {
       push(route.pathWith(params));
 
   /// Replace current route using [GoRouter.pushReplacement].
-  void pushReplacementRoute(final AppRoute route) => pushReplacement(route.path);
+  void pushReplacementRoute(final AppRoute route) =>
+      pushReplacement(route.path);
 
   /// Replace current route with parameters using [GoRouter.pushReplacement].
   void pushReplacementRouteWith(
@@ -219,8 +222,10 @@ GoRouter appRouter(final Ref ref) {
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
-    redirect: (final context, final state) => _handleRedirect(ref, state.uri.path),
-    errorBuilder: (final context, final state) => _ErrorPage(path: state.uri.path),
+    redirect: (final context, final state) =>
+        _handleRedirect(ref, state.uri.path),
+    errorBuilder: (final context, final state) =>
+        _ErrorPage(path: state.uri.path),
   );
 }
 

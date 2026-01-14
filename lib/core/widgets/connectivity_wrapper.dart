@@ -162,7 +162,9 @@ class ConnectivityIndicator extends ConsumerWidget {
     return Icon(
       isOnline ? onlineIcon : offlineIcon,
       size: size,
-      color: isOnline ? (onlineColor ?? theme.colorScheme.primary) : (offlineColor ?? Colors.red),
+      color: isOnline
+          ? (onlineColor ?? theme.colorScheme.primary)
+          : (offlineColor ?? Colors.red),
     );
   }
 }

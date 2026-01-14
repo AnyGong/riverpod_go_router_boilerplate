@@ -71,7 +71,8 @@ class ForceUpdatePage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadiusMedium + AppConstants.borderRadiusSmall,
+                      AppConstants.borderRadiusMedium +
+                          AppConstants.borderRadiusSmall,
                     ),
                   ),
                   child: Row(

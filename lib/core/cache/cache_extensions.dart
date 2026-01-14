@@ -58,7 +58,9 @@ extension CacheServiceExtensions on CacheService {
 
     try {
       final list = jsonDecode(data) as List<dynamic>;
-      return list.map((final e) => fromJson(e as Map<String, dynamic>)).toList();
+      return list
+          .map((final e) => fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (_) {
       return null;
     }

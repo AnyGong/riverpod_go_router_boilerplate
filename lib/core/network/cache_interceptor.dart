@@ -159,7 +159,8 @@ class CacheInterceptor extends Interceptor {
 
     // Handle 304 Not Modified
     if (response.statusCode == 304) {
-      final cachedEntry = response.requestOptions.extra['_cachedEntry'] as CacheEntry?;
+      final cachedEntry =
+          response.requestOptions.extra['_cachedEntry'] as CacheEntry?;
       if (cachedEntry != null) {
         logger?.d('304 Not Modified: using cached response');
         // Extend cache expiration
