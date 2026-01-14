@@ -33,10 +33,10 @@ abstract class AppTheme {
   static const double _snackBarRadius = 8;
 
   /// Minimum button size (width x height).
-  static const Size _buttonMinSize = Size(double.infinity, 48);
+  static const Size _buttonMinSize = Size(.infinity, 48);
 
   /// Standard input padding.
-  static const EdgeInsets _inputPadding = EdgeInsets.symmetric(
+  static const EdgeInsets _inputPadding = .symmetric(
     horizontal: 16,
     vertical: 16,
   );
@@ -52,16 +52,15 @@ abstract class AppTheme {
     scrolledUnderElevation: 1,
   );
 
-  /// Common elevated button style.
-  static final ElevatedButtonThemeData _elevatedButtonTheme =
-      ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          minimumSize: _buttonMinSize,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_buttonRadius),
-          ),
-        ),
-      );
+  /// Common filled button style.
+  static final FilledButtonThemeData _filledButtonTheme = FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      minimumSize: _buttonMinSize,
+      shape: RoundedRectangleBorder(
+        borderRadius: .circular(_buttonRadius),
+      ),
+    ),
+  );
 
   /// Common outlined button style.
   static final OutlinedButtonThemeData _outlinedButtonTheme =
@@ -69,7 +68,7 @@ abstract class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: _buttonMinSize,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_buttonRadius),
+            borderRadius: .circular(_buttonRadius),
           ),
         ),
       );
@@ -79,7 +78,7 @@ abstract class AppTheme {
     style: TextButton.styleFrom(
       minimumSize: _buttonMinSize,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_buttonRadius),
+        borderRadius: .circular(_buttonRadius),
       ),
     ),
   );
@@ -89,7 +88,7 @@ abstract class AppTheme {
       InputDecorationTheme(
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: .circular(_inputRadius),
         ),
         contentPadding: _inputPadding,
       );
@@ -98,15 +97,15 @@ abstract class AppTheme {
   static final CardThemeData _cardTheme = CardThemeData(
     elevation: 0,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(_cardRadius),
+      borderRadius: .circular(_cardRadius),
     ),
   );
 
   /// Common snackbar theme.
   static final SnackBarThemeData _snackBarTheme = SnackBarThemeData(
-    behavior: SnackBarBehavior.floating,
+    behavior: .floating,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(_snackBarRadius),
+      borderRadius: .circular(_snackBarRadius),
     ),
   );
 
@@ -118,11 +117,11 @@ abstract class AppTheme {
   static ThemeData get light {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: .light,
       colorScheme: _lightColorScheme,
       textTheme: AppTypography.textTheme,
       appBarTheme: _appBarTheme,
-      elevatedButtonTheme: _elevatedButtonTheme,
+      filledButtonTheme: _filledButtonTheme,
       outlinedButtonTheme: _outlinedButtonTheme,
       textButtonTheme: _textButtonTheme,
       inputDecorationTheme: _inputDecorationTheme,
@@ -135,11 +134,11 @@ abstract class AppTheme {
   static ThemeData get dark {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: .dark,
       colorScheme: _darkColorScheme,
       textTheme: AppTypography.textTheme,
       appBarTheme: _appBarTheme,
-      elevatedButtonTheme: _elevatedButtonTheme,
+      filledButtonTheme: _filledButtonTheme,
       outlinedButtonTheme: _outlinedButtonTheme,
       textButtonTheme: _textButtonTheme,
       inputDecorationTheme: _inputDecorationTheme,

@@ -32,7 +32,7 @@ class ShimmerLoading extends StatelessWidget {
   Widget build(final BuildContext context) {
     if (!enabled) return child;
 
-    final isDark = context.theme.brightness == Brightness.dark;
+    final isDark = context.theme.brightness == .dark;
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
@@ -66,11 +66,11 @@ class ShimmerLine extends StatelessWidget {
   Widget build(final BuildContext context) {
     return ShimmerLoading(
       child: Container(
-        width: width ?? double.infinity,
+        width: width ?? .infinity,
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: .circular(borderRadius),
         ),
       ),
     );
@@ -93,7 +93,7 @@ class ShimmerCircle extends StatelessWidget {
         height: size,
         decoration: const BoxDecoration(
           color: Colors.white,
-          shape: BoxShape.circle,
+          shape: .circle,
         ),
       ),
     );
@@ -127,7 +127,7 @@ class ShimmerBox extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: .circular(borderRadius),
         ),
       ),
     );
@@ -166,7 +166,7 @@ class ShimmerListTile extends StatelessWidget {
           ],
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 const ShimmerLine(width: 120, height: 14),
                 if (lines > 1) ...[
@@ -210,23 +210,25 @@ class ShimmerCard extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: .circular(AppConstants.borderRadiusLarge),
+        border: .all(color: colorScheme.outlineVariant),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           ShimmerBox(
-            width: double.infinity,
+            width: .infinity,
             height: imageHeight,
             borderRadius: 12,
           ),
           ResponsivePadding(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 ShimmerLine(width: width != null ? width! * 0.7 : 150),
                 const VerticalSpace.sm(),

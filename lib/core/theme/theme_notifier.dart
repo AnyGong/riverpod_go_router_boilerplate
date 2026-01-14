@@ -31,13 +31,13 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   }
 
   /// Convenience methods to set specific themes
-  void setLight() => setThemeMode(ThemeMode.light);
+  void setLight() => setThemeMode(.light);
 
   /// Convenience methods to set specific themes
-  void setDark() => setThemeMode(ThemeMode.dark);
+  void setDark() => setThemeMode(.dark);
 
   /// Convenience methods to set specific themes
-  void setSystem() => setThemeMode(ThemeMode.system);
+  void setSystem() => setThemeMode(.system);
 }
 
 /// Provider for the theme notifier
@@ -48,10 +48,10 @@ final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
 /// Provider that returns true if dark mode is active
 final isDarkModeProvider = Provider<bool>((final ref) {
   final themeMode = ref.watch(themeNotifierProvider);
-  if (themeMode == ThemeMode.system) {
+  if (themeMode == .system) {
     // This will need to be updated based on actual platform brightness
     // In the widget tree, use context.isDarkMode instead
     return false;
   }
-  return themeMode == ThemeMode.dark;
+  return themeMode == .dark;
 });

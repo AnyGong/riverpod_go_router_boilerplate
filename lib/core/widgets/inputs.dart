@@ -200,7 +200,7 @@ class AppSearchField extends StatelessWidget {
       focusNode: focusNode,
       enabled: enabled,
       autofocus: autofocus,
-      textInputAction: TextInputAction.search,
+      textInputAction: .search,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       decoration: InputDecoration(
@@ -226,10 +226,10 @@ class AppSearchField extends StatelessWidget {
         filled: true,
         fillColor: theme.colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.borderRadiusXLarge),
-          borderSide: BorderSide.none,
+          borderRadius: .circular(AppConstants.borderRadiusXLarge),
+          borderSide: .none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding: const .symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.sm,
         ),
@@ -249,7 +249,7 @@ class AppChip extends StatelessWidget {
     this.selected = false,
     this.onSelected,
     this.onDeleted,
-    this.variant = AppChipVariant.filled,
+    this.variant = .filled,
   });
 
   /// Label text for the chip.
@@ -287,13 +287,13 @@ class AppChip extends StatelessWidget {
 
     if (onSelected != null) {
       return switch (variant) {
-        AppChipVariant.filled => FilterChip(
+        .filled => FilterChip(
           label: Text(label),
           avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
           selected: selected,
           onSelected: onSelected,
         ),
-        AppChipVariant.outlined => FilterChip.elevated(
+        .outlined => FilterChip.elevated(
           label: Text(label),
           avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
           selected: selected,
@@ -330,8 +330,8 @@ class AppBadge extends StatelessWidget {
     this.textColor,
     this.showZero = false,
     this.maxCount = 99,
-    this.size = AppBadgeSize.medium,
-    this.position = AppBadgePosition.topRight,
+    this.size = .medium,
+    this.position = .topRight,
   });
 
   /// Count to display.
@@ -380,29 +380,29 @@ class AppBadge extends StatelessWidget {
     }
 
     final badge = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: size == AppBadgeSize.small ? 4 : 6,
-        vertical: size == AppBadgeSize.small ? 1 : 2,
+      padding: .symmetric(
+        horizontal: size == .small ? 4 : 6,
+        vertical: size == .small ? 1 : 2,
       ),
       decoration: BoxDecoration(
         color: badgeColor,
-        borderRadius: BorderRadius.circular(
-          size == AppBadgeSize.small ? 8 : 10,
+        borderRadius: .circular(
+          size == .small ? 8 : 10,
         ),
       ),
       constraints: BoxConstraints(
-        minWidth: size == AppBadgeSize.small ? 16 : 20,
-        minHeight: size == AppBadgeSize.small ? 16 : 20,
+        minWidth: size == .small ? 16 : 20,
+        minHeight: size == .small ? 16 : 20,
       ),
       child: content != null
           ? Text(
               content,
               style: TextStyle(
                 color: badgeTextColor,
-                fontSize: size == AppBadgeSize.small ? 10 : 12,
-                fontWeight: FontWeight.bold,
+                fontSize: size == .small ? 10 : 12,
+                fontWeight: .bold,
               ),
-              textAlign: TextAlign.center,
+              textAlign: .center,
             )
           : null,
     );
@@ -418,7 +418,7 @@ class AppBadge extends StatelessWidget {
     };
 
     return Stack(
-      clipBehavior: Clip.none,
+      clipBehavior: .none,
       children: [
         child!,
         Positioned(
@@ -508,7 +508,7 @@ class AppDivider extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: const .symmetric(horizontal: AppSpacing.md),
           child: Text(
             label!,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -565,13 +565,13 @@ class StatusDot extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = context.theme;
+    final colorScheme = context.theme.colorScheme;
     final color = switch (status) {
-      StatusType.success => Colors.green,
-      StatusType.warning => Colors.orange,
-      StatusType.error => theme.colorScheme.error,
-      StatusType.info => theme.colorScheme.primary,
-      StatusType.neutral => Colors.grey,
+      StatusType.success => colorScheme.primary,
+      StatusType.warning => colorScheme.tertiary,
+      StatusType.error => colorScheme.error,
+      StatusType.info => colorScheme.secondary,
+      StatusType.neutral => colorScheme.outline,
     };
 
     final dot = Container(
@@ -579,7 +579,7 @@ class StatusDot extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: color,
-        shape: BoxShape.circle,
+        shape: .circle,
       ),
     );
 
@@ -651,7 +651,7 @@ class _PulsingDotState extends State<_PulsingDot>
           height: widget.size,
           decoration: BoxDecoration(
             color: widget.color.withValues(alpha: _animation.value),
-            shape: BoxShape.circle,
+            shape: .circle,
             boxShadow: [
               BoxShadow(
                 color: widget.color.withValues(alpha: _animation.value * 0.5),

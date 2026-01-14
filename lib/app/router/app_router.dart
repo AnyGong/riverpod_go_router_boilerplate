@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/app/app_config.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/auth_routes.dart';
+import 'package:riverpod_go_router_boilerplate/app/presentation/pages/error_page.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
@@ -228,7 +229,7 @@ GoRouter appRouter(final Ref ref) {
     redirect: (final context, final state) =>
         _handleRedirect(ref, state.uri.path),
     errorBuilder: (final context, final state) =>
-        _ErrorPage(path: state.uri.path),
+        ErrorPage(path: state.uri.path),
     observers: [
       // Performance monitoring for screen traces
       PerformanceRouteObserver(ref),
@@ -259,7 +260,7 @@ String? _handleRedirect(final Ref ref, final String path) {
 
 /// Guard: Don't redirect while session is loading (except from splash).
 String? _guardLoading(final AppRoute? route, final SessionState sessionState) {
-  if (sessionState.isLoading && route != AppRoute.splash) {
+  if (sessionState.isLoading && route != .splash) {
     return null; // Allow current navigation to proceed
   }
   return null;
@@ -273,7 +274,7 @@ String? _guardInitialization(
   final AppLifecycleState lifecycleState,
 ) {
   if (!lifecycleState.isInitialized) {
-    if (route != AppRoute.splash) {
+    if (route != .splash) {
       return AppRoute.splash.path; // Force back to splash
     }
     return null; // Stay on splash
@@ -283,7 +284,7 @@ String? _guardInitialization(
 
 /// Guard: Always allow access to maintenance page.
 String? _guardMaintenance(final AppRoute? route) {
-  if (route == AppRoute.maintenance) {
+  if (route == .maintenance) {
     return null; // Allow access
   }
   return null;
@@ -291,7 +292,7 @@ String? _guardMaintenance(final AppRoute? route) {
 
 /// Guard: Allow splash to handle its own routing.
 String? _guardSplash(final AppRoute? route) {
-  if (route == AppRoute.splash) {
+  if (route == .splash) {
     return null; // Splash handles navigation after init
   }
   return null;
@@ -311,51 +312,9 @@ String? _guardAuth(final AppRoute? route, final SessionState sessionState) {
   }
 
   // Redirect authenticated users away from login
-  if (isLoggedIn && route == AppRoute.login) {
+  if (isLoggedIn && route == .login) {
     return AppRoute.home.path;
   }
 
   return null;
-}
-
-// ============================================================================
-// Error Page
-// ============================================================================
-
-/// Error page shown when route is not found.
-class _ErrorPage extends StatelessWidget {
-  const _ErrorPage({required this.path});
-
-  final String path;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const VerticalSpace.md(),
-            Text(
-              'Page not found',
-              style: context.theme.textTheme.headlineSmall,
-            ),
-            const VerticalSpace.sm(),
-            Text(
-              path,
-              style: context.theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-              ),
-            ),
-            const VerticalSpace.lg(),
-            AppButton(
-              onPressed: () => context.goRoute(AppRoute.home),
-              label: 'Go Home',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

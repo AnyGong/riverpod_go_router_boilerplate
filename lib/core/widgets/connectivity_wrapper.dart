@@ -53,8 +53,8 @@ class ConnectivityWrapper extends ConsumerWidget {
         // Offline banner
         if (!isOnline)
           Positioned(
-            top: bannerPosition == BannerPosition.top ? 0 : null,
-            bottom: bannerPosition == BannerPosition.bottom ? 0 : null,
+            top: bannerPosition == .top ? 0 : null,
+            bottom: bannerPosition == .bottom ? 0 : null,
             left: 0,
             right: 0,
             child: const _OfflineBanner(),
@@ -79,33 +79,34 @@ class _OfflineBanner extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     final topPadding = MediaQuery.of(context).viewPadding.top;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-          color: Colors.red.shade700,
+          color: colorScheme.error,
           child: SafeArea(
             bottom: false,
             child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.only(
+              width: .infinity,
+              padding: .only(
                 top: topPadding > 0 ? 4 : 8,
                 bottom: 8,
                 left: 16,
                 right: 16,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: .center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.wifi_off_rounded,
-                    color: Colors.white,
+                    color: colorScheme.onError,
                     size: 18,
                   ),
                   const HorizontalSpace.sm(),
-                  const Text(
+                  Text(
                     'No Internet Connection',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onError,
+                      fontWeight: .w500,
                       fontSize: 13,
                     ),
                   ),
@@ -157,14 +158,14 @@ class ConnectivityIndicator extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final isOnline = ref.watch(isOnlineProvider);
-    final theme = context.theme;
+    final colorScheme = context.theme.colorScheme;
 
     return Icon(
       isOnline ? onlineIcon : offlineIcon,
       size: size,
       color: isOnline
-          ? (onlineColor ?? theme.colorScheme.primary)
-          : (offlineColor ?? Colors.red),
+          ? (onlineColor ?? colorScheme.primary)
+          : (offlineColor ?? colorScheme.error),
     );
   }
 }

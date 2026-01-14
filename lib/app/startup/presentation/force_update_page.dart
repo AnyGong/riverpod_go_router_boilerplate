@@ -7,9 +7,12 @@ import 'package:riverpod_go_router_boilerplate/core/version/app_version_service.
 import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
-/// Force update page shown when the app version is below minimum required.
+/// Force update page shown when app version is below minimum required.
 ///
 /// This page blocks all app functionality until the user updates.
+/// It displays:
+/// - Current vs. minimum required version
+/// - A clear call-to-action to open the app store
 class ForceUpdatePage extends ConsumerWidget {
   /// Creates a [ForceUpdatePage] widget.
   const ForceUpdatePage({super.key});
@@ -17,7 +20,6 @@ class ForceUpdatePage extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final versionAsync = ref.watch(versionInfoProvider);
-    final theme = context.theme;
 
     return Scaffold(
       body: SafeArea(
@@ -25,96 +27,18 @@ class ForceUpdatePage extends ConsumerWidget {
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.lg,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             children: [
               const Spacer(),
-              // Update icon
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.system_update,
-                  size: 64,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
+              _buildUpdateIcon(context),
               const VerticalSpace.xl(),
-              // Title
-              Text(
-                'Update Required',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              _buildTitle(context),
               const VerticalSpace.md(),
-              // Description
-              Text(
-                'A new version of the app is available. '
-                'Please update to continue using the app.',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              _buildDescription(context),
               const VerticalSpace.lg(),
-              // Version info
-              versionAsync.when(
-                data: (final info) => Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm + AppSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadiusMedium +
-                          AppConstants.borderRadiusSmall,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'v${info.currentVersion}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.error,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      const HorizontalSpace.sm(),
-                      Icon(
-                        Icons.arrow_forward,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const HorizontalSpace.sm(),
-                      Text(
-                        'v${info.minimumVersion ?? 'Latest'}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
+              _buildVersionInfo(context, versionAsync),
               const Spacer(),
-              // Update button
-              AppButton(
-                variant: AppButtonVariant.primary,
-                size: AppButtonSize.large,
-                isExpanded: true,
-                onPressed: () => _openStore(ref),
-                icon: Icons.download,
-                label: 'Update Now',
-              ),
+              _buildUpdateButton(ref),
               const VerticalSpace.md(),
             ],
           ),
@@ -123,19 +47,129 @@ class ForceUpdatePage extends ConsumerWidget {
     );
   }
 
+  /// Builds the update icon container.
+  Widget _buildUpdateIcon(final BuildContext context) {
+    final colorScheme = context.colorScheme;
+
+    return Container(
+      padding: const .all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        shape: .circle,
+      ),
+      child: Icon(
+        Icons.system_update,
+        size: 64,
+        color: colorScheme.primary,
+      ),
+    );
+  }
+
+  /// Builds the title text.
+  Widget _buildTitle(final BuildContext context) {
+    final textTheme = context.textTheme;
+
+    return Text(
+      'Update Required',
+      style: textTheme.headlineMedium?.copyWith(
+        fontWeight: .bold,
+      ),
+      textAlign: .center,
+    );
+  }
+
+  /// Builds the description text.
+  Widget _buildDescription(final BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
+    return Text(
+      'A new version of the app is available. '
+      'Please update to continue using the app.',
+      style: textTheme.bodyLarge?.copyWith(
+        color: colorScheme.onSurfaceVariant,
+      ),
+      textAlign: .center,
+    );
+  }
+
+  /// Builds the version info container.
+  Widget _buildVersionInfo(
+    final BuildContext context,
+    final AsyncValue<VersionInfo> versionAsync,
+  ) {
+    return versionAsync.when(
+      data: (final info) => _VersionInfoContainer(info: info),
+      loading: () => const SizedBox.shrink(),
+      error: (_, final __) => const SizedBox.shrink(),
+    );
+  }
+
+  /// Builds the update button.
+  Widget _buildUpdateButton(final WidgetRef ref) {
+    return AppButton(
+      variant: .primary,
+      size: .large,
+      isExpanded: true,
+      onPressed: () => _openStore(ref),
+      icon: Icons.download,
+      label: 'Update Now',
+    );
+  }
+
+  /// Opens the app store listing.
   Future<void> _openStore(final WidgetRef ref) async {
     final reviewService = ref.read(inAppReviewServiceProvider);
     await reviewService.openStoreListing();
+  }
+}
 
-    // Fallback: try to open store URL directly
-    // You can customize these URLs for your app
-    // final storeUrl = Platform.isIOS
-    //     ? 'https://apps.apple.com/app/id<YOUR_APP_ID>'
-    //     : 'https://play.google.com/store/apps/details?id=<YOUR_PACKAGE_NAME>';
-    //
-    // final uri = Uri.parse(storeUrl);
-    // if (await canLaunchUrl(uri)) {
-    //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-    // }
+/// Container displaying current and minimum version information.
+class _VersionInfoContainer extends StatelessWidget {
+  const _VersionInfoContainer({required this.info});
+
+  final VersionInfo info;
+
+  @override
+  Widget build(final BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
+    return Container(
+      padding: const .symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm + AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: .circular(AppConstants.borderRadiusMedium),
+      ),
+      child: Row(
+        mainAxisSize: .min,
+        children: [
+          Text(
+            'v${info.currentVersion}',
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.error,
+              decoration: .lineThrough,
+            ),
+          ),
+          const HorizontalSpace.sm(),
+          Icon(
+            Icons.arrow_forward,
+            size: 16,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          const HorizontalSpace.sm(),
+          Text(
+            'v${info.minimumVersion ?? 'Latest'}',
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: .bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

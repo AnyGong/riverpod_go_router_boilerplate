@@ -94,7 +94,7 @@ class FadeIn extends StatefulWidget {
     required this.child,
     super.key,
     this.duration = AppConstants.animationNormal,
-    this.delay = Duration.zero,
+    this.delay = .zero,
     this.curve = Curves.easeOut,
   });
 
@@ -124,7 +124,7 @@ class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
     _controller = AnimationController(duration: widget.duration, vsync: this);
     _animation = CurvedAnimation(parent: _controller, curve: widget.curve);
 
-    if (widget.delay == Duration.zero) {
+    if (widget.delay == .zero) {
       _controller.forward();
     } else {
       Future.delayed(widget.delay, () {
@@ -152,9 +152,9 @@ class SlideIn extends StatefulWidget {
     required this.child,
     super.key,
     this.duration = AppConstants.animationNormal,
-    this.delay = Duration.zero,
+    this.delay = .zero,
     this.curve = Curves.easeOut,
-    this.direction = SlideDirection.fromBottom,
+    this.direction = .fromBottom,
     this.offset = 1.0,
   });
 
@@ -190,17 +190,17 @@ class _SlideInState extends State<SlideIn> with SingleTickerProviderStateMixin {
     _controller = AnimationController(duration: widget.duration, vsync: this);
 
     final begin = switch (widget.direction) {
-      SlideDirection.fromLeft => Offset(-widget.offset, 0),
-      SlideDirection.fromRight => Offset(widget.offset, 0),
-      SlideDirection.fromTop => Offset(0, -widget.offset),
-      SlideDirection.fromBottom => Offset(0, widget.offset),
+      .fromLeft => Offset(-widget.offset, 0),
+      .fromRight => Offset(widget.offset, 0),
+      .fromTop => Offset(0, -widget.offset),
+      .fromBottom => Offset(0, widget.offset),
     };
 
     _animation = Tween(begin: begin, end: Offset.zero).animate(
       CurvedAnimation(parent: _controller, curve: widget.curve),
     );
 
-    if (widget.delay == Duration.zero) {
+    if (widget.delay == .zero) {
       _controller.forward();
     } else {
       Future.delayed(widget.delay, () {
@@ -243,10 +243,10 @@ class ScaleIn extends StatefulWidget {
     required this.child,
     super.key,
     this.duration = AppConstants.animationNormal,
-    this.delay = Duration.zero,
+    this.delay = .zero,
     this.curve = Curves.easeOut,
     this.begin = 0.0,
-    this.alignment = Alignment.center,
+    this.alignment = .center,
   });
 
   /// Child widget to animate.
@@ -283,7 +283,7 @@ class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
       CurvedAnimation(parent: _controller, curve: widget.curve),
     );
 
-    if (widget.delay == Duration.zero) {
+    if (widget.delay == .zero) {
       _controller.forward();
     } else {
       Future.delayed(widget.delay, () {
@@ -317,7 +317,7 @@ class StaggeredList extends StatelessWidget {
     this.itemDuration = const Duration(milliseconds: 200),
     this.staggerDelay = const Duration(milliseconds: 50),
     this.curve = Curves.easeOut,
-    this.direction = SlideDirection.fromBottom,
+    this.direction = .fromBottom,
   });
 
   /// Children to animate.

@@ -13,7 +13,7 @@ abstract class AppTypography {
   /// Large display text style.
   static const TextStyle displayLarge = TextStyle(
     fontSize: 57,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: -0.25,
     height: 1.12,
   );
@@ -21,7 +21,7 @@ abstract class AppTypography {
   /// Medium display text style.
   static const TextStyle displayMedium = TextStyle(
     fontSize: 45,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0,
     height: 1.16,
   );
@@ -29,7 +29,7 @@ abstract class AppTypography {
   /// Small display text style.
   static const TextStyle displaySmall = TextStyle(
     fontSize: 36,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0,
     height: 1.22,
   );
@@ -37,7 +37,7 @@ abstract class AppTypography {
   /// Large headline text style.
   static const TextStyle headlineLarge = TextStyle(
     fontSize: 32,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0,
     height: 1.25,
   );
@@ -45,7 +45,7 @@ abstract class AppTypography {
   /// Medium headline text style.
   static const TextStyle headlineMedium = TextStyle(
     fontSize: 28,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0,
     height: 1.29,
   );
@@ -53,7 +53,7 @@ abstract class AppTypography {
   /// Small headline text style.
   static const TextStyle headlineSmall = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0,
     height: 1.33,
   );
@@ -61,7 +61,7 @@ abstract class AppTypography {
   /// Large title text style.
   static const TextStyle titleLarge = TextStyle(
     fontSize: 22,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0,
     height: 1.27,
   );
@@ -69,7 +69,7 @@ abstract class AppTypography {
   /// Medium title text style.
   static const TextStyle titleMedium = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0.15,
     height: 1.5,
   );
@@ -77,7 +77,7 @@ abstract class AppTypography {
   /// Small title text style.
   static const TextStyle titleSmall = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0.1,
     height: 1.43,
   );
@@ -85,7 +85,7 @@ abstract class AppTypography {
   /// Large body text style.
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0.5,
     height: 1.5,
   );
@@ -93,7 +93,7 @@ abstract class AppTypography {
   /// Medium body text style.
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0.25,
     height: 1.43,
   );
@@ -101,7 +101,7 @@ abstract class AppTypography {
   /// Small body text style.
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w400,
+    fontWeight: .w400,
     letterSpacing: 0.4,
     height: 1.33,
   );
@@ -109,7 +109,7 @@ abstract class AppTypography {
   /// Large label text style.
   static const TextStyle labelLarge = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0.1,
     height: 1.43,
   );
@@ -117,7 +117,7 @@ abstract class AppTypography {
   /// Medium label text style.
   static const TextStyle labelMedium = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0.5,
     height: 1.33,
   );
@@ -125,7 +125,7 @@ abstract class AppTypography {
   /// Small label text style.
   static const TextStyle labelSmall = TextStyle(
     fontSize: 11,
-    fontWeight: FontWeight.w500,
+    fontWeight: .w500,
     letterSpacing: 0.5,
     height: 1.45,
   );

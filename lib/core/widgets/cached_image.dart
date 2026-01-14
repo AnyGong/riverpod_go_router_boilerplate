@@ -14,7 +14,7 @@ class AppCachedImage extends StatelessWidget {
     super.key,
     this.width,
     this.height,
-    this.fit = BoxFit.cover,
+    this.fit = .cover,
     this.borderRadius,
     this.placeholder,
     this.errorWidget,
@@ -70,9 +70,11 @@ class _ShimmerPlaceholder extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
       child: Container(width: width, height: height, color: Colors.white),
     );
   }
@@ -86,13 +88,15 @@ class _ErrorPlaceholder extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: width,
       height: height,
-      color: Colors.grey[200],
+      color: colorScheme.surfaceContainerHighest,
       child: Icon(
         Icons.broken_image_outlined,
-        color: Colors.grey[400],
+        color: colorScheme.onSurfaceVariant,
         size: (width ?? height ?? 48) * 0.4,
       ),
     );
@@ -143,19 +147,22 @@ class AppCachedAvatar extends StatelessWidget {
       imageUrl: imageUrl!,
       imageBuilder: (final context, final imageProvider) =>
           CircleAvatar(radius: radius, backgroundImage: imageProvider),
-      placeholder: (final context, final url) => CircleAvatar(
-        radius: radius,
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
+      placeholder: (final context, final url) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return CircleAvatar(
+          radius: radius,
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: .circle,
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
       errorWidget: (final context, final url, final error) => CircleAvatar(
         radius: radius,
         backgroundColor: context.theme.colorScheme.primaryContainer,

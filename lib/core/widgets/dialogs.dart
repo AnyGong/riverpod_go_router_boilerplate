@@ -24,15 +24,13 @@ abstract class AppDialogs {
         content: Text(message),
         actions: [
           AppButton(
-            variant: AppButtonVariant.text,
+            variant: .text,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(false),
             label: cancelText,
           ),
           AppButton(
-            variant: isDangerous
-                ? AppButtonVariant.primary
-                : AppButtonVariant.primary,
+            variant: isDangerous ? .primary : .primary,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(true),
             label: confirmText,
@@ -62,7 +60,7 @@ abstract class AppDialogs {
         content: Text(message),
         actions: [
           AppButton(
-            variant: AppButtonVariant.primary,
+            variant: .primary,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(),
             label: buttonText,
@@ -93,7 +91,7 @@ abstract class AppDialogs {
         content: Text(message),
         actions: [
           AppButton(
-            variant: AppButtonVariant.primary,
+            variant: .primary,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(),
             label: buttonText,
@@ -110,19 +108,21 @@ abstract class AppDialogs {
     required final String message,
     final String buttonText = 'OK',
   }) {
+    final theme = context.theme;
+
     return showDialog<void>(
       context: context,
       builder: (final context) => AlertDialog(
-        icon: const Icon(
+        icon: Icon(
           Icons.check_circle_outline,
           size: 48,
-          color: Colors.green,
+          color: theme.colorScheme.primary,
         ),
         title: Text(title),
         content: Text(message),
         actions: [
           AppButton(
-            variant: AppButtonVariant.primary,
+            variant: .primary,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(),
             label: buttonText,
@@ -156,8 +156,8 @@ abstract class AppDialogs {
         content: Form(
           key: formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: .min,
+            crossAxisAlignment: .start,
             children: [
               if (message != null) ...[
                 Text(message),
@@ -175,13 +175,13 @@ abstract class AppDialogs {
         ),
         actions: [
           AppButton(
-            variant: AppButtonVariant.text,
+            variant: .text,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(),
             label: cancelText,
           ),
           AppButton(
-            variant: AppButtonVariant.primary,
+            variant: .primary,
             isExpanded: false,
             onPressed: () {
               if (formKey.currentState?.validate() ?? false) {
@@ -232,7 +232,7 @@ abstract class AppDialogs {
                     style: isSelected
                         ? TextStyle(
                             color: context.theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: .bold,
                           )
                         : null,
                   ),
@@ -332,8 +332,8 @@ abstract class AppBottomSheets {
       shape:
           shape ??
           const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppConstants.borderRadiusXLarge),
+            borderRadius: .vertical(
+              top: .circular(AppConstants.borderRadiusXLarge),
             ),
           ),
       builder: (final context) => child,
@@ -358,8 +358,8 @@ abstract class AppBottomSheets {
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.lg,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
             children: [
               // Handle bar
               Center(
@@ -368,7 +368,7 @@ abstract class AppBottomSheets {
                   height: 4,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: .circular(2),
                   ),
                 ),
               ),
@@ -376,9 +376,9 @@ abstract class AppBottomSheets {
               Text(
                 title,
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: .bold,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: .center,
               ),
               if (message != null) ...[
                 const VerticalSpace.sm(),
@@ -387,18 +387,18 @@ abstract class AppBottomSheets {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                 ),
               ],
               const VerticalSpace.xl(),
               AppButton(
-                variant: AppButtonVariant.primary,
+                variant: .primary,
                 onPressed: () => Navigator.of(context).pop(true),
                 label: confirmText,
               ),
               const VerticalSpace.sm(),
               AppButton(
-                variant: AppButtonVariant.text,
+                variant: .text,
                 onPressed: () => Navigator.of(context).pop(false),
                 label: cancelText,
               ),
@@ -423,7 +423,7 @@ abstract class AppBottomSheets {
       context,
       child: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             // Handle bar
             const VerticalSpace.sm(),
@@ -432,17 +432,17 @@ abstract class AppBottomSheets {
               height: 4,
               decoration: BoxDecoration(
                 color: theme.colorScheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: .circular(2),
               ),
             ),
             if (title != null) ...[
               const VerticalSpace.md(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                padding: const .symmetric(horizontal: AppSpacing.lg),
                 child: Text(
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                   ),
                 ),
               ),
@@ -475,7 +475,7 @@ abstract class AppBottomSheets {
               ListTile(
                 title: Text(
                   cancelText,
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                   style: theme.textTheme.bodyLarge,
                 ),
                 onTap: () => Navigator.of(context).pop(),

@@ -102,19 +102,19 @@ class AppVersionService {
       if (forceUpdate && minimumVersion != null) {
         // Check if current version is below minimum
         if (_isVersionLower(currentVersion, minimumVersion)) {
-          checkResult = VersionCheckResult.forceUpdateRequired;
+          checkResult = .forceUpdateRequired;
         } else {
-          checkResult = VersionCheckResult.upToDate;
+          checkResult = .upToDate;
         }
       } else if (minimumVersion != null) {
         // Optional update check
         if (_isVersionLower(currentVersion, minimumVersion)) {
-          checkResult = VersionCheckResult.updateAvailable;
+          checkResult = .updateAvailable;
         } else {
-          checkResult = VersionCheckResult.upToDate;
+          checkResult = .upToDate;
         }
       } else {
-        checkResult = VersionCheckResult.upToDate;
+        checkResult = .upToDate;
       }
 
       return Success(

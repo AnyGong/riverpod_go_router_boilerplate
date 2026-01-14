@@ -96,4 +96,4 @@ class AppLogger {
 /// Provider for the application logger.
 /// Returns the singleton instance for consistency.
 @Riverpod(keepAlive: true)
-AppLogger logger(final Ref ref) => AppLogger.instance;
+AppLogger logger(final Ref ref) => .instance;

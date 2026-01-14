@@ -106,7 +106,7 @@ class ResponsivePadding extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical),
+      padding: .symmetric(horizontal: horizontal, vertical: vertical),
       child: child,
     );
   }
@@ -119,7 +119,7 @@ class ContentContainer extends StatelessWidget {
     required this.child,
     super.key,
     this.maxWidth = 600,
-    this.padding = const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+    this.padding = const .symmetric(horizontal: AppSpacing.md),
   });
 
   /// Content widget.

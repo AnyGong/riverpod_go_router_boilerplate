@@ -40,16 +40,14 @@ class ConnectivityService {
       (final result) => result != ConnectivityResult.none,
     );
     _statusController.add(
-      hasConnection
-          ? ConnectivityStatus.connected
-          : ConnectivityStatus.disconnected,
+      hasConnection ? .connected : .disconnected,
     );
   }
 
   /// Returns whether the device is currently connected to a network.
   Future<bool> isConnected() async {
     final results = await _connectivity.checkConnectivity();
-    return results.any((final result) => result != ConnectivityResult.none);
+    return results.any((final result) => result != .none);
   }
 
   /// Disposes resources used by this service.
@@ -81,7 +79,7 @@ final connectivityStatusProvider = StreamProvider<ConnectivityStatus>((
 final isOnlineProvider = Provider<bool>((final ref) {
   final status = ref.watch(connectivityStatusProvider);
   return status.maybeWhen(
-    data: (final s) => s == ConnectivityStatus.connected,
+    data: (final s) => s == .connected,
     orElse: () => true,
   );
 });

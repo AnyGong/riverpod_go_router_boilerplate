@@ -48,15 +48,15 @@ class AppButton extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                variant == AppButtonVariant.primary
+                variant == .primary
                     ? colorScheme.onPrimary
                     : colorScheme.primary,
               ),
             ),
           )
         : Row(
-            mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: isExpanded ? .max : .min,
+            mainAxisAlignment: .center,
             children: [
               if (icon != null) ...[
                 Icon(icon, size: _iconSize),
@@ -67,32 +67,30 @@ class AppButton extends StatelessWidget {
           );
 
     final button = switch (variant) {
-      AppButtonVariant.primary => FilledButton(
+      .primary => FilledButton(
         onPressed: isLoading ? null : onPressed,
         style: _buttonStyle(context),
         child: child,
       ),
-      AppButtonVariant.secondary => OutlinedButton(
+      .secondary => OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: _buttonStyle(context),
         child: child,
       ),
-      AppButtonVariant.text => TextButton(
+      .text => TextButton(
         onPressed: isLoading ? null : onPressed,
         style: _buttonStyle(context),
         child: child,
       ),
     };
 
-    return isExpanded
-        ? SizedBox(width: double.infinity, child: button)
-        : button;
+    return isExpanded ? SizedBox(width: .infinity, child: button) : button;
   }
 
   double get _iconSize => switch (size) {
-    AppButtonSize.small => 16,
-    AppButtonSize.medium => 20,
-    AppButtonSize.large => 24,
+    .small => 16,
+    .medium => 20,
+    .large => 24,
   };
 
   ButtonStyle _buttonStyle(final BuildContext context) {
@@ -103,21 +101,21 @@ class AppButton extends StatelessWidget {
   }
 
   Size get _minSize => switch (size) {
-    AppButtonSize.small => const Size(64, 36),
-    AppButtonSize.medium => const Size(88, 44),
-    AppButtonSize.large => const Size(112, 52),
+    .small => const Size(64, 36),
+    .medium => const Size(88, 44),
+    .large => const Size(112, 52),
   };
 
   EdgeInsets get _padding => switch (size) {
-    AppButtonSize.small => const EdgeInsets.symmetric(
+    .small => const .symmetric(
       horizontal: AppSpacing.md,
       vertical: AppSpacing.sm,
     ),
-    AppButtonSize.medium => const EdgeInsets.symmetric(
+    .medium => const .symmetric(
       horizontal: AppSpacing.md,
       vertical: AppSpacing.md,
     ),
-    AppButtonSize.large => const EdgeInsets.symmetric(
+    .large => const .symmetric(
       horizontal: AppSpacing.lg,
       vertical: AppSpacing.md,
     ),
@@ -156,7 +154,7 @@ class AppIconButton extends StatelessWidget {
     required this.onPressed,
     super.key,
     this.tooltip,
-    this.variant = AppIconButtonVariant.standard,
+    this.variant = .standard,
     this.size = 24,
     this.isLoading = false,
   });
@@ -182,25 +180,25 @@ class AppIconButton extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return switch (variant) {
-      AppIconButtonVariant.standard => IconButton(
+      .standard => IconButton(
         onPressed: isLoading ? null : onPressed,
         icon: _buildIcon(context),
         iconSize: size,
         tooltip: tooltip,
       ),
-      AppIconButtonVariant.filled => IconButton.filled(
+      .filled => IconButton.filled(
         onPressed: isLoading ? null : onPressed,
         icon: _buildIcon(context),
         iconSize: size,
         tooltip: tooltip,
       ),
-      AppIconButtonVariant.outlined => IconButton.outlined(
+      .outlined => IconButton.outlined(
         onPressed: isLoading ? null : onPressed,
         icon: _buildIcon(context),
         iconSize: size,
         tooltip: tooltip,
       ),
-      AppIconButtonVariant.filledTonal => IconButton.filledTonal(
+      .filledTonal => IconButton.filledTonal(
         onPressed: isLoading ? null : onPressed,
         icon: _buildIcon(context),
         iconSize: size,
