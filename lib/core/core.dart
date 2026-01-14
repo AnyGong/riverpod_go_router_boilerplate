@@ -15,6 +15,12 @@ export 'constants/assets.dart';
 export 'constants/storage_keys.dart';
 // Crashlytics
 export 'crashlytics/crashlytics.dart';
+// Analytics
+export 'analytics/analytics.dart';
+// Performance Monitoring
+export 'performance/performance.dart';
+// Remote Config (Firebase)
+export 'remote_config/remote_config.dart';
 // Deep Linking
 export 'deep_link/deep_link.dart';
 // Extensions

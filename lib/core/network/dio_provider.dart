@@ -7,6 +7,7 @@ import 'package:riverpod_go_router_boilerplate/core/cache/cache_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/cache_interceptor.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/interceptors.dart';
+import 'package:riverpod_go_router_boilerplate/core/performance/performance_http_interceptor.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
@@ -48,17 +49,19 @@ Dio dio(final Ref ref) {
 
   // Add interceptors in order of execution
   dio.interceptors.addAll([
-    // 1. Auth interceptor - adds tokens, handles 401 refresh
+    // 1. Performance interceptor - tracks HTTP request metrics (production only)
+    PerformanceHttpInterceptor(ref),
+    // 2. Auth interceptor - adds tokens, handles 401 refresh
     AuthInterceptor(ref, parentDio: dio),
-    // 2. Cache interceptor - offline-first caching for GET requests
+    // 3. Cache interceptor - offline-first caching for GET requests
     CacheInterceptor(
       cacheService: ref.read(cacheServiceProvider),
       connectivityService: ref.read(connectivityServiceProvider),
       logger: EnvConfig.enableLogging ? ref.read(loggerProvider) : null,
     ),
-    // 3. Retry interceptor - exponential backoff for failed requests
+    // 4. Retry interceptor - exponential backoff for failed requests
     RetryInterceptor(dio),
-    // 4. Logging interceptor - request/response logging (debug only)
+    // 5. Logging interceptor - request/response logging (debug only)
     if (EnvConfig.enableLogging) LoggingInterceptor(ref),
   ]);
 

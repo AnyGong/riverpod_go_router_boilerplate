@@ -78,7 +78,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       margin: const EdgeInsets.only(bottom: AppSpacing.xl),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(AppConstants.borderRadiusXXL),
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.borderRadiusXXL,
+                        ),
                       ),
                       child: Icon(
                         Icons.flutter_dash,

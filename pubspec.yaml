@@ -58,10 +58,13 @@ dependencies:
   local_auth: ^3.0.0
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # CRASH REPORTING & ANALYTICS
+  # FIREBASE SUITE (Crashlytics, Analytics, Performance, Remote Config)
   # ─────────────────────────────────────────────────────────────────────────────
   firebase_core: ^4.3.0
   firebase_crashlytics: ^5.0.6
+  firebase_analytics: ^12.1.0
+  firebase_performance: ^0.11.1
+  firebase_remote_config: ^6.1.3
 
   # ─────────────────────────────────────────────────────────────────────────────
   # DEEP LINKING

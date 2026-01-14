@@ -49,9 +49,14 @@ class AppBootstrap extends StatelessWidget {
     // Note: Drift database is lazily initialized when first accessed
     // via the cacheDatabaseProvider. No explicit initialization needed.
 
-    // Initialize Firebase Crashlytics (production only by default)
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Firebase Services Initialization
+    // ─────────────────────────────────────────────────────────────────────────────
     // TODO: Uncomment after running `flutterfire configure`
     // await CrashlyticsService.initialize();
+    // await AnalyticsService(null as dynamic).initialize(); // Use container ref
+    // await PerformanceService(null as dynamic).initialize();
+    // await RemoteConfigService(null as dynamic).initialize();
 
     // Set up error handling (falls back to local logging if Crashlytics not initialized)
     _setupErrorHandling();
@@ -59,7 +64,6 @@ class AppBootstrap extends StatelessWidget {
     AppLogger.instance.i('App bootstrap completed');
 
     // Add any other initialization here:
-    // - Initialize analytics
     // - Load remote config
     // - etc.
   }

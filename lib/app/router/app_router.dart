@@ -216,6 +216,9 @@ GoRouter appRouter(final Ref ref) {
   // when session state changes, maintenance mode toggles, etc.
   final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
 
+  // Get analytics observer for screen tracking
+  final analyticsObserver = ref.watch(analyticsObserverProvider);
+
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoute.splash.path,
@@ -226,6 +229,12 @@ GoRouter appRouter(final Ref ref) {
         _handleRedirect(ref, state.uri.path),
     errorBuilder: (final context, final state) =>
         _ErrorPage(path: state.uri.path),
+    observers: [
+      // Performance monitoring for screen traces
+      PerformanceRouteObserver(ref),
+      // Analytics for screen view tracking
+      if (analyticsObserver != null) analyticsObserver,
+    ],
   );
 }
 

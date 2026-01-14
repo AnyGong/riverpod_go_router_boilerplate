@@ -721,6 +721,123 @@ StorageKeys.onboardingCompleted // 'onboarding_completed'
 | `DeepLinkService`          | Universal link handling |
 | `InAppReviewService`       | App store reviews       |
 | `CrashlyticsService`       | Crash reporting         |
+| `AnalyticsService`         | User analytics          |
+| `PerformanceService`       | Performance monitoring  |
+| `RemoteConfigService`      | Feature flags & config  |
+
+### Firebase Suite (`lib/core/`)
+
+The boilerplate includes a complete Firebase integration:
+
+#### Crashlytics (`lib/core/crashlytics/`)
+
+```dart
+// Record non-fatal errors
+ref.read(crashlyticsServiceProvider).recordError(
+  exception,
+  stackTrace,
+  reason: 'API call failed',
+);
+
+// Log breadcrumbs
+ref.read(crashlyticsServiceProvider).log('User tapped checkout');
+
+// Set user identifier
+ref.read(crashlyticsServiceProvider).setUserId('user_123');
+```
+
+#### Analytics (`lib/core/analytics/`)
+
+```dart
+final analytics = ref.read(analyticsServiceProvider);
+
+// Predefined events
+await analytics.logLogin(method: 'email');
+await analytics.logSignUp(method: 'google');
+await analytics.logSearch(searchTerm: 'shoes');
+await analytics.logPurchase(
+  transactionId: 'txn_123',
+  value: 99.99,
+  currency: 'USD',
+);
+
+// Custom events (use constants from AnalyticsEvents)
+await analytics.logEvent(
+  AnalyticsEvents.featureUsed,
+  parameters: {'feature': 'dark_mode'},
+);
+
+// User properties (use constants from AnalyticsUserProperties)
+await analytics.setUserProperty(
+  AnalyticsUserProperties.subscriptionTier,
+  'premium',
+);
+```
+
+#### Performance Monitoring (`lib/core/performance/`)
+
+```dart
+final performance = ref.read(performanceServiceProvider);
+
+// Trace async operations
+final result = await performance.traceAsync(
+  'checkout_flow',
+  () => processCheckout(),
+  attributes: {'payment_method': 'credit_card'},
+  metrics: {'items_count': 5},
+);
+
+// Manual traces for fine-grained control
+final trace = await performance.startTrace('image_upload');
+trace?.putAttribute('image_type', 'profile');
+// ... perform operation ...
+await trace?.stop();
+
+// HTTP metrics are automatic via PerformanceHttpInterceptor
+// Screen traces are automatic via PerformanceRouteObserver
+```
+
+#### Remote Config (`lib/core/remote_config/`)
+
+```dart
+final remoteConfig = ref.read(remoteConfigServiceProvider);
+
+// Feature flags
+final isFeatureEnabled = remoteConfig.getBool(RemoteConfigKeys.newFeatureEnabled);
+final apiVersion = remoteConfig.getString(RemoteConfigKeys.apiVersion);
+final maxRetries = remoteConfig.getInt(RemoteConfigKeys.maxApiRetries);
+
+// Force update check
+if (remoteConfig.isForceUpdateRequired) {
+  final minVersion = remoteConfig.minAppVersion;
+  // Show force update dialog
+}
+
+// Maintenance mode
+if (remoteConfig.isMaintenanceMode) {
+  // Show maintenance screen
+}
+
+// Fetch latest config
+await remoteConfig.fetchAndActivate();
+
+// Real-time updates
+remoteConfig.listenForUpdates((updatedKeys) {
+  if (updatedKeys.contains(RemoteConfigKeys.maintenanceMode)) {
+    // Handle maintenance mode change
+  }
+});
+```
+
+#### Firebase Setup
+
+1. Create a Firebase project at https://console.firebase.google.com
+2. Add your Android and iOS apps
+3. Download configuration files:
+   - Android: `google-services.json` → `android/app/`
+   - iOS: `GoogleService-Info.plist` → `ios/Runner/`
+4. Run `flutterfire configure` to generate `firebase_options.dart`
+5. Uncomment initialization in `lib/app/bootstrap.dart`
 
 ---
 

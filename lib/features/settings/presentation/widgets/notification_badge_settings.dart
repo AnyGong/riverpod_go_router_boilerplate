@@ -42,7 +42,9 @@ class NotificationBadgeSettings extends ConsumerWidget {
                     ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.error,
-                      borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.borderRadiusSM,
+                      ),
                     ),
                     child: Text(
                       '$count',
@@ -55,7 +57,8 @@ class NotificationBadgeSettings extends ConsumerWidget {
               ],
             ),
             trailing: PopupMenuButton<_BadgeAction>(
-              onSelected: (final action) => _handleBadgeAction(ref, action, l10n),
+              onSelected: (final action) =>
+                  _handleBadgeAction(ref, action, l10n),
               itemBuilder: (final context) => [
                 PopupMenuItem<_BadgeAction>(
                   value: _BadgeAction.incrementOne,
@@ -109,7 +112,9 @@ class NotificationBadgeSettings extends ConsumerWidget {
       await ref.read(badgeCountProvider.notifier).increment();
       ref.read(feedbackServiceProvider).showSuccess(l10n.badgeIncremented);
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
+      ref
+          .read(feedbackServiceProvider)
+          .showError(l10n.failedFormat(e.toString()));
     }
   }
 
@@ -120,9 +125,13 @@ class NotificationBadgeSettings extends ConsumerWidget {
   ) async {
     try {
       await ref.read(badgeCountProvider.notifier).addNotifications(count);
-      ref.read(feedbackServiceProvider).showSuccess(l10n.notificationsAddedFormat(count));
+      ref
+          .read(feedbackServiceProvider)
+          .showSuccess(l10n.notificationsAddedFormat(count));
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
+      ref
+          .read(feedbackServiceProvider)
+          .showError(l10n.failedFormat(e.toString()));
     }
   }
 
@@ -134,7 +143,9 @@ class NotificationBadgeSettings extends ConsumerWidget {
       await ref.read(badgeCountProvider.notifier).clearBadge();
       ref.read(feedbackServiceProvider).showSuccess(l10n.badgeCleared);
     } catch (e) {
-      ref.read(feedbackServiceProvider).showError(l10n.failedFormat(e.toString()));
+      ref
+          .read(feedbackServiceProvider)
+          .showError(l10n.failedFormat(e.toString()));
     }
   }
 }

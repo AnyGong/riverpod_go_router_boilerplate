@@ -34,7 +34,9 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.language_outlined),
             title: Text(l10n.language),
-            subtitle: Text(_languageLabel(currentLocale ?? const Locale('en'), l10n)),
+            subtitle: Text(
+              _languageLabel(currentLocale ?? const Locale('en'), l10n),
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLanguageDialog(context, ref, l10n),
           ),
@@ -145,7 +147,9 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
                   color: isSelected ? dialogContext.colorScheme.primary : null,
                 ),
                 const HorizontalSpace.sm(),
@@ -171,7 +175,8 @@ class SettingsPage extends ConsumerWidget {
     final WidgetRef ref,
     final AppLocalizations l10n,
   ) {
-    final currentLocale = ref.read(localeNotifierProvider) ?? const Locale('en');
+    final currentLocale =
+        ref.read(localeNotifierProvider) ?? const Locale('en');
 
     showDialog<void>(
       context: context,
@@ -184,7 +189,9 @@ class SettingsPage extends ConsumerWidget {
             l10n.english,
             currentLocale.languageCode == 'en',
             () {
-              ref.read(localeNotifierProvider.notifier).setLocale(const Locale('en'));
+              ref
+                  .read(localeNotifierProvider.notifier)
+                  .setLocale(const Locale('en'));
               Navigator.of(dialogContext).pop();
             },
           ),
@@ -194,7 +201,9 @@ class SettingsPage extends ConsumerWidget {
             l10n.bengali,
             currentLocale.languageCode == 'bn',
             () {
-              ref.read(localeNotifierProvider.notifier).setLocale(const Locale('bn'));
+              ref
+                  .read(localeNotifierProvider.notifier)
+                  .setLocale(const Locale('bn'));
               Navigator.of(dialogContext).pop();
             },
           ),
@@ -215,7 +224,9 @@ class SettingsPage extends ConsumerWidget {
       child: Row(
         children: [
           Icon(
-            isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+            isSelected
+                ? Icons.radio_button_checked
+                : Icons.radio_button_unchecked,
             color: isSelected ? context.colorScheme.primary : null,
           ),
           const HorizontalSpace.sm(),

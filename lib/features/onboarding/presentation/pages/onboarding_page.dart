@@ -33,12 +33,14 @@ class OnboardingPageData {
 const _pages = [
   OnboardingPageData(
     title: 'Welcome',
-    description: 'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
+    description:
+        'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
     icon: Icons.flutter_dash,
   ),
   OnboardingPageData(
     title: 'Modern Architecture',
-    description: 'Built with Riverpod, GoRouter, and clean architecture principles.',
+    description:
+        'Built with Riverpod, GoRouter, and clean architecture principles.',
     icon: Icons.architecture,
   ),
   OnboardingPageData(
@@ -120,7 +122,9 @@ class OnboardingPage extends HookConsumerWidget {
                   if (currentPage.value > 0) const HorizontalSpace.md(),
                   Expanded(
                     child: AppButton(
-                      label: currentPage.value == _pages.length - 1 ? 'Get Started' : 'Next',
+                      label: currentPage.value == _pages.length - 1
+                          ? 'Get Started'
+                          : 'Next',
                       onPressed: () {
                         if (currentPage.value == _pages.length - 1) {
                           _completeOnboarding(context, ref);
