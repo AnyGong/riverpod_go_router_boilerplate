@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
+import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Splash page shown during app initialization.
 ///
@@ -58,7 +61,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       body: Center(
@@ -79,22 +82,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 color: theme.colorScheme.primary,
               ),
             ),
-            const SizedBox(height: 32),
+            const VerticalSpace.xl(),
             Text(
               'Flutter Boilerplate',
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 48),
-            SizedBox(
-              width: 32,
-              height: 32,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                color: theme.colorScheme.primary,
-              ),
-            ),
+            const VerticalSpace.xxl(),
+            const LoadingWidget(size: 32, strokeWidth: 3),
           ],
         ),
       ),

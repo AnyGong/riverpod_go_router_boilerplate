@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/storage_keys.dart';
 import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
-import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
 
@@ -112,9 +112,7 @@ class AuthRepositoryMock implements AuthRepository {
         .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
         .map(
-          (final word) => word.isNotEmpty
-              ? '${word[0].toUpperCase()}${word.substring(1)}'
-              : '',
+          (final word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '',
         )
         .join(' ');
   }

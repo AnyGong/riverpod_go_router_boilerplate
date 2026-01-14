@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A shimmer loading wrapper for arbitrary content.
@@ -32,7 +32,7 @@ class ShimmerLoading extends StatelessWidget {
   Widget build(final BuildContext context) {
     if (!enabled) return child;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.theme.brightness == Brightness.dark;
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
@@ -213,7 +213,7 @@ class ShimmerCard extends StatelessWidget {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(

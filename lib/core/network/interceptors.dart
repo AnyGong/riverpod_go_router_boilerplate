@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/storage_keys.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
@@ -12,8 +13,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 typedef TokenRefreshCallback =
     Future<bool> Function(
       String? refreshToken,
-      Future<void> Function(String accessToken, String? refreshToken)
-      saveTokens,
+      Future<void> Function(String accessToken, String? refreshToken) saveTokens,
     );
 
 /// Callback type for handling authentication failures.

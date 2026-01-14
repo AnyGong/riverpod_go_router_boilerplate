@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 /// A widget that renders loading, error, or data states
 /// for a Riverpod [AsyncValue].
@@ -78,7 +79,7 @@ class LoadingWidget extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: strokeWidth),
           ),
           if (message != null) ...[
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
             Text(
               message!,
               style: Theme.of(
@@ -121,28 +122,28 @@ class ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 64, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
             Text(
               'Something went wrong',
               style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: 8),
+            const VerticalSpace.sm(),
             Text(
               message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              const VerticalSpace.lg(),
               OutlinedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
@@ -181,26 +182,26 @@ class EmptyWidget extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 80, color: theme.colorScheme.outline),
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
             Text(
               message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey),
             ),
             if (action != null && actionLabel != null) ...[
-              const SizedBox(height: 24),
-              ElevatedButton(
+              const VerticalSpace.lg(),
+              AppButton(
                 onPressed: action,
-                child: Text(actionLabel!),
+                label: actionLabel!,
               ),
             ],
           ],

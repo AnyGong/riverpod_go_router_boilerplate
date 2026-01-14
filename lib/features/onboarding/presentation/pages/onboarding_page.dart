@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
 
 /// Onboarding page data model
@@ -61,7 +59,7 @@ class OnboardingPage extends HookConsumerWidget {
   Widget build(final BuildContext context, final WidgetRef ref) {
     final pageController = usePageController();
     final currentPage = useState(0);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       body: SafeArea(
@@ -110,7 +108,7 @@ class OnboardingPage extends HookConsumerWidget {
                   if (currentPage.value > 0)
                     Expanded(
                       child: AppButton(
-                        variant: AppButtonVariant.secondary,
+                        variant: .secondary,
                         label: 'Back',
                         onPressed: () {
                           pageController.previousPage(
@@ -175,7 +173,7 @@ class _OnboardingPageContent extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return ResponsivePadding(
       child: Column(

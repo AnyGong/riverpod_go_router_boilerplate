@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/home/presentation/pages/home_page.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/pages/settings_page.dart';
@@ -15,8 +16,7 @@ final protectedRoutes = [
   GoRoute(
     path: AppRoute.profile.path,
     name: AppRoute.profile.name,
-    builder: (final context, final state) =>
-        const _PlaceholderPage(title: 'Profile'),
+    builder: (final context, final state) => const _PlaceholderPage(title: 'Profile'),
   ),
   GoRoute(
     path: AppRoute.settings.path,
@@ -47,16 +47,16 @@ class _PlaceholderPage extends StatelessWidget {
             Icon(
               Icons.construction,
               size: 64,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.theme.colorScheme.primary,
             ),
-            const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 8),
+            const VerticalSpace.md(),
+            Text(title, style: context.theme.textTheme.headlineMedium),
+            const VerticalSpace.sm(),
             Text(
               'This page is under construction',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: context.theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
             ),
           ],
         ),

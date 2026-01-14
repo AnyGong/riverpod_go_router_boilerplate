@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 
 /// Extension for convenient caching of typed objects.
 extension CacheServiceExtensions on CacheService {
@@ -58,9 +58,7 @@ extension CacheServiceExtensions on CacheService {
 
     try {
       final list = jsonDecode(data) as List<dynamic>;
-      return list
-          .map((final e) => fromJson(e as Map<String, dynamic>))
-          .toList();
+      return list.map((final e) => fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {
       return null;
     }

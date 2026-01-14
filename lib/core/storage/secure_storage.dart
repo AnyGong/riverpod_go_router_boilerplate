@@ -20,6 +20,13 @@ part 'secure_storage.g.dart';
 ///
 /// **Important:** Never store unencrypted sensitive data. Always use this
 /// provider for tokens, passwords, and other credentials.
+///
+/// **Usage:**
+/// ```dart
+/// final storage = ref.read(secureStorageProvider);
+/// await storage.write(key: StorageKeys.accessToken, value: token);
+/// final token = await storage.read(key: StorageKeys.accessToken);
+/// ```
 @Riverpod(keepAlive: true)
 FlutterSecureStorage secureStorage(final Ref ref) {
   return const FlutterSecureStorage(
@@ -32,19 +39,4 @@ FlutterSecureStorage secureStorage(final Ref ref) {
     ),
     // Linux uses libsecret, macOS uses Keychain, Web uses encrypted localStorage
   );
-}
-
-/// Storage keys used throughout the app.
-abstract class StorageKeys {
-  /// Key for storing access token
-  static const String accessToken = 'access_token';
-
-  /// Key for storing refresh token
-  static const String refreshToken = 'refresh_token';
-
-  /// Key for storing user ID
-  static const String userId = 'user_id';
-
-  /// Key for storing onboarding completion status
-  static const String onboardingCompleted = 'onboarding_completed';
 }

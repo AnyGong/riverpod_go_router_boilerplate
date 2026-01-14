@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
@@ -159,8 +159,7 @@ class CacheInterceptor extends Interceptor {
 
     // Handle 304 Not Modified
     if (response.statusCode == 304) {
-      final cachedEntry =
-          response.requestOptions.extra['_cachedEntry'] as CacheEntry?;
+      final cachedEntry = response.requestOptions.extra['_cachedEntry'] as CacheEntry?;
       if (cachedEntry != null) {
         logger?.d('304 Not Modified: using cached response');
         // Extend cache expiration

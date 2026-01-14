@@ -38,35 +38,46 @@ lib/features/<feature_name>/
 
 ---
 
-## � Constants
+## 📦 Constants
 
-**File**: `lib/core/constants/constants.dart`
+**Path**: `lib/core/constants/`
+
+The constants are organized into separate files for better maintainability:
+
+| File                 | Purpose                            |
+| :------------------- | :--------------------------------- |
+| `app_constants.dart` | Durations, dimensions, validation  |
+| `api_endpoints.dart` | All API endpoint paths             |
+| `assets.dart`        | Image, icon, animation asset paths |
+| `storage_keys.dart`  | Secure storage and prefs keys      |
 
 ### `AppConstants`
 
-| Constant             | Value  | Usage                          |
-| :------------------- | :----- | :----------------------------- |
-| `animationFast`      | 150ms  | Quick transitions              |
-| `animationNormal`    | 300ms  | Standard animations            |
-| `animationSlow`      | 500ms  | Emphasized animations          |
-| `connectTimeout`     | 30s    | HTTP connection timeout        |
-| `receiveTimeout`     | 30s    | HTTP receive timeout           |
-| `debounceDelay`      | 500ms  | Input debouncing               |
-| `defaultPageSize`    | 20     | Pagination page size           |
-| `borderRadiusSmall`  | 4.0    | Subtle corners                 |
-| `borderRadiusMedium` | 8.0    | Standard corners               |
-| `borderRadiusLarge`  | 16.0   | Prominent corners              |
-| `buttonHeight`       | 48.0   | Standard button height         |
-| `inputHeight`        | 56.0   | Standard input height          |
-| `maxContentWidth`    | 600.0  | Content max-width (responsive) |
-| `minPasswordLength`  | 8      | Password validation            |
-| `emailPattern`       | RegExp | Email validation regex         |
-| `phonePattern`       | RegExp | Phone validation regex         |
+**File**: `lib/core/constants/app_constants.dart`
+
+| Constant            | Value  | Usage                          |
+| :------------------ | :----- | :----------------------------- |
+| `animationFast`     | 150ms  | Quick transitions              |
+| `animationNormal`   | 300ms  | Standard animations            |
+| `animationSlow`     | 500ms  | Emphasized animations          |
+| `connectTimeout`    | 30s    | HTTP connection timeout        |
+| `receiveTimeout`    | 30s    | HTTP receive timeout           |
+| `debounceDelay`     | 500ms  | Input debouncing               |
+| `defaultPageSize`   | 20     | Pagination page size           |
+| `borderRadiusSM`    | 4.0    | Subtle corners                 |
+| `borderRadiusMD`    | 8.0    | Standard corners               |
+| `borderRadiusLG`    | 12.0   | Prominent corners              |
+| `borderRadiusXL`    | 16.0   | Very rounded corners           |
+| `buttonHeight`      | 48.0   | Standard button height         |
+| `inputHeight`       | 56.0   | Standard input height          |
+| `maxContentWidth`   | 600.0  | Content max-width (responsive) |
+| `minPasswordLength` | 8      | Password validation            |
+| `emailPattern`      | RegExp | Email validation regex         |
 
 ```dart
 // ✅ Correct
 Duration(milliseconds: AppConstants.animationNormal.inMilliseconds)
-BorderRadius.circular(AppConstants.borderRadiusMedium)
+BorderRadius.circular(AppConstants.borderRadiusMD)
 
 // ❌ Wrong - Magic numbers
 Duration(milliseconds: 300)
@@ -75,19 +86,76 @@ BorderRadius.circular(8)
 
 ### `ApiEndpoints`
 
-Pre-defined API endpoint paths:
+**File**: `lib/core/constants/api_endpoints.dart`
+
+Pre-defined API endpoint paths organized by feature:
 
 ```dart
-ApiEndpoints.login       // '/auth/login'
-ApiEndpoints.register    // '/auth/register'
-ApiEndpoints.currentUser // '/users/me'
+// Auth
+ApiEndpoints.login            // '/auth/login'
+ApiEndpoints.register         // '/auth/register'
+ApiEndpoints.logout           // '/auth/logout'
+ApiEndpoints.refreshToken     // '/auth/refresh'
+ApiEndpoints.forgotPassword   // '/auth/forgot-password'
+
+// User
+ApiEndpoints.currentUser      // '/users/me'
+ApiEndpoints.updateProfile    // '/users/me'
+ApiEndpoints.changePassword   // '/users/me/password'
+
+// Notifications
+ApiEndpoints.notifications    // '/notifications'
+ApiEndpoints.registerDevice   // '/notifications/device'
 ```
 
-### `Assets`
+### `Assets` & `AppIcons`
+
+**File**: `lib/core/constants/assets.dart`
 
 ```dart
-Assets.logo        // 'assets/images/logo.png'
-Assets.imagesPath  // 'assets/images'
+// Images
+Assets.logo                   // 'assets/images/logo.png'
+Assets.placeholder            // 'assets/images/placeholder.png'
+Assets.emptyState             // 'assets/images/empty_state.png'
+Assets.onboarding.page1       // 'assets/images/onboarding_1.png'
+
+// Animations (Lottie)
+Assets.loadingAnimation       // 'assets/animations/loading.json'
+Assets.successAnimation       // 'assets/animations/success.json'
+
+// Icons (SVG)
+AppIcons.home                 // 'assets/icons/home.svg'
+AppIcons.settings             // 'assets/icons/settings.svg'
+AppIcons.google               // 'assets/icons/google.svg'
+```
+
+### `StorageKeys`
+
+**File**: `lib/core/constants/storage_keys.dart`
+
+Centralized storage keys for secure storage and shared preferences:
+
+| Category          | Keys                                                   |
+| :---------------- | :----------------------------------------------------- |
+| **Auth**          | `accessToken`, `refreshToken`, `tokenExpiry`, `userId` |
+| **Preferences**   | `themeMode`, `locale`, `notificationsEnabled`          |
+| **App State**     | `onboardingCompleted`, `launchCount`, `hasRatedApp`    |
+| **Cache**         | `cachedUserProfile`, `lastSyncTimestamp`               |
+| **Notifications** | `fcmToken`, `badgeCount`, `lastNotificationRead`       |
+
+```dart
+await secureStorage.write(key: StorageKeys.accessToken, value: token);
+final token = await secureStorage.read(key: StorageKeys.accessToken);
+```
+
+### `PrefsKeys`
+
+Non-sensitive shared preferences keys:
+
+```dart
+PrefsKeys.lastTabIndex       // UI state
+PrefsKeys.recentSearches     // Search history
+PrefsKeys.shownTooltips      // Feature discovery
 ```
 
 ---
@@ -188,6 +256,145 @@ ResponsiveBuilder(
   tablet: TabletLayout(),
   desktop: DesktopLayout(),
 )
+```
+
+### Input Widgets
+
+| Widget           | Purpose                                   |
+| :--------------- | :---------------------------------------- |
+| `AppTextField`   | Styled text field with consistent styling |
+| `AppSearchField` | Search input with clear button            |
+| `AppChip`        | Filter/input chips                        |
+| `AppBadge`       | Count/status badges                       |
+| `AppDivider`     | Divider with optional label               |
+| `StatusDot`      | Status indicator (online/offline/busy)    |
+
+```dart
+AppTextField(
+  label: 'Email',
+  prefixIcon: Icons.email,
+  validator: Validators.email(),
+)
+
+AppSearchField(
+  controller: searchController,
+  onChanged: (query) => ref.read(searchProvider.notifier).search(query),
+)
+
+AppChip(
+  label: 'Flutter',
+  selected: isSelected,
+  onSelected: (selected) => toggleFilter('flutter'),
+)
+
+AppBadge(
+  count: notificationCount,
+  child: Icon(Icons.notifications),
+)
+
+StatusDot.online()  // Green pulsing dot
+StatusDot.busy()    // Red dot
+```
+
+### Dialogs & Bottom Sheets
+
+**File**: `lib/core/widgets/dialogs.dart`
+
+| Helper                 | Purpose                          |
+| :--------------------- | :------------------------------- |
+| `AppDialogs.confirm()` | Confirmation dialog              |
+| `AppDialogs.alert()`   | Simple alert                     |
+| `AppDialogs.error()`   | Error dialog with icon           |
+| `AppDialogs.success()` | Success dialog with icon         |
+| `AppDialogs.input()`   | Input dialog with validation     |
+| `AppDialogs.select()`  | Selection dialog                 |
+| `AppDialogs.loading()` | Loading dialog (returns dismiss) |
+
+```dart
+final confirmed = await AppDialogs.confirm(
+  context,
+  title: 'Delete Item',
+  message: 'This action cannot be undone.',
+  isDangerous: true,
+);
+
+if (confirmed == true) {
+  await deleteItem();
+}
+
+// Input dialog
+final name = await AppDialogs.input(
+  context,
+  title: 'Rename',
+  initialValue: currentName,
+  validator: Validators.required(),
+);
+
+// Loading dialog
+final dismiss = AppDialogs.loading(context, message: 'Saving...');
+await saveData();
+dismiss();
+```
+
+**Bottom Sheets:**
+
+```dart
+AppBottomSheets.confirm(
+  context,
+  title: 'Sign Out',
+  message: 'Are you sure?',
+);
+
+AppBottomSheets.actions<String>(
+  context,
+  title: 'Options',
+  actions: [
+    BottomSheetAction(value: 'edit', label: 'Edit', icon: Icons.edit),
+    BottomSheetAction(value: 'delete', label: 'Delete', icon: Icons.delete, isDestructive: true),
+  ],
+);
+```
+
+### Animation Widgets
+
+**File**: `lib/core/widgets/animations.dart`
+
+| Widget          | Purpose                        |
+| :-------------- | :----------------------------- |
+| `FadeIn`        | Fade in on mount               |
+| `SlideIn`       | Slide in from direction        |
+| `ScaleIn`       | Scale in on mount              |
+| `StaggeredList` | Staggered list item animations |
+| `ShakeWidget`   | Shake effect (for errors)      |
+| `Pulse`         | Pulsing animation              |
+
+```dart
+// Automatic fade-in animation
+FadeIn(
+  duration: AppConstants.animationNormal,
+  delay: 100.ms,
+  child: Text('Hello'),
+)
+
+// Slide from bottom
+SlideIn(
+  direction: SlideDirection.fromBottom,
+  child: Card(...),
+)
+
+// Staggered list
+StaggeredList(
+  staggerDelay: 50.ms,
+  children: items.map((item) => ItemCard(item)).toList(),
+)
+
+// Shake on error
+final shakeController = ShakeController();
+ShakeWidget(
+  controller: shakeController,
+  child: TextField(...),
+)
+// Trigger: shakeController.shake();
 ```
 
 ---
@@ -315,6 +522,95 @@ String? name;
 name.isNullOrEmpty     // true
 name.orEmpty           // ''
 name.orDefault('N/A')  // 'N/A'
+```
+
+### Number Extensions
+
+**File**: `lib/core/extensions/num_extensions.dart`
+
+```dart
+// Formatting
+1234567.formatted              // '1,234,567'
+1234567.89.compactFormatted    // '1.2M'
+0.1234.toPercentage()          // '12.34%'
+99.99.toCurrency()             // '$99.99'
+99.99.toCurrency('€')          // '€99.99'
+
+// File sizes
+1024.toFileSize()              // '1.0 KB'
+1048576.toFileSize()           // '1.0 MB'
+
+// Time formatting
+125.toMinutesSeconds()         // '02:05'
+3665.toHoursMinutesSeconds()   // '01:01:05'
+
+// Clamping
+150.clampPercentage            // 100.0
+(-5).clampPercentage           // 0.0
+
+// Duration shortcuts (works with int and double)
+5.seconds                      // Duration(seconds: 5)
+500.ms                         // Duration(milliseconds: 500)
+2.5.minutes                    // Duration(seconds: 150)
+
+// Spacing shortcuts
+16.h                           // SizedBox(height: 16)
+8.w                            // SizedBox(width: 8)
+```
+
+### Iterable Extensions
+
+**File**: `lib/core/extensions/iterable_extensions.dart`
+
+```dart
+// Safe access
+[1, 2, 3].firstOrNull          // 1
+[].firstOrNull                 // null
+[1, 2, 3].lastOrNull           // 3
+
+// Grouping & Chunking
+users.groupBy((u) => u.role)   // Map<Role, List<User>>
+[1, 2, 3, 4, 5].chunk(2)       // [[1, 2], [3, 4], [5]]
+
+// Filtering
+[1, 2, 2, 3, 3].distinct()     // [1, 2, 3]
+users.distinctBy((u) => u.id)  // Unique by ID
+
+// Finding
+users.maxBy((u) => u.score)    // User with highest score
+users.minBy((u) => u.age)      // User with lowest age
+
+// Transformations
+users.associate((u) => MapEntry(u.id, u))  // Map<int, User>
+users.sortedBy((u) => u.name)              // Sorted copy
+users.sortedByDescending((u) => u.score)   // Descending sort
+
+// Conditional
+items.takeWhileInclusive((i) => i < 5)  // Includes boundary element
+```
+
+### Duration Extensions
+
+**File**: `lib/core/extensions/duration_extensions.dart`
+
+```dart
+// Formatting
+Duration(seconds: 125).formatHHMMSS    // '00:02:05'
+Duration(seconds: 3665).formatHHMMSS   // '01:01:05'
+Duration(minutes: 5).formatCompact     // '5m'
+Duration(hours: 2, minutes: 30).formatCompact  // '2h 30m'
+
+// Time from now/ago
+Duration(hours: 2).fromNow             // DateTime 2 hours from now
+Duration(days: 1).ago                  // DateTime 1 day ago
+
+// Comparison
+Duration(seconds: 30).isLongerThan(Duration(seconds: 20))  // true
+Duration(seconds: 10).isShorterThan(Duration(seconds: 20)) // true
+
+// Rounding
+Duration(seconds: 125).roundToMinutes  // Duration(minutes: 2)
+Duration(minutes: 45).roundToHours     // Duration(hours: 1)
 ```
 
 ---

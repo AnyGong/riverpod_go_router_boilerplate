@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A cached network image widget with built-in loading and error states.
@@ -127,13 +128,13 @@ class AppCachedAvatar extends StatelessWidget {
     if (imageUrl == null || imageUrl!.isEmpty) {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: context.theme.colorScheme.primaryContainer,
         child:
             placeholder ??
             Icon(
               Icons.person,
               size: radius,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.theme.colorScheme.primary,
             ),
       );
     }
@@ -157,13 +158,13 @@ class AppCachedAvatar extends StatelessWidget {
       ),
       errorWidget: (final context, final url, final error) => CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: context.theme.colorScheme.primaryContainer,
         child:
             placeholder ??
             Icon(
               Icons.person,
               size: radius,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.theme.colorScheme.primary,
             ),
       ),
     );

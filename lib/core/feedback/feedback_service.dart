@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/core/feedback/feedback_config.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Service for showing dialogs and snackbars without BuildContext.
 ///
@@ -30,9 +31,7 @@ class FeedbackService {
       duration: config.duration,
       backgroundColor: _getBackgroundColor(config.type),
       behavior: SnackBarBehavior.floating,
-      dismissDirection: config.dismissible
-          ? DismissDirection.horizontal
-          : DismissDirection.none,
+      dismissDirection: config.dismissible ? DismissDirection.horizontal : DismissDirection.none,
       action: config.action != null && config.actionLabel != null
           ? SnackBarAction(
               label: config.actionLabel!,
@@ -94,9 +93,7 @@ class FeedbackService {
       barrierDismissible: config.barrierDismissible,
       builder: (final context) => AlertDialog.adaptive(
         title: Text(config.title),
-        content:
-            config.content ??
-            (config.message != null ? Text(config.message!) : null),
+        content: config.content ?? (config.message != null ? Text(config.message!) : null),
         actions: [
           if (config.cancelLabel != null)
             TextButton(
@@ -111,9 +108,7 @@ class FeedbackService {
               config.onConfirm?.call();
               Navigator.of(context).pop(true);
             },
-            style: config.isDestructive
-                ? TextButton.styleFrom(foregroundColor: Colors.red)
-                : null,
+            style: config.isDestructive ? TextButton.styleFrom(foregroundColor: Colors.red) : null,
             child: Text(config.confirmLabel),
           ),
         ],
@@ -171,7 +166,7 @@ class FeedbackService {
             children: [
               const CircularProgressIndicator.adaptive(),
               if (message != null) ...[
-                const SizedBox(width: 16),
+                const HorizontalSpace.md(),
                 Flexible(child: Text(message)),
               ],
             ],

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
 import 'package:riverpod_go_router_boilerplate/core/review/in_app_review_service.dart';
 import 'package:riverpod_go_router_boilerplate/core/version/app_version_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Force update page shown when the app version is below minimum required.
 ///
@@ -13,19 +17,20 @@ class ForceUpdatePage extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final versionAsync = ref.watch(versionInfoProvider);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: ResponsivePadding(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
               // Update icon
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
                   shape: BoxShape.circle,
@@ -36,7 +41,7 @@ class ForceUpdatePage extends ConsumerWidget {
                   color: theme.colorScheme.primary,
                 ),
               ),
-              const SizedBox(height: 32),
+              const VerticalSpace.xl(),
               // Title
               Text(
                 'Update Required',
@@ -45,7 +50,7 @@ class ForceUpdatePage extends ConsumerWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const VerticalSpace.md(),
               // Description
               Text(
                 'A new version of the app is available. '
@@ -55,17 +60,19 @@ class ForceUpdatePage extends ConsumerWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const VerticalSpace.lg(),
               // Version info
               versionAsync.when(
                 data: (final info) => Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm + AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadiusMedium + AppConstants.borderRadiusSmall,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -77,13 +84,13 @@ class ForceUpdatePage extends ConsumerWidget {
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const HorizontalSpace.sm(),
                       Icon(
                         Icons.arrow_forward,
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 12),
+                      const HorizontalSpace.sm(),
                       Text(
                         'v${info.minimumVersion ?? 'Latest'}',
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -99,18 +106,15 @@ class ForceUpdatePage extends ConsumerWidget {
               ),
               const Spacer(),
               // Update button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () => _openStore(ref),
-                  icon: const Icon(Icons.download),
-                  label: const Text('Update Now'),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
+              AppButton(
+                variant: AppButtonVariant.primary,
+                size: AppButtonSize.large,
+                isExpanded: true,
+                onPressed: () => _openStore(ref),
+                icon: Icons.download,
+                label: 'Update Now',
               ),
-              const SizedBox(height: 16),
+              const VerticalSpace.md(),
             ],
           ),
         ),

@@ -39,12 +39,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         .read(authProvider)
         .whenOrNull(
           error: (final error, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(error.toString()),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
+            context.showErrorSnackBar(error.toString());
           },
           data: (final user) {
             if (user != null) {
@@ -56,7 +51,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
 
@@ -177,9 +172,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       variant: .text,
                       size: .medium,
                       isExpanded: true,
-                      onPressed: () {
-                        // TODO: Navigate to forgot password
-                      },
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              // TODO: Navigate to forgot password
+                            },
                       label: 'Forgot Password?',
                     ),
                   ],

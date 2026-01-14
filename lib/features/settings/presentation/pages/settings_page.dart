@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/providers/package_info_provider.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/notification_badge_settings.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/settings_section_header.dart';
@@ -127,9 +126,7 @@ class SettingsPage extends ConsumerWidget {
                   isSelected
                       ? Icons.radio_button_checked
                       : Icons.radio_button_unchecked,
-                  color: isSelected
-                      ? Theme.of(dialogContext).colorScheme.primary
-                      : null,
+                  color: isSelected ? dialogContext.colorScheme.primary : null,
                 ),
                 const HorizontalSpace.sm(),
                 Text(
@@ -137,7 +134,7 @@ class SettingsPage extends ConsumerWidget {
                   style: isSelected
                       ? TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(dialogContext).colorScheme.primary,
+                          color: dialogContext.colorScheme.primary,
                         )
                       : null,
                 ),

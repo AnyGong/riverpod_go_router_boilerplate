@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 /// Section header for settings groups.
 class SettingsSectionHeader extends StatelessWidget {
@@ -11,7 +11,7 @@ class SettingsSectionHeader extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     return ResponsivePadding(
       child: Text(
         title,

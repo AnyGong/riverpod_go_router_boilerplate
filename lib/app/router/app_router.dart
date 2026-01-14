@@ -7,7 +7,7 @@ import 'package:riverpod_go_router_boilerplate/app/router/protected_routes.dart'
 import 'package:riverpod_go_router_boilerplate/app/router/splash_route.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_state.dart';
-import 'package:riverpod_go_router_boilerplate/core/session/session.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 part 'app_router.g.dart';
 
@@ -163,12 +163,10 @@ enum AppRoute {
   }
 
   /// All routes that require authentication.
-  static List<AppRoute> get protectedRoutes =>
-      values.where((final r) => r.requiresAuth).toList();
+  static List<AppRoute> get protectedRoutes => values.where((final r) => r.requiresAuth).toList();
 
   /// All public routes (no auth required).
-  static List<AppRoute> get publicRoutes =>
-      values.where((final r) => !r.requiresAuth).toList();
+  static List<AppRoute> get publicRoutes => values.where((final r) => !r.requiresAuth).toList();
 }
 
 /// Extension for convenient navigation with [AppRoute] enum.
@@ -193,8 +191,7 @@ extension AppRouteNavigation on BuildContext {
       push(route.pathWith(params));
 
   /// Replace current route using [GoRouter.pushReplacement].
-  void pushReplacementRoute(final AppRoute route) =>
-      pushReplacement(route.path);
+  void pushReplacementRoute(final AppRoute route) => pushReplacement(route.path);
 
   /// Replace current route with parameters using [GoRouter.pushReplacement].
   void pushReplacementRouteWith(
@@ -222,10 +219,8 @@ GoRouter appRouter(final Ref ref) {
     debugLogDiagnostics: true,
     refreshListenable: lifecycleListenable,
     routes: [splashRoute, ...authRoutes, ...protectedRoutes],
-    redirect: (final context, final state) =>
-        _handleRedirect(ref, state.uri.path),
-    errorBuilder: (final context, final state) =>
-        _ErrorPage(path: state.uri.path),
+    redirect: (final context, final state) => _handleRedirect(ref, state.uri.path),
+    errorBuilder: (final context, final state) => _ErrorPage(path: state.uri.path),
   );
 }
 
@@ -327,22 +322,22 @@ class _ErrorPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
+            const VerticalSpace.md(),
             Text(
               'Page not found',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: context.theme.textTheme.headlineSmall,
             ),
-            const SizedBox(height: 8),
+            const VerticalSpace.sm(),
             Text(
               path,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: context.theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
             ),
-            const SizedBox(height: 24),
-            ElevatedButton(
+            const VerticalSpace.lg(),
+            AppButton(
               onPressed: () => context.goRoute(AppRoute.home),
-              child: const Text('Go Home'),
+              label: 'Go Home',
             ),
           ],
         ),

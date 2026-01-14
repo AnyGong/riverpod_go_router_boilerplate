@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/config/remote_config_service.dart';
+import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Maintenance page shown when the app is under maintenance.
@@ -13,7 +14,7 @@ class MaintenancePage extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final maintenanceMessage = ref.watch(maintenanceMessageProvider);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       body: SafeArea(

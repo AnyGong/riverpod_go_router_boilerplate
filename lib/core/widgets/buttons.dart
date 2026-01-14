@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// A configurable button with consistent app styling.
 class AppButton extends StatelessWidget {
@@ -37,12 +39,12 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     final Widget child = isLoading
         ? SizedBox(
-            width: 20,
-            height: 20,
+            width: AppSpacing.lg,
+            height: AppSpacing.lg,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
@@ -58,7 +60,7 @@ class AppButton extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Icon(icon, size: _iconSize),
-                const SizedBox(width: 8),
+                const HorizontalSpace.sm(),
               ],
               Text(label),
             ],
@@ -108,16 +110,16 @@ class AppButton extends StatelessWidget {
 
   EdgeInsets get _padding => switch (size) {
     AppButtonSize.small => const EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 8,
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.sm,
     ),
     AppButtonSize.medium => const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 12,
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.md,
     ),
     AppButtonSize.large => const EdgeInsets.symmetric(
-      horizontal: 24,
-      vertical: 16,
+      horizontal: AppSpacing.lg,
+      vertical: AppSpacing.md,
     ),
   };
 }

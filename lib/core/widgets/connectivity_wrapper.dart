@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 /// A wrapper widget that shows a "No Internet" banner when connectivity is lost.
 ///
@@ -100,7 +100,7 @@ class _OfflineBanner extends StatelessWidget {
                     color: Colors.white,
                     size: 18,
                   ),
-                  const SizedBox(width: 8),
+                  const HorizontalSpace.sm(),
                   const Text(
                     'No Internet Connection',
                     style: TextStyle(
@@ -157,14 +157,12 @@ class ConnectivityIndicator extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final isOnline = ref.watch(isOnlineProvider);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Icon(
       isOnline ? onlineIcon : offlineIcon,
       size: size,
-      color: isOnline
-          ? (onlineColor ?? theme.colorScheme.primary)
-          : (offlineColor ?? Colors.red),
+      color: isOnline ? (onlineColor ?? theme.colorScheme.primary) : (offlineColor ?? Colors.red),
     );
   }
 }

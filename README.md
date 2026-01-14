@@ -220,10 +220,24 @@ lib/
 ├── app/                   # Global app config (Theme, Router, Startup)
 ├── config/                # Environment config (Env vars)
 ├── core/                  # Shared kernel (Network, Storage, Utils, Widgets)
+│   ├── constants/         # App constants, API endpoints, assets, storage keys
+│   ├── extensions/        # Context, String, DateTime, Num, Duration extensions
+│   ├── widgets/           # Reusable UI components (buttons, inputs, dialogs)
+│   ├── hooks/             # Custom Flutter hooks
+│   └── ...                # Network, Storage, Theme, Forms, etc.
 ├── features/              # Feature modules (Auth, Home, Settings)
 ├── l10n/                  # Localization ARB files
 └── main.dart              # Entry point
 ```
+
+### Core Module Highlights
+
+| Directory     | Contents                                                  |
+| :------------ | :-------------------------------------------------------- |
+| `constants/`  | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`   |
+| `extensions/` | `context.theme`, `'str'.capitalized`, `123.formatted`     |
+| `widgets/`    | `AppButton`, `AppTextField`, `AsyncValueWidget`, `FadeIn` |
+| `hooks/`      | `useDebounce`, `useToggle`, `usePagination`               |
 
 ---
 

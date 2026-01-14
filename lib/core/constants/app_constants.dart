@@ -1,20 +1,32 @@
-/// Application-wide constants.
+/// Application-wide constants for durations, timeouts, dimensions, and validation.
+///
+/// Use these constants instead of magic numbers throughout the app.
+///
+/// Usage:
+/// ```dart
+/// AnimatedContainer(
+///   duration: AppConstants.animationNormal,
+///   ...
+/// )
+/// ```
 abstract class AppConstants {
   // ─────────────────────────────────────────────────────────────────────────────
   // ANIMATION DURATIONS
   // ─────────────────────────────────────────────────────────────────────────────
-  /// Fast animation duration.
+
+  /// Fast animation duration (150ms) - quick transitions, micro-interactions.
   static const Duration animationFast = Duration(milliseconds: 150);
 
-  /// Normal animation duration.
+  /// Normal animation duration (300ms) - standard animations.
   static const Duration animationNormal = Duration(milliseconds: 300);
 
-  /// Slow animation duration.
+  /// Slow animation duration (500ms) - emphasized animations.
   static const Duration animationSlow = Duration(milliseconds: 500);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // NETWORK TIMEOUTS
   // ─────────────────────────────────────────────────────────────────────────────
+
   /// Connection timeout for HTTP requests.
   static const Duration connectTimeout = Duration(seconds: 30);
 
@@ -37,99 +49,163 @@ abstract class AppConstants {
   // ─────────────────────────────────────────────────────────────────────────────
   // CACHE TIMEOUTS
   // ─────────────────────────────────────────────────────────────────────────────
-  /// Default cache expiry duration.
+
+  /// Default cache expiry duration (24 hours).
   static const Duration cacheExpiry = Duration(hours: 24);
 
-  /// Cache expiry for short-lived data (e.g., search results).
+  /// Cache expiry for short-lived data (5 minutes) - e.g., search results.
   static const Duration cacheExpiryShort = Duration(minutes: 5);
 
-  /// Cache expiry for long-lived data (e.g., static content).
+  /// Cache expiry for long-lived data (7 days) - e.g., static content.
   static const Duration cacheExpiryLong = Duration(days: 7);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // UI TIMEOUTS & DELAYS
   // ─────────────────────────────────────────────────────────────────────────────
-  /// Debounce delay for user input.
+
+  /// Debounce delay for user input (500ms).
   static const Duration debounceDelay = Duration(milliseconds: 500);
 
-  /// Throttle delay for actions.
+  /// Throttle delay for actions (300ms).
   static const Duration throttleDelay = Duration(milliseconds: 300);
+
+  /// Splash screen minimum duration.
+  static const Duration splashDuration = Duration(seconds: 2);
+
+  /// Snackbar default duration.
+  static const Duration snackbarDuration = Duration(seconds: 3);
+
+  /// Tooltip display duration.
+  static const Duration tooltipDuration = Duration(seconds: 2);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // PAGINATION
   // ─────────────────────────────────────────────────────────────────────────────
+
   /// Default number of items per page for paginated requests.
   static const int defaultPageSize = 20;
 
   /// Maximum number of items per page allowed.
   static const int maxPageSize = 100;
 
+  /// Infinite scroll threshold (pixels from bottom to trigger load).
+  static const double infiniteScrollThreshold = 200;
+
   // ─────────────────────────────────────────────────────────────────────────────
-  // UI DIMENSIONS
+  // UI DIMENSIONS - BORDER RADIUS
   // ─────────────────────────────────────────────────────────────────────────────
 
-  /// Small border radius for subtle rounding.
-  static const double borderRadiusSmall = 4;
+  /// Extra small border radius (2px) - very subtle rounding.
+  static const double borderRadiusXS = 2;
 
-  /// Medium border radius for standard rounding.
-  static const double borderRadiusMedium = 8;
+  /// Small border radius (4px) - subtle corners.
+  static const double borderRadiusSM = 4;
 
-  /// Large border radius for prominent rounding.
-  static const double borderRadiusLarge = 16;
+  /// Medium border radius (8px) - standard corners.
+  static const double borderRadiusMD = 8;
 
-  /// Extra large border radius for very rounded corners.
-  static const double borderRadiusXLarge = 24;
+  /// Large border radius (12px) - prominent corners.
+  static const double borderRadiusLG = 12;
 
-  // Icon sizes
+  /// Extra large border radius (16px) - very rounded corners.
+  static const double borderRadiusXL = 16;
 
-  /// Small icon size.
-  static const double iconSizeSmall = 16;
+  /// Extra extra large border radius (24px) - pill-like corners.
+  static const double borderRadiusXXL = 24;
 
-  /// Medium icon size.
-  static const double iconSizeMedium = 24;
+  /// Full/circular border radius.
+  static const double borderRadiusFull = 9999;
 
-  /// Large icon size.
-  static const double iconSizeLarge = 32;
+  // Legacy aliases for backward compatibility
+  /// @deprecated Use [borderRadiusSM] instead.
+  static const double borderRadiusSmall = borderRadiusSM;
 
-  /// Standard button height.
+  /// @deprecated Use [borderRadiusMD] instead.
+  static const double borderRadiusMedium = borderRadiusMD;
+
+  /// @deprecated Use [borderRadiusLG] instead.
+  static const double borderRadiusLarge = borderRadiusLG;
+
+  /// @deprecated Use [borderRadiusXL] instead.
+  static const double borderRadiusXLarge = borderRadiusXL;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - ICON SIZES
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Extra small icon size (12px).
+  static const double iconSizeXS = 12;
+
+  /// Small icon size (16px).
+  static const double iconSizeSM = 16;
+
+  /// Medium icon size (24px) - default.
+  static const double iconSizeMD = 24;
+
+  /// Large icon size (32px).
+  static const double iconSizeLG = 32;
+
+  /// Extra large icon size (48px).
+  static const double iconSizeXL = 48;
+
+  // Legacy aliases
+  /// @deprecated Use [iconSizeSM] instead.
+  static const double iconSizeSmall = iconSizeSM;
+
+  /// @deprecated Use [iconSizeMD] instead.
+  static const double iconSizeMedium = iconSizeMD;
+
+  /// @deprecated Use [iconSizeLG] instead.
+  static const double iconSizeLarge = iconSizeLG;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - COMPONENT HEIGHTS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Small button height (36px).
+  static const double buttonHeightSM = 36;
+
+  /// Standard button height (48px).
   static const double buttonHeight = 48;
 
-  /// Standard input field height.
+  /// Large button height (56px).
+  static const double buttonHeightLG = 56;
+
+  /// Standard input field height (56px).
   static const double inputHeight = 56;
 
-  /// Standard app bar height.
+  /// Standard app bar height (56px).
   static const double appBarHeight = 56;
 
-  /// Maximum content width for large screens.
+  /// Bottom navigation bar height (64px).
+  static const double bottomNavHeight = 64;
+
+  /// Tab bar height (48px).
+  static const double tabBarHeight = 48;
+
+  /// List tile height (56px).
+  static const double listTileHeight = 56;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - LAYOUT
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Maximum content width for large screens (600px).
   static const double maxContentWidth = 600;
 
-  /// Maximum width for tablets.
+  /// Maximum width for tablets (900px).
   static const double maxTabletWidth = 900;
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // PADDING & MARGIN
-  // ─────────────────────────────────────────────────────────────────────────────
-  /// Extra extra small padding/margin.
-  static const double paddingXS = 4;
+  /// Maximum width for desktop (1200px).
+  static const double maxDesktopWidth = 1200;
 
-  /// Extra small padding/margin.
-  static const double paddingSM = 8;
-
-  /// Medium padding/margin.
-  static const double paddingMD = 16;
-
-  /// Large padding/margin.
-  static const double paddingLG = 24;
-
-  /// Extra large padding/margin.
-  static const double paddingXL = 32;
-
-  /// Extra extra large padding/margin.
-  static const double paddingXXL = 48;
+  /// Minimum touch target size (48px) - accessibility requirement.
+  static const double minTouchTarget = 48;
 
   // ─────────────────────────────────────────────────────────────────────────────
   // VALIDATION
   // ─────────────────────────────────────────────────────────────────────────────
+
   /// Minimum password length.
   static const int minPasswordLength = 8;
 
@@ -142,91 +218,37 @@ abstract class AppConstants {
   /// Maximum username length.
   static const int maxUsernameLength = 30;
 
-  /// Maximum bio length.
+  /// Maximum bio/description length.
   static const int maxBioLength = 500;
 
   /// Maximum file size in bytes (10MB).
-  static const int maxFileSize = 10 * 1024 * 1024; // 10MB
+  static const int maxFileSize = 10 * 1024 * 1024;
+
+  /// Maximum image dimension (for upload).
+  static const int maxImageDimension = 2048;
 
   // ─────────────────────────────────────────────────────────────────────────────
   // REGEX PATTERNS
   // ─────────────────────────────────────────────────────────────────────────────
+
   /// Email validation pattern.
   static final RegExp emailPattern = RegExp(
     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
   );
 
-  /// Phone number validation pattern.
+  /// Phone number validation pattern (international format).
   static final RegExp phonePattern = RegExp(r'^\+?[\d\s-]{10,}$');
 
   /// URL validation pattern.
   static final RegExp urlPattern = RegExp(
     r'^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$',
   );
-}
 
-/// API endpoint paths.
-abstract class ApiEndpoints {
-  // Auth
-  /// Login endpoint.
-  static const String login = '/auth/login';
+  /// Username validation pattern (alphanumeric, underscore, hyphen).
+  static final RegExp usernamePattern = RegExp(r'^[a-zA-Z0-9_-]+$');
 
-  /// Register endpoint.
-  static const String register = '/auth/register';
-
-  /// Logout endpoint.
-  static const String logout = '/auth/logout';
-
-  /// Refresh token endpoint.
-  static const String refreshToken = '/auth/refresh';
-
-  /// Forgot password endpoint.
-  static const String forgotPassword = '/auth/forgot-password';
-
-  /// Reset password endpoint.
-  static const String resetPassword = '/auth/reset-password';
-
-  /// Verify email endpoint.
-  static const String verifyEmail = '/auth/verify-email';
-
-  // User
-  /// Get current user profile.
-  static const String currentUser = '/users/me';
-
-  /// Update user profile.
-  static const String updateProfile = '/users/me';
-
-  /// Change user password.
-  static const String changePassword = '/users/me/password';
-
-  /// Upload user avatar.
-  static const String uploadAvatar = '/users/me/avatar';
-
-  // Settings
-  /// Get app settings.
-  static const String settings = '/settings';
-
-  /// Notification settings.
-  static const String notifications = '/settings/notifications';
-}
-
-/// Asset paths.
-abstract class Assets {
-  // Images
-  /// Base path for images.
-  static const String imagesPath = 'assets/images';
-
-  /// Logo image asset.
-  static const String logo = '$imagesPath/logo.png';
-
-  /// Placeholder image asset.
-  static const String placeholder = '$imagesPath/placeholder.png';
-
-  // Icons
-  /// Base path for icons.
-  static const String iconsPath = 'assets/icons';
-
-  // Animations (Lottie)
-  /// Base path for animations.
-  static const String animationsPath = 'assets/animations';
+  /// Strong password pattern (min 8 chars, 1 upper, 1 lower, 1 digit, 1 special).
+  static final RegExp strongPasswordPattern = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+  );
 }

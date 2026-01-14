@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_database.dart';
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_entry.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
 
 export 'cache_entry.dart';

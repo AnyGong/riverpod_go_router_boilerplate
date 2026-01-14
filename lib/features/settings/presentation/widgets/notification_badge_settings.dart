@@ -10,7 +10,7 @@ class NotificationBadgeSettings extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final badgeCount = ref.watch(badgeCountProvider);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Column(
       children: [
@@ -35,7 +35,7 @@ class NotificationBadgeSettings extends ConsumerWidget {
                 if (count > 0)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
+                      horizontal: AppSpacing.sm - 2,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(

@@ -4,7 +4,7 @@ import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_go_router_boilerplate/config/env_config.dart';
 import 'package:riverpod_go_router_boilerplate/core/cache/cache_service.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/constants.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/cache_interceptor.dart';
 import 'package:riverpod_go_router_boilerplate/core/network/interceptors.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/connectivity.dart';

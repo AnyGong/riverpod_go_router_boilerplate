@@ -75,17 +75,32 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 | `VerticalSpace` / `HorizontalSpace` | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`) |
 | `CachedImage`                       | All network images                                        |
 | `ResponsiveBuilder`                 | Adaptive layouts                                          |
+| `AppTextField` / `AppSearchField`   | All text inputs and search fields                         |
+| `AppChip` / `AppBadge`              | Filter chips and count badges                             |
+| `AppDialogs.confirm()`              | Confirmation dialogs                                      |
+| `FadeIn` / `SlideIn` / `ScaleIn`    | Entry animations                                          |
 
 ### Constants (`lib/core/constants/`)
 
-| Constant Class                    | Use For             |
-| :-------------------------------- | :------------------ |
-| `AppConstants.animationNormal`    | Animation durations |
-| `AppConstants.borderRadiusMedium` | Border radii        |
-| `AppConstants.debounceDelay`      | Debounce delays     |
-| `AppConstants.defaultPageSize`    | Pagination          |
-| `ApiEndpoints.login`              | API endpoint paths  |
-| `StorageKeys.accessToken`         | Secure storage keys |
+Constants are organized into separate files:
+
+| File                 | Contains                          |
+| :------------------- | :-------------------------------- |
+| `app_constants.dart` | Durations, dimensions, validation |
+| `api_endpoints.dart` | API endpoint paths                |
+| `assets.dart`        | Image, icon, animation paths      |
+| `storage_keys.dart`  | Secure storage and prefs keys     |
+
+| Constant Class                 | Use For             |
+| :----------------------------- | :------------------ |
+| `AppConstants.animationNormal` | Animation durations |
+| `AppConstants.borderRadiusMD`  | Border radii        |
+| `AppConstants.debounceDelay`   | Debounce delays     |
+| `AppConstants.defaultPageSize` | Pagination          |
+| `ApiEndpoints.login`           | API endpoint paths  |
+| `StorageKeys.accessToken`      | Secure storage keys |
+| `Assets.logo`                  | Asset paths         |
+| `AppIcons.home`                | Icon paths          |
 
 ### Extensions (`lib/core/extensions/`)
 
@@ -93,12 +108,16 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 // ✅ Use extensions
 context.colorScheme         // instead of Theme.of(context).colorScheme
 context.textTheme           // instead of Theme.of(context).textTheme
+context.theme               // instead of Theme.of(context)
 context.screenWidth         // instead of MediaQuery.of(context).size.width
 context.isMobile            // responsive checks
 context.unfocus()           // dismiss keyboard
 context.showSnackBar(msg)   // show snackbar
 'hello'.capitalized         // string utilities
 DateTime.now().timeAgo      // date formatting
+1234567.formatted           // number formatting
+[1,2,3].firstOrNull         // safe list access
+Duration(hours: 2).fromNow  // duration helpers
 ```
 
 ### Hooks (`lib/core/hooks/`)
