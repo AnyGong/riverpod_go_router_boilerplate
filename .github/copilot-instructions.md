@@ -91,16 +91,18 @@ Constants are organized into separate files:
 | `assets.dart`        | Image, icon, animation paths      |
 | `storage_keys.dart`  | Secure storage and prefs keys     |
 
-| Constant Class                 | Use For             |
-| :----------------------------- | :------------------ |
-| `AppConstants.animationNormal` | Animation durations |
-| `AppConstants.borderRadiusMD`  | Border radii        |
-| `AppConstants.debounceDelay`   | Debounce delays     |
-| `AppConstants.defaultPageSize` | Pagination          |
-| `ApiEndpoints.login`           | API endpoint paths  |
-| `StorageKeys.accessToken`      | Secure storage keys |
-| `Assets.logo`                  | Asset paths         |
-| `AppIcons.home`                | Icon paths          |
+| Constant Class                   | Use For              |
+| :------------------------------- | :------------------- |
+| `AppConstants.animationNormal`   | Animation durations  |
+| `AppConstants.borderRadiusMD`    | Border radii         |
+| `AppConstants.debounceDelay`     | Debounce delays      |
+| `AppConstants.defaultPageSize`   | Pagination           |
+| `ApiEndpoints.login`             | API endpoint paths   |
+| `StorageKeys.accessToken`        | Secure storage keys  |
+| `Assets.logo`                    | Asset paths          |
+| `AppIcons.home`                  | Icon paths           |
+| `AnalyticsEvents.login`          | Analytics event keys |
+| `RemoteConfigKeys.minAppVersion` | Remote config keys   |
 
 ### Extensions (`lib/core/extensions/`)
 
@@ -128,6 +130,28 @@ For `HookWidget` classes:
 useDebounce(value, delay)   // debounced values
 useToggle(initial)          // boolean toggle
 usePagination(fetcher)      // infinite scroll
+```
+
+### Firebase Services (`lib/core/`)
+
+| Service                       | Path             | Use For                         |
+| :---------------------------- | :--------------- | :------------------------------ |
+| `CrashlyticsService`          | `crashlytics/`   | Crash reporting & error logging |
+| `AnalyticsService`            | `analytics/`     | User analytics & event tracking |
+| `PerformanceService`          | `performance/`   | Performance monitoring & traces |
+| `FirebaseRemoteConfigService` | `remote_config/` | Feature flags & A/B testing     |
+
+```dart
+// Analytics
+ref.read(analyticsServiceProvider).logLogin(method: 'email');
+ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.featureUsed);
+
+// Performance (custom traces)
+await ref.read(performanceServiceProvider).traceAsync('checkout', () => process());
+
+// Remote Config (feature flags)
+ref.read(firebaseRemoteConfigServiceProvider).getBool(RemoteConfigKeys.newFeatureEnabled);
+ref.read(firebaseRemoteConfigServiceProvider).isMaintenanceMode;
 ```
 
 ---

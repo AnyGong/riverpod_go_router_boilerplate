@@ -129,6 +129,36 @@
 
 </td>
 </tr>
+<tr>
+<td width="33%">
+
+### 📊 Firebase Suite
+
+- ✅ Crashlytics (Crash Reporting)
+- ✅ Analytics (User Tracking)
+- ✅ Performance Monitoring
+- ✅ Remote Config (Feature Flags)
+
+</td>
+<td width="33%">
+
+### 🔔 Notifications
+
+- ✅ Local Notifications
+- ✅ Scheduled Notifications
+- ✅ In-App Review Prompts
+
+</td>
+<td width="33%">
+
+### 🛡️ Permissions
+
+- ✅ Runtime Permissions
+- ✅ Permission Rationale
+- ✅ Settings Deep Links
+
+</td>
+</tr>
 </table>
 
 ---
@@ -142,6 +172,7 @@
 | **Network**    | `dio` + `drift`             | HTTP client with offline caching |
 | **Forms**      | `reactive_forms`            | Reactive form validation         |
 | **Auth**       | `local_auth`                | Biometrics                       |
+| **Firebase**   | `firebase_*`                | Analytics, Performance, Config   |
 | **I18n**       | `flutter_localizations`     | Intl with ARB files              |
 | **Code Style** | `very_good_analysis`        | Strict lint rules                |
 | **Testing**    | `mocktail` + `flutter_test` | Unit & Widget tests              |
