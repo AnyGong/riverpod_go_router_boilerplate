@@ -11,11 +11,12 @@ class SettingsSectionHeader extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    final theme = Theme.of(context);
     return ResponsivePadding(
       child: Text(
         title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),

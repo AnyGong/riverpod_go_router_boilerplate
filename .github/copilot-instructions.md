@@ -2,6 +2,10 @@
 
 You are an expert Flutter developer working on a production-grade boilerplate project. Your goal is to maintain the highest standards of code quality, architecture, and maintainability.
 
+**Reference**: For detailed documentation of all reusable components, see `DEVELOPER_GUIDE.md`.
+
+---
+
 ## ⚠️ Critical: Architectural Constraints
 
 You must strictly adhere to the following file size limits to ensure maintainability. If a file exceeds these limits, you **MUST** refactor it immediately by extracting widgets, configuration, or logic into separate files.
@@ -44,27 +48,81 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 - Use **GoRouter** for all navigation.
 - Define routes in `lib/app/router/`.
-- Use **Typed Routes** (`GoRouteData`) for type safety where possible.
+- Use `AppRoute` enum for type-safe route paths.
 
 ### Forms
 
 - Use **`reactive_forms`** for all complex form handling.
+- Use pre-built form groups from `lib/core/forms/` (e.g., `AuthForms.login()`).
 - Validation logic should be reusable (e.g., `lib/core/utils/validators.dart`).
+
+---
+
+## 📦 Mandatory Reusable Components
+
+**You MUST use these existing components. Do NOT create alternatives.**
+
+### Widgets (`lib/core/widgets/`)
+
+| Widget                              | Use For                                                   |
+| :---------------------------------- | :-------------------------------------------------------- |
+| `AsyncValueWidget<T>`               | Displaying Riverpod `AsyncValue` (loading/error/data)     |
+| `LoadingWidget`                     | Any loading state                                         |
+| `ErrorWidget`                       | Any error state with retry                                |
+| `EmptyWidget`                       | Empty lists / no data states                              |
+| `AppButton`                         | All buttons (primary, secondary, text variants)           |
+| `AppIconButton`                     | All icon buttons                                          |
+| `VerticalSpace` / `HorizontalSpace` | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`) |
+| `CachedImage`                       | All network images                                        |
+| `ResponsiveBuilder`                 | Adaptive layouts                                          |
+
+### Constants (`lib/core/constants/`)
+
+| Constant Class                    | Use For             |
+| :-------------------------------- | :------------------ |
+| `AppConstants.animationNormal`    | Animation durations |
+| `AppConstants.borderRadiusMedium` | Border radii        |
+| `AppConstants.debounceDelay`      | Debounce delays     |
+| `AppConstants.defaultPageSize`    | Pagination          |
+| `ApiEndpoints.login`              | API endpoint paths  |
+| `StorageKeys.accessToken`         | Secure storage keys |
+
+### Extensions (`lib/core/extensions/`)
+
+```dart
+// ✅ Use extensions
+context.colorScheme         // instead of Theme.of(context).colorScheme
+context.textTheme           // instead of Theme.of(context).textTheme
+context.screenWidth         // instead of MediaQuery.of(context).size.width
+context.isMobile            // responsive checks
+context.unfocus()           // dismiss keyboard
+context.showSnackBar(msg)   // show snackbar
+'hello'.capitalized         // string utilities
+DateTime.now().timeAgo      // date formatting
+```
+
+### Hooks (`lib/core/hooks/`)
+
+For `HookWidget` classes:
+
+```dart
+useDebounce(value, delay)   // debounced values
+useToggle(initial)          // boolean toggle
+usePagination(fetcher)      // infinite scroll
+```
 
 ---
 
 ## 📝 Coding Standards & Style
 
-### General Rules (Flutter Style Guide)
+### Hard Constraints
 
-- **SOLID Principles**: Apply SOLID principles throughout.
-- **Concise & Declarative**: Prefer functional and declarative patterns.
-- **Composition over Inheritance**: Favor composition. Widgets are for UI.
-- **Immutability**: All classes (Entities, States, Widgets) should be immutable (`@immutable` / `final` fields).
-- **Hard Constraints**:
-  - **No `useIsMounted`**: Use `context.mounted` instead.
-  - **No Magic Numbers**: Use `AppSpacing` (e.g., `AppSpacing.md`) and `AppConstants`.
-  - **No Direct Colors**: Always use `Theme.of(context).colorScheme` or `Theme.of(context).extension<MyColors>()`.
+- **No `useIsMounted`**: Use `context.mounted` instead.
+- **No Magic Numbers**: Use `AppSpacing.md`, `AppConstants.borderRadiusMedium`, etc.
+- **No Direct Colors**: Use `context.colorScheme.primary` (via extension).
+- **No Raw SizedBox for Spacing**: Use `VerticalSpace.md()` or `HorizontalSpace.sm()`.
+- **No Custom Loading Widgets**: Use `LoadingWidget`.
+- **No Custom Error Widgets**: Use `ErrorWidget`.
 
 ### Naming Conventions
 
@@ -91,19 +149,36 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 ## 🛠️ Development Workflow
 
-### Dependency Management
+### Adding a New Feature
 
-- Use `flutter pub add` to add packages.
-- **Build Runner**: Always run after modifying annotated files:
-  ```bash
-  dart run build_runner build --delete-conflicting-outputs
-  ```
+**Always use the generator script:**
+
+```bash
+make feature NAME=my_feature
+```
+
+Then implement:
+
+1. Define `Entity` in `domain/entities/`.
+2. Define `Repository Interface` in `domain/repositories/`.
+3. Implement `Repository` in `data/repositories/`.
+4. Create `Provider` in `presentation/providers/`.
+5. Build `Page` in `presentation/pages/`.
+6. Add entry to `AppRoute` enum in `lib/app/router/app_router.dart`.
+
+### Build Commands
+
+```bash
+make gen       # Run code generation (build_runner + l10n)
+make format    # Format code & apply fixes
+make lint      # Run static analysis
+make test      # Run all tests
+```
 
 ### Testing
 
 - **Unit Tests**: For Logic/Repositories (`flutter test`).
 - **Widget Tests**: For UI Components.
-- **Golden Tests**: For visual regression (optional).
 - **Pattern**: Arrange-Act-Assert.
 
 ### Mocking Guidelines
@@ -124,8 +199,8 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 ### Layout Best Practices
 
-- **Responsiveness**: Use `LayoutBuilder` or `MediaQuery`.
-- **Spacing**: Use constants from `AppSpacing`.
+- **Responsiveness**: Use `ResponsiveBuilder` or `context.responsive()`.
+- **Spacing**: Use `VerticalSpace` / `HorizontalSpace` widgets.
 - **Lists**: Use `ListView.builder` for performance.
 - **Safe Areas**: Respect `SafeArea`.
 
@@ -134,18 +209,3 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 - **Contrast**: Ensure 4.5:1 ratio.
 - **Semantics**: Use `Semantics` widgets where necessary.
 - **Scaling**: Test with dynamic text scaling.
-
----
-
-## 🚀 Specific Feature Implementation Rules
-
-### Adding a New Feature
-
-1. Create folder `lib/features/<feature_name>`.
-2. Create `data`, `domain`, `presentation` subfolders.
-3. Define `Entity` in `domain`.
-4. Define `Repository Interface` in `domain`.
-5. Implement `Repository` in `data`.
-6. Create `Provider` in `presentation/providers`.
-7. Build `Page` in `presentation/pages`.
-8. Add Route to `app_router.dart`.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/theme/theme_notifier.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/providers/package_info_provider.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/notification_badge_settings.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/settings_section_header.dart';
@@ -130,7 +131,7 @@ class SettingsPage extends ConsumerWidget {
                       ? Theme.of(dialogContext).colorScheme.primary
                       : null,
                 ),
-                const SizedBox(width: 12),
+                const HorizontalSpace.sm(),
                 Text(
                   _themeModeLabel(mode),
                   style: isSelected

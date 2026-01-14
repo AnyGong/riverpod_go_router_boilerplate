@@ -31,7 +31,7 @@ class NotificationBadgeSettings extends ConsumerWidget {
             subtitle: Row(
               children: [
                 Text('$count notification${count != 1 ? 's' : ''}'),
-                const SizedBox(width: 8),
+                const HorizontalSpace.sm(),
                 if (count > 0)
                   Container(
                     padding: const EdgeInsets.symmetric(

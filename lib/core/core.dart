@@ -8,6 +8,8 @@ export 'biometric/biometric.dart';
 export 'cache/cache.dart';
 // Config
 export 'config/config.dart';
+// Constants
+export 'constants/constants.dart';
 // Crashlytics
 export 'crashlytics/crashlytics.dart';
 // Deep Linking
