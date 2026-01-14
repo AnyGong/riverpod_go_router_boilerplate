@@ -26,17 +26,62 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 ### Directory Structure
 
-- **`lib/app/`**: Global app setup (routing, theme, initialization).
-- **`lib/core/`**: Shared utilities, foundational services, and widgets (e.g., `network/`, `storage/`, `widgets/`, `localization/`).
-- **`lib/features/`**: Feature modules. Each feature **MUST** follow strictly:
-  - **`data/`**: Repositories implementations, DTOs, data sources.
-  - **`domain/`**: Entities (simple classes), Repository interfaces.
-  - **`presentation/`**:
-    - **`pages/`**: Full screens.
-    - **`widgets/`**: Reusable UI components for the feature.
-    - **`providers/`**: Application logic (Riverpod Notifiers).
+```
+lib/
+├── app/                    # App-level setup
+│   ├── router/             # GoRouter configuration & routes
+│   └── startup/            # App lifecycle & startup state machine
+├── config/                 # Environment configuration
+├── core/                   # Shared utilities & foundational code
+│   ├── analytics/          # Firebase Analytics
+│   ├── biometric/          # Biometric authentication
+│   ├── cache/              # Offline-first caching (Drift)
+│   ├── constants/          # App-wide constants
+│   ├── crashlytics/        # Firebase Crashlytics
+│   ├── extensions/         # Dart/Flutter extensions
+│   ├── forms/              # Reactive Forms configurations
+│   ├── hooks/              # Flutter Hooks utilities
+│   ├── network/            # Dio, interceptors, API client
+│   ├── notifications/      # Local notifications
+│   ├── performance/        # Firebase Performance
+│   ├── permissions/        # Permission handling
+│   ├── remote_config/      # Firebase Remote Config
+│   ├── result/             # Result monad for error handling
+│   ├── session/            # Session state management
+│   ├── storage/            # Secure storage utilities
+│   ├── theme/              # App theming
+│   ├── utils/              # Validators, logger, etc.
+│   └── widgets/            # Reusable UI components
+├── features/               # Feature modules
+│   ├── auth/               # Authentication feature
+│   ├── home/               # Home feature
+│   ├── onboarding/         # Onboarding feature
+│   └── settings/           # Settings feature
+└── l10n/                   # Localization files
+```
 
-### State Management (Riverpod)
+### Feature Module Structure
+
+Each feature **MUST** follow this structure:
+
+```
+features/<feature_name>/
+├── data/               # Data layer
+│   └── repositories/   # Repository implementations
+├── domain/             # Domain layer
+│   ├── entities/       # Business objects
+│   └── repositories/   # Repository interfaces
+└── presentation/       # Presentation layer
+    ├── pages/          # Full screens
+    ├── widgets/        # Feature-specific widgets
+    └── providers/      # Riverpod Notifiers
+```
+
+---
+
+## 🔄 State Management (Riverpod)
+
+### Rules
 
 - **Mandatory**: Use **Riverpod** for all state management.
 - **Code Generation**: Use `@riverpod` / `@Riverpod(keepAlive: true)`.
@@ -44,13 +89,70 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 - **UI Role**: Widgets only `watch` state and `read` methods. No complex logic in `build()`.
 - **Avoid**: `StatefulWidget` for logic (use only for animation/input controllers).
 
-### Routing (GoRouter)
+### keepAlive Guidelines
+
+Use `@Riverpod(keepAlive: true)` **ONLY** for:
+
+- Global app state (auth, theme, user preferences)
+- Expensive services (network clients, database connections)
+- State that must survive navigation (audio player, download manager)
+
+**Default to autoDispose** for page-specific providers.
+
+### Example Provider
+
+```dart
+@riverpod
+class MyFeatureNotifier extends _$MyFeatureNotifier {
+  @override
+  Future<MyData> build() async {
+    final repo = ref.watch(myRepositoryProvider);
+    return repo.fetchData();
+  }
+
+  Future<void> doSomething() async {
+    state = const AsyncLoading();
+    final result = await ref.read(myRepositoryProvider).doAction();
+    state = result.fold(
+      onSuccess: AsyncData.new,
+      onFailure: (e) => AsyncError(e, StackTrace.current),
+    );
+  }
+}
+```
+
+---
+
+## 🛣️ Routing (GoRouter)
 
 - Use **GoRouter** for all navigation.
 - Define routes in `lib/app/router/`.
 - Use `AppRoute` enum for type-safe route paths.
 
-### Forms
+### Route Navigation
+
+```dart
+// Using extension methods (preferred)
+context.goRoute(AppRoute.home);
+context.pushRoute(AppRoute.settings);
+
+// With parameters
+context.goRouteWith(AppRoute.productDetail, {'id': '123'});
+
+// Standard GoRouter (also works)
+context.go('/home');
+context.push('/settings');
+```
+
+### Adding New Routes
+
+1. Add enum entry to `AppRoute` in `app_router.dart`
+2. Create route definition in appropriate file (`auth_routes.dart`, `protected_routes.dart`)
+3. Set `requiresAuth` appropriately
+
+---
+
+## 📋 Forms
 
 - Use **`reactive_forms`** for all complex form handling.
 - Use pre-built form groups from `lib/core/forms/` (e.g., `AuthForms.login()`).
@@ -64,25 +166,21 @@ This project follows a **Feature-First Clean Architecture** with **Riverpod** fo
 
 ### Widgets (`lib/core/widgets/`)
 
-| Widget                              | Use For                                                   |
-| :---------------------------------- | :-------------------------------------------------------- |
-| `AsyncValueWidget<T>`               | Displaying Riverpod `AsyncValue` (loading/error/data)     |
-| `LoadingWidget`                     | Any loading state                                         |
-| `ErrorWidget`                       | Any error state with retry                                |
-| `EmptyWidget`                       | Empty lists / no data states                              |
-| `AppButton`                         | All buttons (primary, secondary, text variants)           |
-| `AppIconButton`                     | All icon buttons                                          |
-| `VerticalSpace` / `HorizontalSpace` | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`) |
-| `CachedImage`                       | All network images                                        |
-| `ResponsiveBuilder`                 | Adaptive layouts                                          |
-| `AppTextField` / `AppSearchField`   | All text inputs and search fields                         |
-| `AppChip` / `AppBadge`              | Filter chips and count badges                             |
-| `AppDialogs.confirm()`              | Confirmation dialogs                                      |
-| `FadeIn` / `SlideIn` / `ScaleIn`    | Entry animations                                          |
+| Widget                              | Use For                                                     |
+| :---------------------------------- | :---------------------------------------------------------- |
+| `AsyncValueWidget<T>`               | Displaying Riverpod `AsyncValue` (loading/error/data)       |
+| `LoadingWidget`                     | Any loading state                                           |
+| `AppErrorWidget`                    | Any error state with retry action                           |
+| `EmptyWidget`                       | Empty lists / no data states                                |
+| `AppButton`                         | All buttons (use `AppButtonVariant.primary/secondary/text`) |
+| `AppIconButton`                     | All icon buttons                                            |
+| `VerticalSpace` / `HorizontalSpace` | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`)   |
+| `CachedImage`                       | All network images                                          |
+| `ResponsiveBuilder`                 | Adaptive layouts                                            |
+| `AppDialogs.confirm()`              | Confirmation dialogs                                        |
+| `FadeIn` / `SlideIn` / `ScaleIn`    | Entry animations                                            |
 
 ### Constants (`lib/core/constants/`)
-
-Constants are organized into separate files:
 
 | File                 | Contains                          |
 | :------------------- | :-------------------------------- |
@@ -107,7 +205,7 @@ Constants are organized into separate files:
 ### Extensions (`lib/core/extensions/`)
 
 ```dart
-// ✅ Use extensions
+// ✅ Use extensions (preferred)
 context.colorScheme         // instead of Theme.of(context).colorScheme
 context.textTheme           // instead of Theme.of(context).textTheme
 context.theme               // instead of Theme.of(context)
@@ -115,11 +213,9 @@ context.screenWidth         // instead of MediaQuery.of(context).size.width
 context.isMobile            // responsive checks
 context.unfocus()           // dismiss keyboard
 context.showSnackBar(msg)   // show snackbar
+context.showErrorSnackBar() // error snackbar
 'hello'.capitalized         // string utilities
 DateTime.now().timeAgo      // date formatting
-1234567.formatted           // number formatting
-[1,2,3].firstOrNull         // safe list access
-Duration(hours: 2).fromNow  // duration helpers
 ```
 
 ### Hooks (`lib/core/hooks/`)
@@ -160,33 +256,61 @@ ref.read(firebaseRemoteConfigServiceProvider).isMaintenanceMode;
 
 ### Hard Constraints
 
-- **No `useIsMounted`**: Use `context.mounted` instead.
-- **No Magic Numbers**: Use `AppSpacing.md`, `AppConstants.borderRadiusMedium`, etc.
+- **No Magic Numbers**: Use `AppSpacing.md`, `AppConstants.borderRadiusMD`, etc.
 - **No Direct Colors**: Use `context.colorScheme.primary` (via extension).
 - **No Raw SizedBox for Spacing**: Use `VerticalSpace.md()` or `HorizontalSpace.sm()`.
 - **No Custom Loading Widgets**: Use `LoadingWidget`.
-- **No Custom Error Widgets**: Use `ErrorWidget`.
+- **No Custom Error Widgets**: Use `AppErrorWidget`.
+- **Enum Shorthand**: Use Dart 3 enum shorthand syntax (e.g., `variant: .primary` instead of `variant: AppButtonVariant.primary`).
 
 ### Naming Conventions
 
-- **Files**: `snake_case.dart` (e.g., `user_repository.dart`).
-- **Classes**: `PascalCase` (e.g., `UserRepository`).
-- **Variables/Functions**: `camelCase`.
-- **Private Members**: `_privateVariable`.
-- **JSON Fields**: `snake_case` (use `@JsonSerializable(fieldRename: FieldRename.snake)`).
+| Type            | Convention  | Example                |
+| :-------------- | :---------- | :--------------------- |
+| Files           | snake_case  | `user_repository.dart` |
+| Classes         | PascalCase  | `UserRepository`       |
+| Variables       | camelCase   | `userData`             |
+| Private Members | \_camelCase | `_privateField`        |
+| Constants       | camelCase   | `maxRetryAttempts`     |
+| JSON Fields     | snake_case  | `user_name`            |
 
-### Dart Best Practices
+### Error Handling
 
-- **Null Safety**: Leverage sound null safety. Avoid `!` bang operator.
-- **Async/Await**: Use `Future` and `Stream` properly. Handle errors.
-- **Pattern Matching**: Use Dart 3 switch expressions where possible.
-- **Records**: Use records for multiple return values instead of utility classes.
+Always use the `Result<T>` monad for operations that can fail:
 
-### Documentation
+```dart
+// Repository
+Future<Result<User>> fetchUser(String id) async {
+  try {
+    final response = await apiClient.get<Map<String, dynamic>>('/users/$id');
+    return response.map((data) => User.fromJson(data));
+  } catch (e) {
+    return Failure(UnexpectedException(message: e.toString()));
+  }
+}
 
-- **Public APIs**: Must have Dartdoc (`///`) comments.
-- **Complex Logic**: Explain _why_, not just _what_.
-- **No Redundant Comments**: Don't document obvious getters/setters.
+// Usage
+final result = await repo.fetchUser('123');
+result.fold(
+  onSuccess: (user) => handleUser(user),
+  onFailure: (error) => showError(error.message),
+);
+```
+
+### Validation
+
+Use `Validators.compose()` for form validation:
+
+```dart
+TextFormField(
+  validator: Validators.compose([
+    Validators.required('Email is required'),
+    Validators.email('Invalid email format'),
+  ]),
+)
+```
+
+**Note**: `Validators.strongPassword()` requires 8+ characters with uppercase, lowercase, number, and special character. Don't add redundant `minLength` validators.
 
 ---
 
@@ -207,7 +331,7 @@ Then implement:
 3. Implement `Repository` in `data/repositories/`.
 4. Create `Provider` in `presentation/providers/`.
 5. Build `Page` in `presentation/pages/`.
-6. Add entry to `AppRoute` enum in `lib/app/router/app_router.dart`.
+6. Add entry to `AppRoute` enum.
 
 ### Build Commands
 
@@ -216,19 +340,17 @@ make gen       # Run code generation (build_runner + l10n)
 make format    # Format code & apply fixes
 make lint      # Run static analysis
 make test      # Run all tests
+make prepare   # Full setup (clean + l10n + gen)
 ```
 
-### Testing
+### Testing Guidelines
 
-- **Unit Tests**: For Logic/Repositories (`flutter test`).
-- **Widget Tests**: For UI Components.
-- **Pattern**: Arrange-Act-Assert.
-
-### Mocking Guidelines
-
-- **Shared Mocks**: Place reusable mocks in `test/helpers/mocks.dart`.
-- **Library**: Use `mocktail` for all mocking.
-- **Result<void>**: When mocking `Result<void>`, return `const Success(null)`.
+- **Unit Tests**: For Logic/Repositories
+- **Widget Tests**: For UI Components
+- **Pattern**: Arrange-Act-Assert
+- **Shared Mocks**: Place in `test/helpers/mocks.dart`
+- **Library**: Use `mocktail` for all mocking
+- **Result<void>**: Return `const Success(null)` when mocking
 
 ---
 
@@ -237,7 +359,7 @@ make test      # Run all tests
 ### Material 3
 
 - **ThemeData**: Centralized in `lib/core/theme/`.
-- **ColorScheme**: Derived from `ColorScheme.fromSeed`.
+- **ColorScheme**: Uses `ColorScheme.light()` and `ColorScheme.dark()`.
 - **Dark Mode**: Support `ThemeMode.system`, `light`, and `dark`.
 
 ### Layout Best Practices
@@ -252,3 +374,46 @@ make test      # Run all tests
 - **Contrast**: Ensure 4.5:1 ratio.
 - **Semantics**: Use `Semantics` widgets where necessary.
 - **Scaling**: Test with dynamic text scaling.
+
+---
+
+## 🔐 Security Best Practices
+
+### Secure Storage
+
+- Use `FlutterSecureStorage` for sensitive data (tokens, credentials).
+- Never log sensitive information.
+- iOS Keychain data persists across reinstalls — use `FreshInstallHandler`.
+
+### Network Security
+
+- Auth tokens are automatically injected via `AuthInterceptor`.
+- 401 responses trigger automatic token refresh with `Completer` coordination.
+- Failed requests retry with exponential backoff.
+
+---
+
+## 📱 Platform Considerations
+
+### iOS
+
+- Keychain accessibility: `first_unlock_this_device`.
+- Handle fresh install scenarios (clear stale keychain data).
+
+### Android
+
+- Encrypted SharedPreferences for secure storage.
+- Native Cronet adapter for HTTP/3 support (release mode).
+
+---
+
+## ❌ Anti-Patterns to Avoid
+
+1. **Don't** use `StatefulWidget` for business logic
+2. **Don't** call `ref.read` in `build()` — use `ref.watch`
+3. **Don't** create custom loading/error widgets
+4. **Don't** use magic numbers for spacing/dimensions
+5. **Don't** store tokens in plain SharedPreferences
+6. **Don't** ignore `Result` failures
+7. **Don't** use `!` bang operator without checking null first
+8. **Don't** duplicate constants across files

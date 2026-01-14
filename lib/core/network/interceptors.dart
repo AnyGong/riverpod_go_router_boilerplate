@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +24,9 @@ typedef TokenRefreshCallback =
 typedef OnAuthFailureCallback = void Function();
 
 /// Interceptor for adding authentication headers and handling token refresh.
+///
+/// Uses a [Completer] to ensure concurrent 401 responses wait for the same
+/// refresh operation, preventing multiple simultaneous refresh attempts.
 ///
 /// The refresh logic is injectable via [onRefreshToken] callback, allowing
 /// you to customize the refresh behavior for your specific backend.
@@ -65,7 +70,9 @@ class AuthInterceptor extends QueuedInterceptor {
   /// Use this to logout the user and redirect to login.
   final OnAuthFailureCallback? onAuthFailure;
 
-  bool _isRefreshing = false;
+  /// Completer for coordinating concurrent refresh requests.
+  /// Multiple 401 responses will wait on the same completer.
+  Completer<bool>? _refreshCompleter;
 
   @override
   Future<void> onRequest(
@@ -87,22 +94,42 @@ class AuthInterceptor extends QueuedInterceptor {
     final DioException err,
     final ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode == 401 && !_isRefreshing) {
-      _isRefreshing = true;
+    if (err.response?.statusCode != 401) {
+      return handler.next(err);
+    }
 
-      try {
-        final refreshed = await _refreshToken();
-        if (refreshed) {
+    // Check if a refresh is already in progress
+    if (_refreshCompleter != null) {
+      // Wait for the ongoing refresh to complete
+      final refreshed = await _refreshCompleter!.future;
+      if (refreshed) {
+        // Retry the request with new token
+        try {
           final response = await _retryRequest(err.requestOptions);
-          _isRefreshing = false;
           return handler.resolve(response);
+        } catch (e) {
+          return handler.next(err);
         }
-      } catch (e) {
-        // Refresh failed, clear tokens and notify
-        await _handleAuthFailure();
       }
+      return handler.next(err);
+    }
 
-      _isRefreshing = false;
+    // Start a new refresh operation
+    _refreshCompleter = Completer<bool>();
+
+    try {
+      final refreshed = await _refreshToken();
+      _refreshCompleter!.complete(refreshed);
+      _refreshCompleter = null;
+
+      if (refreshed) {
+        final response = await _retryRequest(err.requestOptions);
+        return handler.resolve(response);
+      }
+    } catch (e) {
+      _refreshCompleter?.complete(false);
+      _refreshCompleter = null;
+      await _handleAuthFailure();
     }
 
     handler.next(err);

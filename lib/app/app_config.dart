@@ -27,7 +27,10 @@ class AppConfig {
   static const bool onboardingEnabled = true;
 
   /// Minimum password length for validation.
-  static const int minPasswordLength = 6;
+  ///
+  /// Note: This should match [AppConstants.minPasswordLength] for consistency.
+  /// The strong password validator requires 8 characters minimum.
+  static const int minPasswordLength = 8;
 
   /// Session timeout duration.
   ///

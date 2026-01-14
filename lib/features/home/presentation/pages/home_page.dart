@@ -90,8 +90,8 @@ class _HomeContent extends ConsumerWidget {
             const VerticalSpace.md(),
             // Logout button
             AppButton(
-              variant: .secondary,
-              size: .large,
+              variant: AppButtonVariant.secondary,
+              size: AppButtonSize.large,
               isExpanded: true,
               onPressed: () => _handleLogout(context, ref),
               icon: Icons.logout,
@@ -110,20 +110,20 @@ class _HomeContent extends ConsumerWidget {
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (final context) => AlertDialog(
+      builder: (final dialogContext) => AlertDialog(
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
           AppButton(
-            variant: .text,
+            variant: AppButtonVariant.text,
             isExpanded: false,
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
             label: 'Cancel',
           ),
           AppButton(
-            variant: .primary,
+            variant: AppButtonVariant.primary,
             isExpanded: false,
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             label: 'Sign Out',
           ),
         ],
@@ -131,11 +131,20 @@ class _HomeContent extends ConsumerWidget {
     );
 
     if (confirmed ?? false) {
-      final sessionService = ref.read(sessionServiceProvider);
-      await sessionService.endSession();
-
-      final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
-      await lifecycleNotifier.onUserLoggedOut();
+      try {
+        // End session first (clears tokens)
+        final sessionService = ref.read(sessionServiceProvider);
+        await sessionService.endSession();
+      } catch (e) {
+        // Log error but continue with logout
+        // Session cleanup is best-effort
+      } finally {
+        // Always notify lifecycle notifier to trigger navigation
+        final lifecycleNotifier = ref.read(
+          appLifecycleNotifierProvider.notifier,
+        );
+        await lifecycleNotifier.onUserLoggedOut();
+      }
     }
   }
 }

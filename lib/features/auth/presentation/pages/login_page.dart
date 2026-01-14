@@ -149,12 +149,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                       validator: Validators.compose([
                         Validators.required('Password is required'),
-                        Validators.minLength(
-                          6,
-                          'Password must be at least 6 characters',
-                        ),
                         Validators.strongPassword(
-                          'Strong password required (0-9, A-Z, a-z, special char)',
+                          'Password must be 8+ chars with uppercase, lowercase, number & special char',
                         ),
                       ]),
                     ),
@@ -162,8 +158,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     // Login button
                     AppButton(
-                      variant: .primary,
-                      size: .large,
+                      variant: AppButtonVariant.primary,
+                      size: AppButtonSize.large,
                       isExpanded: true,
                       isLoading: isLoading,
                       onPressed: isLoading ? null : _handleLogin,
@@ -173,8 +169,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     // Forgot password
                     AppButton(
-                      variant: .text,
-                      size: .medium,
+                      variant: AppButtonVariant.text,
+                      size: AppButtonSize.medium,
                       isExpanded: true,
                       onPressed: isLoading
                           ? null

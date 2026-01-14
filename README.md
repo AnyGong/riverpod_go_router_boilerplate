@@ -23,10 +23,16 @@
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Quick Start](#-quick-start)
+- [Step-by-Step Setup](#-step-by-step-setup)
 - [Architecture](#-architecture)
 - [Project Structure](#-project-structure)
 - [Core Concepts](#-core-concepts)
 - [Commands](#-commands)
+- [Creating Your First Feature](#-creating-your-first-feature)
+- [Firebase Setup](#-firebase-setup)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
 - [License](#-license)
 
 ---
@@ -43,6 +49,7 @@
 - You prefer **conventions over configuration**
 - You value **clean architecture** and **testability**
 - You're building apps that need to **scale**
+- You want to skip weeks of initial setup
 
 </td>
 <td width="50%">
@@ -52,12 +59,13 @@
 - A tutorial or learning resource
 - A minimal starter (it's comprehensive)
 - A flexible "choose your own adventure" template
+- A playground for experimentation
 
 </td>
 </tr>
 </table>
 
-> 💡 **Philosophy**: This boilerplate enforces **feature-first Clean Architecture** and **Riverpod Code Generation** to ensure consistency.
+> 💡 **Philosophy**: This boilerplate enforces **feature-first Clean Architecture** with **Riverpod Code Generation** to ensure consistency across teams and projects.
 
 ---
 
@@ -72,7 +80,7 @@
 - ✅ Feature-first Clean Architecture
 - ✅ Riverpod 3.x (Codegen)
 - ✅ Dependency Injection
-- ✅ Result Pattern (Monad)
+- ✅ Result Pattern (Error Handling)
 - ✅ Strict Lints & Rules
 
 </td>
@@ -116,6 +124,7 @@
 - ✅ Biometric Auth (Face/Touch ID)
 - ✅ Secure Token Management
 - ✅ Auto-Session Expiry
+- ✅ Fresh Install Handling (iOS)
 
 </td>
 <td width="33%">
@@ -183,35 +192,108 @@
 
 ### Prerequisites
 
-- Flutter SDK **3.19+**
-- Dart SDK **3.x**
+- Flutter SDK **3.19+** ([Install Flutter](https://docs.flutter.dev/get-started/install))
+- Dart SDK **3.x** (included with Flutter)
+- Git ([Download](https://git-scm.com/downloads))
+- A code editor (VS Code recommended with Flutter extension)
 
-### 🆕 Creating a New Project
+### 5-Minute Setup
 
-1. **Clone the repo:**
+```bash
+# 1. Clone the repository
+git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git my_app
+cd my_app
 
-   ```bash
-   git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git my_app
-   cd my_app
-   ```
+# 2. Remove existing git history and start fresh
+rm -rf .git && git init
 
-2. **Clean history & Initialize:**
+# 3. Rename project to your app name
+make rename NAME=my_app ORG=com.example DISPLAY="My Awesome App"
 
-   ```bash
-   rm -rf .git && git init
-   ```
+# 4. Setup dependencies and generate code
+make prepare
 
-3. **Rename Project:**
+# 5. Run the app
+flutter run
+```
 
-   ```bash
-   make rename NAME=my_app ORG=com.example DISPLAY="My Awesome App"
-   ```
+That's it! 🎉 Your app is running.
 
-4. **Setup & Run:**
-   ```bash
-   make prepare  # Installs deps & generates code
-   flutter run
-   ```
+---
+
+## 📋 Step-by-Step Setup
+
+For beginners, here's a detailed walkthrough:
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git my_app
+cd my_app
+```
+
+This downloads the boilerplate code into a folder called `my_app`.
+
+### Step 2: Remove Git History
+
+```bash
+rm -rf .git
+git init
+```
+
+This removes the boilerplate's git history so you can start fresh with your own commits.
+
+### Step 3: Rename the Project
+
+```bash
+make rename NAME=myapp ORG=com.yourcompany DISPLAY="Your App Name"
+```
+
+This updates:
+
+- Package name in pubspec.yaml
+- Bundle identifiers (iOS/Android)
+- Display name shown on devices
+
+**Parameters:**
+
+- `NAME`: lowercase, no spaces (e.g., `myshoppingapp`)
+- `ORG`: reverse domain notation (e.g., `com.yourcompany`)
+- `DISPLAY`: Human-readable name with spaces allowed
+
+### Step 4: Install Dependencies & Generate Code
+
+```bash
+make prepare
+```
+
+This command:
+
+1. Cleans any previous builds
+2. Gets all Flutter dependencies (`flutter pub get`)
+3. Generates localization files
+4. Runs build_runner to generate Riverpod code
+
+### Step 5: Run the App
+
+```bash
+# iOS Simulator
+flutter run -d iPhone
+
+# Android Emulator
+flutter run -d emulator
+
+# All connected devices
+flutter run
+```
+
+### Step 6: Verify Everything Works
+
+The app should launch with:
+
+- A splash screen
+- Demo login page
+- Home page after "login"
 
 ---
 
@@ -230,17 +312,20 @@ lib/features/my_feature/
 │   ├── entities/          # Business Objects
 │   └── repositories/      # Repository Interfaces
 │
-└── presentation/          # 🎨 Context Layer
-    ├── pages/             # Scaffold Widgets
+└── presentation/          # 🎨 Presentation Layer
+    ├── pages/             # Full-screen Widgets
     ├── providers/         # Riverpod Notifiers
     └── widgets/           # Feature-specific Widgets
 ```
 
-### Key Rules
+### Key Architecture Rules
 
-1. **Dependency Rule**: `Domain` depends on nothing. `Data` depends on `Domain`. `Presentation` depends on both.
-2. **Logic Placement**: Business logic goes in **Notifiers** or **UseCases** (Services). Never in UI.
-3. **State**: strictly use `@riverpod` codegen. No `StateProvider` or `ChangeNotifier`.
+| Rule                 | Description                                                                |
+| :------------------- | :------------------------------------------------------------------------- |
+| **Dependency Rule**  | Domain depends on nothing. Data implements Domain. Presentation uses both. |
+| **Logic Placement**  | Business logic goes in Notifiers or Services. Never in UI widgets.         |
+| **State Management** | Use `@riverpod` codegen exclusively. No raw `StateProvider`.               |
+| **Error Handling**   | Use `Result<T>` monad for all fallible operations.                         |
 
 ---
 
@@ -248,72 +333,484 @@ lib/features/my_feature/
 
 ```
 lib/
-├── app/                   # Global app config (Theme, Router, Startup)
-├── config/                # Environment config (Env vars)
-├── core/                  # Shared kernel (Network, Storage, Utils, Widgets)
-│   ├── constants/         # App constants, API endpoints, assets, storage keys
-│   ├── extensions/        # Context, String, DateTime, Num, Duration extensions
-│   ├── widgets/           # Reusable UI components (buttons, inputs, dialogs)
-│   ├── hooks/             # Custom Flutter hooks
-│   └── ...                # Network, Storage, Theme, Forms, etc.
-├── features/              # Feature modules (Auth, Home, Settings)
-├── l10n/                  # Localization ARB files
+├── app/                   # Global app config
+│   ├── router/            # GoRouter configuration & routes
+│   └── startup/           # App lifecycle & startup logic
+├── config/                # Environment configuration
+├── core/                  # Shared kernel
+│   ├── analytics/         # Firebase Analytics
+│   ├── biometric/         # Biometric authentication
+│   ├── cache/             # Offline caching (Drift)
+│   ├── constants/         # App constants, API endpoints
+│   ├── crashlytics/       # Firebase Crashlytics
+│   ├── extensions/        # Dart/Flutter extensions
+│   ├── forms/             # Reactive Forms configs
+│   ├── hooks/             # Custom Flutter Hooks
+│   ├── network/           # Dio, interceptors, API client
+│   ├── notifications/     # Local notifications
+│   ├── performance/       # Firebase Performance
+│   ├── permissions/       # Permission handling
+│   ├── remote_config/     # Firebase Remote Config
+│   ├── result/            # Result monad
+│   ├── session/           # Session state
+│   ├── storage/           # Secure storage
+│   ├── theme/             # App theming
+│   ├── utils/             # Validators, logger, etc.
+│   └── widgets/           # Reusable UI components
+├── features/              # Feature modules
+│   ├── auth/              # Authentication
+│   ├── home/              # Home screen
+│   ├── onboarding/        # Onboarding flow
+│   └── settings/          # App settings
+├── l10n/                  # Localization (ARB files)
 └── main.dart              # Entry point
 ```
 
 ### Core Module Highlights
 
-| Directory     | Contents                                                  |
-| :------------ | :-------------------------------------------------------- |
-| `constants/`  | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`   |
-| `extensions/` | `context.theme`, `'str'.capitalized`, `123.formatted`     |
-| `widgets/`    | `AppButton`, `AppTextField`, `AsyncValueWidget`, `FadeIn` |
-| `hooks/`      | `useDebounce`, `useToggle`, `usePagination`               |
+| Directory     | Contents                                                    |
+| :------------ | :---------------------------------------------------------- |
+| `constants/`  | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`     |
+| `extensions/` | `context.colorScheme`, `'str'.capitalized`, `123.formatted` |
+| `widgets/`    | `AppButton`, `AppErrorWidget`, `AsyncValueWidget`, `FadeIn` |
+| `hooks/`      | `useDebounce`, `useToggle`, `usePagination`                 |
+
+---
+
+## 🎯 Core Concepts
+
+### Result Pattern (Error Handling)
+
+Instead of throwing exceptions, we use the `Result<T>` monad:
+
+```dart
+// In repository
+Future<Result<User>> fetchUser(String id) async {
+  try {
+    final response = await apiClient.get('/users/$id');
+    return Success(User.fromJson(response));
+  } catch (e) {
+    return Failure(ApiException.from(e));
+  }
+}
+
+// In UI/Notifier
+final result = await repo.fetchUser('123');
+result.fold(
+  onSuccess: (user) => state = AsyncData(user),
+  onFailure: (error) => state = AsyncError(error, StackTrace.current),
+);
+```
+
+### Riverpod Patterns
+
+```dart
+// Read-only async data
+@riverpod
+Future<User> currentUser(Ref ref) async {
+  final repo = ref.watch(userRepositoryProvider);
+  final result = await repo.getCurrentUser();
+  return result.getOrThrow();
+}
+
+// Mutable state with notifier
+@riverpod
+class Counter extends _$Counter {
+  @override
+  int build() => 0;
+
+  void increment() => state++;
+  void decrement() => state--;
+}
+```
+
+### Reusable Widgets
+
+```dart
+// ✅ Use built-in components
+AsyncValueWidget<User>(
+  value: ref.watch(userProvider),
+  data: (user) => Text(user.name),
+)
+
+AppButton(
+  label: 'Submit',
+  onPressed: _submit,
+  variant: AppButtonVariant.primary,
+)
+
+VerticalSpace.md()  // 16px gap
+
+// ❌ Don't create custom alternatives
+SizedBox(height: 16)  // Use VerticalSpace.md() instead
+```
 
 ---
 
 ## 💻 Commands
 
-We use `make` to simplify common tasks.
+We use `make` to simplify common tasks:
 
-| Command        | Description                            |
-| :------------- | :------------------------------------- |
-| `make prepare` | Full setup: Clean + L10n + Gen Code    |
-| `make gen`     | Run code gen (build_runner + l10n)     |
-| `make l10n`    | Generate localization files only       |
-| `make watch`   | Run `build_runner watch` (Development) |
-| `make clean`   | Clean build artifacts & deps           |
-| `make format`  | Format code & Apply fixes              |
-| `make lint`    | Run static analysis                    |
-| `make test`    | Run all tests                          |
-| `make upgrade` | Upgrade dependencies                   |
-| `make ci`      | Run CI checks (Lint + Test)            |
-| `make feature` | Create a new feature (requires NAME)   |
-| `make help`    | Show all commands                      |
+| Command               | Description                            |
+| :-------------------- | :------------------------------------- |
+| `make prepare`        | Full setup: Clean + L10n + Gen Code    |
+| `make gen`            | Run code gen (build_runner + l10n)     |
+| `make l10n`           | Generate localization files only       |
+| `make watch`          | Run `build_runner watch` (Development) |
+| `make clean`          | Clean build artifacts & deps           |
+| `make format`         | Format code & Apply fixes              |
+| `make lint`           | Run static analysis                    |
+| `make test`           | Run all tests                          |
+| `make upgrade`        | Upgrade dependencies                   |
+| `make ci`             | Run CI checks (Lint + Test)            |
+| `make feature NAME=x` | Create new feature module              |
+| `make rename NAME=x`  | Rename the project                     |
+| `make help`           | Show all available commands            |
 
 ---
 
-## 👨‍💻 Developer Workflow
+## 🛠️ Creating Your First Feature
 
-_For a deep dive into reusable components (Widgets, Utils) and best practices, strictly read the [Developer Guide](DEVELOPER_GUIDE.md)._
+### Using the Generator
 
-### 1. Scaffolding Features ⚡
-
-**Stop!** Don't create folders manually. Use the generator to ensure Clean Architecture compliance (`Data` / `Domain` / `Presentation`).
+**Always use the generator to create new features:**
 
 ```bash
-make feature NAME=profile
+make feature NAME=products
 ```
 
-### 2. State Management Patterns (Riverpod)
+This creates the correct folder structure:
 
-| Type                  | Annotation                                        | Use Case                      |
-| :-------------------- | :------------------------------------------------ | :---------------------------- |
-| **Read-Only / Async** | `@riverpod Future<T> fetch(Ref ref)`              | API calls, Data fetching      |
-| **Mutable Logic**     | `@riverpod class MyNotifier extends _$MyNotifier` | Forms, Toggles, Complex Logic |
+```
+lib/features/products/
+├── data/
+│   └── repositories/
+├── domain/
+│   ├── entities/
+│   └── repositories/
+└── presentation/
+    ├── pages/
+    ├── providers/
+    └── widgets/
+```
+
+### Implementation Steps
+
+1. **Define Entity** (`domain/entities/product.dart`):
+
+```dart
+class Product {
+  final String id;
+  final String name;
+  final double price;
+
+  const Product({required this.id, required this.name, required this.price});
+}
+```
+
+2. **Define Repository Interface** (`domain/repositories/product_repository.dart`):
+
+```dart
+abstract class ProductRepository {
+  Future<Result<List<Product>>> getProducts();
+  Future<Result<Product>> getProduct(String id);
+}
+```
+
+3. **Implement Repository** (`data/repositories/product_repository_impl.dart`):
+
+```dart
+class ProductRepositoryImpl implements ProductRepository {
+  final ApiClient _apiClient;
+
+  ProductRepositoryImpl(this._apiClient);
+
+  @override
+  Future<Result<List<Product>>> getProducts() async {
+    // Implementation
+  }
+}
+```
+
+4. **Create Provider** (`presentation/providers/products_provider.dart`):
+
+```dart
+@riverpod
+Future<List<Product>> products(Ref ref) async {
+  final repo = ref.watch(productRepositoryProvider);
+  final result = await repo.getProducts();
+  return result.getOrThrow();
+}
+```
+
+5. **Build Page** (`presentation/pages/products_page.dart`):
+
+```dart
+class ProductsPage extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productsAsync = ref.watch(productsProvider);
+
+    return AsyncValueWidget<List<Product>>(
+      value: productsAsync,
+      data: (products) => ProductsList(products: products),
+    );
+  }
+}
+```
+
+6. **Add Route** (`lib/app/router/app_router.dart`):
+
+```dart
+// Add to AppRoute enum
+enum AppRoute {
+  // ...existing routes
+  products,
+}
+
+// Add route definition
+GoRoute(
+  path: '/products',
+  name: AppRoute.products.name,
+  builder: (context, state) => const ProductsPage(),
+),
+```
+
+---
+
+## 🔥 Firebase Setup
+
+### Prerequisites
+
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Install Firebase CLI: `npm install -g firebase-tools`
+3. Install FlutterFire CLI: `dart pub global activate flutterfire_cli`
+
+### Configuration Steps
+
+```bash
+# 1. Login to Firebase
+firebase login
+
+# 2. Configure FlutterFire (run in project root)
+flutterfire configure
+```
+
+This generates `lib/firebase_options.dart` automatically.
+
+### Enable Services
+
+In Firebase Console, enable:
+
+- **Analytics**: Automatically enabled
+- **Crashlytics**: Dashboard → Crashlytics → Enable
+- **Performance**: Dashboard → Performance → Get Started
+- **Remote Config**: Dashboard → Remote Config → Create configuration
+
+### Uncomment Initialization
+
+In `lib/app/bootstrap.dart`, uncomment the Firebase initialization:
+
+```dart
+// Uncomment this line:
+await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+```
+
+---
+
+## 🧪 Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+make test
+
+# Run specific test file
+flutter test test/core/validators_test.dart
+
+# Run with coverage
+flutter test --coverage
+```
+
+### Test Structure
+
+```
+test/
+├── core/
+│   ├── validators_test.dart
+│   └── widgets_test.dart
+├── features/
+│   └── auth/
+│       └── auth_repository_test.dart
+├── helpers/
+│   └── mocks.dart           # Shared mock classes
+└── widget_test.dart
+```
+
+### Writing Tests
+
+```dart
+// Unit test example
+test('email validator returns error for invalid email', () {
+  final validator = Validators.email('Invalid email');
+  expect(validator('not-an-email'), equals('Invalid email'));
+  expect(validator('valid@email.com'), isNull);
+});
+
+// Widget test example
+testWidgets('AppButton shows loading state', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: AppButton(
+        label: 'Submit',
+        onPressed: () {},
+        isLoading: true,
+      ),
+    ),
+  );
+
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+});
+```
+
+### Mocking with Mocktail
+
+```dart
+// In test/helpers/mocks.dart
+class MockAuthRepository extends Mock implements AuthRepository {}
+
+// In test file
+final mockRepo = MockAuthRepository();
+when(() => mockRepo.login(any(), any()))
+    .thenAnswer((_) async => const Success(mockUser));
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+<details>
+<summary><strong>Build runner errors</strong></summary>
+
+```bash
+# Clean and regenerate
+make clean
+make prepare
+```
+
+</details>
+
+<details>
+<summary><strong>iOS Pod install fails</strong></summary>
+
+```bash
+cd ios
+pod deintegrate
+pod install --repo-update
+cd ..
+flutter clean
+flutter pub get
+```
+
+</details>
+
+<details>
+<summary><strong>Android Gradle sync issues</strong></summary>
+
+```bash
+cd android
+./gradlew clean
+cd ..
+flutter clean
+flutter pub get
+```
+
+</details>
+
+<details>
+<summary><strong>Code generation not working</strong></summary>
+
+Make sure you have the `part` directive in files using `@riverpod`:
+
+```dart
+// At top of file
+part 'my_provider.g.dart';
+
+@riverpod
+// ...
+```
+
+Then run:
+
+```bash
+make gen
+```
+
+</details>
+
+<details>
+<summary><strong>iOS Keychain issues after reinstall</strong></summary>
+
+The boilerplate includes `FreshInstallHandler` that automatically clears stale Keychain data. If you're still having issues:
+
+1. Delete the app from simulator/device
+2. Reset the simulator (iOS Simulator → Device → Erase All Content and Settings)
+3. Reinstall the app
+</details>
+
+### Getting Help
+
+1. Check existing [Issues](https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate/issues)
+2. Read the [Developer Guide](DEVELOPER_GUIDE.md)
+3. Open a new issue with:
+   - Flutter version (`flutter --version`)
+   - Error message/logs
+   - Steps to reproduce
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+
+- Follow the existing code style
+- Add tests for new features
+- Update documentation as needed
+- Keep PRs focused and small
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Riverpod](https://riverpod.dev/) - Reactive caching and data-binding framework
+- [GoRouter](https://pub.dev/packages/go_router) - Declarative routing package
+- [Dio](https://pub.dev/packages/dio) - Powerful HTTP client
+- [Drift](https://drift.simonbinder.eu/) - Reactive persistence library
+- Flutter team for an amazing framework
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the Flutter community**
+
+⭐ Star this repo if you find it helpful!
+
+</div>

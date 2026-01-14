@@ -162,11 +162,17 @@ class Validators {
   }
 
   /// URL validator
+  ///
+  /// Validates that the input is a properly formatted URL with scheme and host.
+  /// Accepts both http and https URLs.
   static String? Function(String?) url([final String? message]) {
     return (final value) {
       if (value == null || value.isEmpty) return null;
       final uri = Uri.tryParse(value);
-      if (uri == null || !uri.hasAbsolutePath) {
+      if (uri == null ||
+          !uri.hasScheme ||
+          !uri.hasAuthority ||
+          (!uri.isScheme('http') && !uri.isScheme('https'))) {
         return message ?? 'Please enter a valid URL';
       }
       return null;

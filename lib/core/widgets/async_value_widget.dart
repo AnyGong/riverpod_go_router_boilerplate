@@ -41,7 +41,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
     return value.when(
       data: data,
       loading: loading ?? () => const LoadingWidget(),
-      error: error ?? (final e, final st) => ErrorWidget.builder(error: e),
+      error: error ?? (final e, final st) => AppErrorWidget.fromError(error: e),
       skipLoadingOnRefresh: skipLoadingOnRefresh,
       skipLoadingOnReload: skipLoadingOnReload,
     );
@@ -94,21 +94,23 @@ class LoadingWidget extends StatelessWidget {
 }
 
 /// A widget that displays an error message with an optional retry action.
-class ErrorWidget extends StatelessWidget {
-  /// Creates an [ErrorWidget].
-  const ErrorWidget({
+///
+/// Named `AppErrorWidget` to avoid collision with Flutter's built-in `ErrorWidget`.
+class AppErrorWidget extends StatelessWidget {
+  /// Creates an [AppErrorWidget].
+  const AppErrorWidget({
     required this.message,
     super.key,
     this.onRetry,
     this.icon = Icons.error_outline,
   });
 
-  /// Builds an [ErrorWidget] from an error object.
-  factory ErrorWidget.builder({
+  /// Builds an [AppErrorWidget] from an error object.
+  factory AppErrorWidget.fromError({
     required final Object error,
     final VoidCallback? onRetry,
   }) {
-    return ErrorWidget(message: error.toString(), onRetry: onRetry);
+    return AppErrorWidget(message: error.toString(), onRetry: onRetry);
   }
 
   /// Error message to display.

@@ -18,6 +18,7 @@ This guide documents **every reusable component** in the boilerplate. Use these 
 - [🌐 Services](#-services)
 - [👷 Workflow](#-workflow)
 - [⚡ State Management](#-state-management)
+- [🔐 Security](#-security)
 - [🧪 Testing](#-testing)
 - [❓ FAQ](#-faq)
 
@@ -170,7 +171,7 @@ PrefsKeys.shownTooltips      // Feature discovery
 | :-------------------- | :------------------------------------------------- |
 | `AsyncValueWidget<T>` | Handles Riverpod `AsyncValue` (loading/error/data) |
 | `LoadingWidget`       | Centered spinner with optional message             |
-| `ErrorWidget`         | Error display with retry button                    |
+| `AppErrorWidget`      | Error display with retry button                    |
 | `EmptyWidget`         | Empty state with icon and action                   |
 
 ```dart
@@ -182,7 +183,13 @@ AsyncValueWidget<User>(
 
 LoadingWidget(message: 'Fetching data...')
 
-ErrorWidget(message: 'Failed to load', onRetry: () => ref.invalidate(provider))
+AppErrorWidget(message: 'Failed to load', onRetry: () => ref.invalidate(provider))
+
+// Or use the factory constructor for exception handling:
+AppErrorWidget.fromError(
+  error: exception,
+  onRetry: () => ref.invalidate(provider),
+)
 
 EmptyWidget(
   message: 'No items yet',
@@ -213,6 +220,8 @@ AppIconButton(
   variant: AppIconButtonVariant.filled,
 )
 ```
+
+**Important**: Always use explicit enum values like `AppButtonVariant.primary` instead of `.primary` for better code clarity.
 
 ### Spacing
 
@@ -430,9 +439,14 @@ TextFormField(
 | `pattern(regex)`   | Custom regex                                 |
 | `numeric()`        | Digits only                                  |
 | `phone()`          | Phone format                                 |
-| `url()`            | URL format                                   |
+| `url()`            | URL format (requires http/https scheme)      |
 | `match(getter)`    | Match another field (e.g., confirm password) |
 | `strongPassword()` | 8+ chars, upper, lower, digit, special       |
+
+**Important Notes:**
+
+- `strongPassword()` already includes minimum 8 character requirement. Don't add redundant `minLength(8)` validators.
+- `url()` validates that the URL has a scheme (http/https) and authority component.
 
 ### Logger
 
@@ -694,6 +708,15 @@ result.fold(
 );
 ```
 
+#### Auth Interceptor
+
+The `AuthInterceptor` handles token injection and automatic refresh:
+
+- Automatically injects `Authorization: Bearer <token>` header
+- Handles 401 responses with automatic token refresh
+- Uses `Completer` for concurrent request coordination (prevents multiple simultaneous refresh calls)
+- Failed requests are automatically retried after successful token refresh
+
 ### Storage (`lib/core/storage/`)
 
 | Provider                    | Purpose                     |
@@ -862,6 +885,16 @@ This creates the correct folder structure with placeholder files.
 5. **Build Page** in `presentation/pages/`
 6. **Add Route** to `lib/app/router/app_router.dart`
 
+### Build Commands
+
+```bash
+make gen       # Run code generation (build_runner + l10n)
+make format    # Format code & apply fixes
+make lint      # Run static analysis
+make test      # Run all tests
+make prepare   # Full setup (clean + l10n + gen)
+```
+
 ---
 
 ## ⚡ State Management
@@ -889,6 +922,16 @@ class Counter extends _$Counter {
 }
 ```
 
+### keepAlive Guidelines
+
+Use `@Riverpod(keepAlive: true)` **ONLY** for:
+
+- Global app state (auth, theme, user preferences)
+- Expensive services (network clients, database connections)
+- State that must survive navigation (audio player, download manager)
+
+**Default to autoDispose** for page-specific providers.
+
 ### UI Consumption
 
 ```dart
@@ -907,6 +950,51 @@ class UserPage extends ConsumerWidget {
 
 ---
 
+## 🔐 Security
+
+### Secure Storage
+
+The boilerplate uses `FlutterSecureStorage` for sensitive data like tokens and credentials.
+
+#### iOS Keychain Behavior
+
+**Important**: iOS Keychain data persists across app reinstalls. This can cause issues where stale tokens from a previous install are used after a fresh install.
+
+The `FreshInstallHandler` addresses this:
+
+```dart
+// In bootstrap.dart - automatically clears stale keychain data
+await FreshInstallHandler.handleFreshInstall(secureStorage, sharedPrefs);
+```
+
+How it works:
+
+1. On first launch, stores a marker in SharedPreferences
+2. SharedPreferences is cleared on uninstall (unlike Keychain)
+3. If marker is missing but Keychain has data → fresh install detected
+4. Clears all Keychain data to prevent auth issues
+
+#### Platform-Specific Configuration
+
+**iOS:**
+
+- Keychain accessibility: `first_unlock_this_device`
+- Data only accessible after first device unlock
+
+**Android:**
+
+- Uses EncryptedSharedPreferences
+- Encrypted at rest
+
+### Network Security
+
+- Auth tokens injected automatically via `AuthInterceptor`
+- 401 responses trigger automatic token refresh
+- Uses `Completer` coordination to prevent multiple simultaneous refresh calls
+- Failed requests retry automatically with exponential backoff
+
+---
+
 ## 🧪 Testing
 
 | Type         | When to Write                  |
@@ -914,14 +1002,54 @@ class UserPage extends ConsumerWidget {
 | Unit Tests   | Repositories, Notifiers, Utils |
 | Widget Tests | Reusable widgets, Pages        |
 
+### Test File Organization
+
+```
+test/
+├── core/
+│   ├── validators_test.dart    # Utility tests
+│   └── widgets_test.dart       # Core widget tests
+├── features/
+│   └── auth/
+│       └── auth_repository_test.dart
+├── helpers/
+│   └── mocks.dart              # Shared mock classes
+└── widget_test.dart
+```
+
 ### Mocking
 
-- Use `mocktail`
+- Use `mocktail` for all mocking
 - Shared mocks in `test/helpers/mocks.dart`
 - For `Result<void>`: return `const Success(null)`
 
 ```dart
+// In mocks.dart
+class MockAuthRepository extends Mock implements AuthRepository {}
+class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+class MockApiClient extends Mock implements ApiClient {}
+
+// In test file
 when(() => mockRepo.logout()).thenAnswer((_) async => const Success(null));
+```
+
+### Widget Testing Pattern
+
+```dart
+testWidgets('AppButton shows loading state', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: AppButton(
+        label: 'Submit',
+        onPressed: () {},
+        isLoading: true,
+      ),
+    ),
+  );
+
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  expect(find.text('Submit'), findsNothing);
+});
 ```
 
 ---
@@ -939,6 +1067,15 @@ A: Use `FeedbackService` or `context.showSnackBar()` from UI
 
 **Q: I have a lint error.**
 A: Run `make format`. If it persists, read the error message.
+
+**Q: Why is `ErrorWidget` renamed to `AppErrorWidget`?**
+A: To avoid collision with Flutter's built-in `ErrorWidget` class.
+
+**Q: Why does `strongPassword()` not need `minLength(8)`?**
+A: The `strongPassword()` validator already includes the 8-character minimum requirement.
+
+**Q: How do I handle fresh install on iOS?**
+A: The `FreshInstallHandler` automatically clears stale Keychain data on fresh installs.
 
 ---
 

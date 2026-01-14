@@ -208,5 +208,57 @@ void main() {
         expect(validator('different'), equals('Passwords must match'));
       });
     });
+
+    group('url', () {
+      test('returns null for valid http URL', () {
+        final validator = Validators.url();
+        expect(validator('http://example.com'), isNull);
+      });
+
+      test('returns null for valid https URL', () {
+        final validator = Validators.url();
+        expect(validator('https://example.com'), isNull);
+      });
+
+      test('returns null for URL with path', () {
+        final validator = Validators.url();
+        expect(validator('https://example.com/path/to/page'), isNull);
+      });
+
+      test('returns null for URL with query params', () {
+        final validator = Validators.url();
+        expect(validator('https://example.com?foo=bar'), isNull);
+      });
+
+      test('returns error for URL without scheme', () {
+        final validator = Validators.url();
+        expect(validator('example.com'), isNotNull);
+      });
+
+      test('returns error for URL without host', () {
+        final validator = Validators.url();
+        expect(validator('http://'), isNotNull);
+      });
+
+      test('returns error for non-http/https scheme', () {
+        final validator = Validators.url();
+        expect(validator('ftp://example.com'), isNotNull);
+      });
+
+      test('returns error for plain text', () {
+        final validator = Validators.url();
+        expect(validator('not-a-url'), isNotNull);
+      });
+
+      test('returns null for empty value (not required)', () {
+        final validator = Validators.url();
+        expect(validator(''), isNull);
+      });
+
+      test('returns null for null value (not required)', () {
+        final validator = Validators.url();
+        expect(validator(null), isNull);
+      });
+    });
   });
 }
