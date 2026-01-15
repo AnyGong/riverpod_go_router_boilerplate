@@ -49,7 +49,7 @@ dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   # DATABASE & OFFLINE CACHING (Drift - SQLite)
   # ─────────────────────────────────────────────────────────────────────────────
-  drift: ^2.30.0
+  drift: ^2.30.1
   sqlite3_flutter_libs: ^0.5.41
 
   # ─────────────────────────────────────────────────────────────────────────────
@@ -132,9 +132,9 @@ dev_dependencies:
   # ─────────────────────────────────────────────────────────────────────────────
   # CODE GENERATION
   # ─────────────────────────────────────────────────────────────────────────────
-  build_runner: ^2.10.4
+  build_runner: ^2.10.5
   riverpod_generator: ^4.0.0
-  drift_dev: ^2.30.0
+  drift_dev: ^2.30.1
   # PINNED: freezed 3.2.4+ has conflicts with json_serializable and macros.
   # TODO: Remove pin when freezed releases a compatible version.
   # Tracking: https://github.com/rrousselGit/freezed/issues

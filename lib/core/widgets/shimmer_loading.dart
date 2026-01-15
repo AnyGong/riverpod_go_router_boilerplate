@@ -36,7 +36,8 @@ class ShimmerLoading extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
-      highlightColor: highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
+      highlightColor:
+          highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
       child: child,
     );
   }

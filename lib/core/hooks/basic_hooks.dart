@@ -6,6 +6,24 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 // Re-export flutter_hooks for convenience
 export 'package:flutter_hooks/flutter_hooks.dart';
 
+/// Custom hook for one-time mount effect.
+///
+/// Executes the callback only once when the widget mounts.
+/// Useful for screen tracking, initial API calls, etc.
+///
+/// Usage:
+/// ```dart
+/// useOnMount(() {
+///   ref.read(analyticsServiceProvider).logScreenView(screenName: 'home');
+/// });
+/// ```
+void useOnMount(final VoidCallback callback) {
+  useEffect(() {
+    callback();
+    return null;
+  }, const []);
+}
+
 /// Custom hook for debounced text input.
 ///
 /// Returns a debounced version of the input value that only updates

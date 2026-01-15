@@ -21,6 +21,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _obscurePassword = true;
 
   @override
+  void initState() {
+    super.initState();
+    // Track screen view once on mount
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'login');
+    });
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -58,9 +67,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
     final l10n = AppLocalizations.of(context);
-
-    // Track screen view
-    ref.read(analyticsServiceProvider).logScreenView(screenName: 'login');
 
     return Scaffold(
       body: SafeArea(

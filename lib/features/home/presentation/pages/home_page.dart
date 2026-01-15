@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
@@ -9,7 +9,7 @@ import 'package:riverpod_go_router_boilerplate/features/home/presentation/widget
 import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Home page shown after successful authentication.
-class HomePage extends ConsumerWidget {
+class HomePage extends HookConsumerWidget {
   /// Creates a [HomePage] instance.
   const HomePage({super.key});
 
@@ -19,8 +19,10 @@ class HomePage extends ConsumerWidget {
     final theme = context.theme;
     final l10n = AppLocalizations.of(context);
 
-    // Track screen view for analytics
-    ref.read(analyticsServiceProvider).logScreenView(screenName: 'home');
+    // Track screen view once on mount
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'home');
+    });
 
     return Scaffold(
       appBar: AppBar(

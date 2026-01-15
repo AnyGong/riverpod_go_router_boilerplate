@@ -44,8 +44,12 @@ class OnboardingPage extends HookConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final pages = _buildPages(l10n);
 
-    // Track screen view
-    ref.read(analyticsServiceProvider).logScreenView(screenName: 'onboarding');
+    // Track screen view once on mount
+    useOnMount(() {
+      ref
+          .read(analyticsServiceProvider)
+          .logScreenView(screenName: 'onboarding');
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -123,14 +127,17 @@ class OnboardingPage extends HookConsumerWidget {
                                 children: [
                                   SizedBox(
                                     width:
-                                        (context.screenWidth - AppSpacing.lg * 2 - AppSpacing.md) /
+                                        (context.screenWidth -
+                                            AppSpacing.lg * 2 -
+                                            AppSpacing.md) /
                                         2,
                                     child: AppButton(
                                       variant: .secondary,
                                       label: l10n.onboardingBack,
                                       onPressed: () {
                                         pageController.previousPage(
-                                          duration: AppConstants.animationNormal,
+                                          duration:
+                                              AppConstants.animationNormal,
                                           curve: Curves.easeInOut,
                                         );
                                       },

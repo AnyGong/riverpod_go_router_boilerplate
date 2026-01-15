@@ -266,9 +266,10 @@ DateTime.now().timeAgo      // date formatting
 
 ### Hooks (`lib/core/hooks/`)
 
-For `HookWidget` classes:
+For `HookWidget` and `HookConsumerWidget` classes:
 
 ```dart
+useOnMount(callback)        // one-time effect on mount (analytics, init)
 useDebounce(value, delay)   // debounced values
 useToggle(initial)          // boolean toggle
 usePagination(fetcher)      // infinite scroll
@@ -449,15 +450,31 @@ Text('Login')
 
 ## 📊 Analytics & Screen Tracking
 
-- **Track screen views** for all new pages using `AnalyticsService`:
+- **Track screen views** for all new pages using `useOnMount` hook (HookConsumerWidget):
+
+```dart
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(final BuildContext context, final WidgetRef ref) {
+    // Track screen view once on mount (not on every rebuild!)
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_feature');
+    });
+
+    return Scaffold(...);
+  }
+}
+```
+
+For `ConsumerStatefulWidget`, use `initState`:
 
 ```dart
 @override
-Widget build(final BuildContext context, final WidgetRef ref) {
-  // Log screen view at the start of build
-  ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_feature');
-
-  return Scaffold(...);
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_feature');
+  });
 }
 ```
 
@@ -588,7 +605,7 @@ make prepare   # Full setup (clean + l10n + gen)
    - Placeholder texts, error messages
    - ANY text displayed to users
    - **Rule**: Before submitting code, search for quoted strings and ensure they use `l10n.<key>` instead
-9. **Don't** forget to track screen views in new pages via `AnalyticsService`
+9. **🔴 CRITICAL: Don't** track analytics in `build()` methods - use `useOnMount()` hook for `HookConsumerWidget` or `initState()` with `addPostFrameCallback` for `ConsumerStatefulWidget`. Analytics in build() will fire on every rebuild!
 10. **Don't** bypass file size limits — refactor immediately if exceeded
 11. **Don't** forget try-catch blocks for operations that can fail (especially async operations)
 12. **Do** use `.staggered()` factories for list animations instead of manually calculating delays

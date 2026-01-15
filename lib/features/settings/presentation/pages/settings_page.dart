@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/language_selection_dialog.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/theme_selection_dialog.dart';
@@ -12,7 +12,7 @@ import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.
 ///
 /// Demonstrates animation widgets including `FadeIn`, `SlideIn`, and
 /// `StaggeredList` for a polished user experience.
-class SettingsPage extends ConsumerWidget {
+class SettingsPage extends HookConsumerWidget {
   /// Creates a [SettingsPage] instance.
   const SettingsPage({super.key});
 
@@ -23,8 +23,10 @@ class SettingsPage extends ConsumerWidget {
     final packageInfo = ref.watch(packageInfoProvider);
     final l10n = AppLocalizations.of(context);
 
-    // Track screen view
-    ref.read(analyticsServiceProvider).logScreenView(screenName: 'settings');
+    // Track screen view once on mount
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'settings');
+    });
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
