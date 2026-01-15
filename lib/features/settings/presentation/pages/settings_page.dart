@@ -90,7 +90,10 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: Text(l10n.termsOfService),
-            trailing: const Icon(Icons.open_in_new, size: AppConstants.iconSizeMD),
+            trailing: const Icon(
+              Icons.open_in_new,
+              size: AppConstants.iconSizeMD,
+            ),
             onTap: () {
               // TODO: Open terms of service
             },
@@ -98,7 +101,10 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(l10n.privacyPolicy),
-            trailing: const Icon(Icons.open_in_new, size: AppConstants.iconSizeMD),
+            trailing: const Icon(
+              Icons.open_in_new,
+              size: AppConstants.iconSizeMD,
+            ),
             onTap: () {
               // TODO: Open privacy policy
             },

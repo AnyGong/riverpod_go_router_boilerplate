@@ -22,7 +22,9 @@ void showLanguageSelectionDialog(
           l10n.english,
           currentLocale.languageCode == 'en',
           () {
-            ref.read(localeNotifierProvider.notifier).setLocale(const Locale('en'));
+            ref
+                .read(localeNotifierProvider.notifier)
+                .setLocale(const Locale('en'));
             Navigator.of(dialogContext).pop();
           },
         ),
@@ -32,7 +34,9 @@ void showLanguageSelectionDialog(
           l10n.bengali,
           currentLocale.languageCode == 'bn',
           () {
-            ref.read(localeNotifierProvider.notifier).setLocale(const Locale('bn'));
+            ref
+                .read(localeNotifierProvider.notifier)
+                .setLocale(const Locale('bn'));
             Navigator.of(dialogContext).pop();
           },
         ),
@@ -53,7 +57,9 @@ SimpleDialogOption _buildLanguageOption(
     child: Row(
       children: [
         Icon(
-          isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+          isSelected
+              ? Icons.radio_button_checked
+              : Icons.radio_button_unchecked,
           color: isSelected ? context.colorScheme.primary : null,
         ),
         const HorizontalSpace.sm(),

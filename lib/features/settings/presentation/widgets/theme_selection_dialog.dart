@@ -25,7 +25,9 @@ void showThemeSelectionDialog(
           child: Row(
             children: [
               Icon(
-                isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                isSelected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
                 color: isSelected ? dialogContext.colorScheme.primary : null,
               ),
               const HorizontalSpace.sm(),

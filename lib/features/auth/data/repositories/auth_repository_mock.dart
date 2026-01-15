@@ -111,7 +111,9 @@ class AuthRepositoryMock implements AuthRepository {
         .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
         .map(
-          (final word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '',
+          (final word) => word.isNotEmpty
+              ? '${word[0].toUpperCase()}${word.substring(1)}'
+              : '',
         )
         .join(' ');
   }
