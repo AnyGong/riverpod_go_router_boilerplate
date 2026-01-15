@@ -23,6 +23,9 @@ abstract class AppConstants {
   /// Slow animation duration (500ms) - emphasized animations.
   static const Duration animationSlow = Duration(milliseconds: 500);
 
+  /// Page indicator animation duration (200ms) - carousel indicators.
+  static const Duration pageIndicatorAnimation = Duration(milliseconds: 200);
+
   // ─────────────────────────────────────────────────────────────────────────────
   // NETWORK TIMEOUTS
   // ─────────────────────────────────────────────────────────────────────────────
@@ -77,6 +80,19 @@ abstract class AppConstants {
 
   /// Tooltip display duration.
   static const Duration tooltipDuration = Duration(seconds: 2);
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // MOCK/TEST DELAYS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Mock repository quick delay (200ms) - for operations like logout.
+  static const Duration mockQuickDelay = Duration(milliseconds: 200);
+
+  /// Mock repository network delay (500ms) - simulates typical network latency.
+  static const Duration mockNetworkDelay = Duration(milliseconds: 500);
+
+  /// Mock repository slow network delay (2s) - simulates slow network conditions.
+  static const Duration mockSlowNetworkDelay = Duration(seconds: 2);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // PAGINATION
@@ -147,6 +163,27 @@ abstract class AppConstants {
 
   /// Extra large icon size (48px).
   static const double iconSizeXL = 48;
+
+  /// Onboarding icon size (64px).
+  static const double onboardingIconSize = 64;
+
+  /// Onboarding icon container size (120x120px).
+  static const double onboardingIconContainerSize = 120;
+
+  /// Onboarding icon background opacity (0.1).
+  static const double onboardingIconBackgroundOpacity = 0.1;
+
+  /// Page indicator active width (24px).
+  static const double pageIndicatorActiveWidth = 24;
+
+  /// Page indicator inactive width (8px).
+  static const double pageIndicatorInactiveWidth = 8;
+
+  /// Page indicator height (8px).
+  static const double pageIndicatorHeight = 8;
+
+  /// Page indicator opacity when inactive (0.3).
+  static const double pageIndicatorInactiveOpacity = 0.3;
 
   // Legacy aliases
   /// @deprecated Use [iconSizeSM] instead.

@@ -30,9 +30,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await ref
-        .read(authProvider.notifier)
-        .login(_emailController.text.trim(), _passwordController.text);
+    final authNotifier = ref.read(authProvider.notifier);
+    await authNotifier.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
 
     if (!mounted) return;
 
@@ -56,6 +58,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
     final l10n = AppLocalizations.of(context);
+
+    // Track screen view
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'login');
 
     return Scaffold(
       body: SafeArea(
@@ -118,8 +123,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         prefixIcon: const Icon(Icons.email_outlined),
                       ),
                       validator: Validators.compose([
-                        Validators.required('Email is required'),
-                        Validators.email('Please enter a valid email'),
+                        Validators.required(l10n.emailRequired),
+                        Validators.email(l10n.emailInvalid),
                       ]),
                     ),
                     const VerticalSpace.md(),
@@ -148,10 +153,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                       ),
                       validator: Validators.compose([
-                        Validators.required('Password is required'),
-                        Validators.strongPassword(
-                          'Password must be 8+ chars with uppercase, lowercase, number & special char',
-                        ),
+                        Validators.required(l10n.passwordRequired),
+                        Validators.strongPassword(l10n.passwordWeak),
                       ]),
                     ),
                     const VerticalSpace.lg(),

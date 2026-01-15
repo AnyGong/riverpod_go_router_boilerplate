@@ -4,6 +4,7 @@ library;
 // Data
 export 'data/repositories/auth_repository_impl.dart';
 export 'data/repositories/auth_repository_mock.dart';
+export 'data/repositories/auth_repository_provider.dart';
 export 'data/repositories/auth_repository_remote.dart';
 // Domain
 export 'domain/entities/user.dart';

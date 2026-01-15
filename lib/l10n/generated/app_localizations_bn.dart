@@ -291,4 +291,144 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get bengali => 'বাংলা';
+
+  @override
+  String get featureShowcase => 'ফিচার শোকেস';
+
+  @override
+  String get featureShowcaseDescription =>
+      'বয়লারপ্লেটের অন্তর্নির্মিত ইউটিলিটি এবং কম্পোনেন্ট অন্বেষণ করুন।';
+
+  @override
+  String get feedbackDemo => 'ফিডব্যাক সার্ভিস';
+
+  @override
+  String get feedbackDemoDescription =>
+      'বিভিন্ন ধরনের স্ন্যাকবার বার্তা দেখান।';
+
+  @override
+  String get success => 'সফল';
+
+  @override
+  String get error => 'ত্রুটি';
+
+  @override
+  String get info => 'তথ্য';
+
+  @override
+  String get dialogDemo => 'ডায়ালগ';
+
+  @override
+  String get dialogDemoDescription =>
+      'AppDialogs ব্যবহার করে নিশ্চিতকরণ ডায়ালগ দেখান।';
+
+  @override
+  String get showDialog => 'ডায়ালগ দেখান';
+
+  @override
+  String get navigationDemo => 'টাইপ-সেফ নেভিগেশন';
+
+  @override
+  String get navigationDemoDescription =>
+      'কম্পাইল-টাইম সেফটির জন্য AppRoute enum ব্যবহার করে নেভিগেট করুন।';
+
+  @override
+  String get goToSettings => 'সেটিংসে যান';
+
+  @override
+  String get notificationsEnabled => 'নোটিফিকেশন সক্রিয় করা হয়েছে';
+
+  @override
+  String get notificationsEnabledDescription =>
+      'এই অ্যাপের জন্য পুশ নোটিফিকেশন সক্রিয় বা নিষ্ক্রিয় করুন।';
+
+  @override
+  String get notificationDemo => 'নোটিফিকেশন';
+
+  @override
+  String get notificationDemoDescription => 'স্থানীয় নোটিফিকেশন পাঠান।';
+
+  @override
+  String get basicNotification => 'নোটিফিকেশন পাঠান';
+
+  @override
+  String get confirmLogout => 'আপনি কি সাইন আউট করতে চান?';
+
+  @override
+  String get logoutFailed =>
+      'সাইন আউট ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।';
+
+  @override
+  String get youAreAllSet => 'আপনি সব প্রস্তুত!';
+
+  @override
+  String get startBuilding => 'আপনার দুর্দান্ত অ্যাপ তৈরি করুন।';
+
+  @override
+  String get notificationTitle => 'হ্যালো!';
+
+  @override
+  String get notificationBody => 'এটি বয়লারপ্লেট থেকে একটি মৌলিক নোটিফিকেশন।';
+
+  @override
+  String get dialogConfirmTitle => 'পদক্ষেপ নিশ্চিত করুন';
+
+  @override
+  String get dialogConfirmMessage =>
+      'এটি AppDialogs.confirm() হেল্পার প্রদর্শন করে।';
+
+  @override
+  String get dialogConfirmButton => 'বুঝলাম';
+
+  @override
+  String get dialogConfirmed => 'ডায়ালগ নিশ্চিত করা হয়েছে!';
+
+  @override
+  String get emailRequired => 'ইমেইল প্রয়োজন';
+
+  @override
+  String get emailInvalid => 'অনুগ্রহ করে একটি বৈধ ইমেইল প্রবেশ করুন';
+
+  @override
+  String get passwordRequired => 'পাসওয়ার্ড প্রয়োজন';
+
+  @override
+  String get passwordWeak =>
+      'পাসওয়ার্ড ৮+ অক্ষরের সাথে বড় অক্ষর, ছোট অক্ষর, সংখ্যা এবং বিশেষ অক্ষর থাকতে হবে';
+
+  @override
+  String get onboardingWelcomeTitle => 'স্বাগতম';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'ফ্লাটার বয়লারপ্লেটে স্বাগতম। আপনার পরবর্তী অ্যাপের জন্য একটি প্রোডাকশন-রেডি টেমপ্লেট।';
+
+  @override
+  String get onboardingArchitectureTitle => 'আধুনিক আর্কিটেকচার';
+
+  @override
+  String get onboardingArchitectureDescription =>
+      'রিভারপড, গোরাউটার এবং ক্লিন আর্কিটেকচার নীতি দিয়ে তৈরি।';
+
+  @override
+  String get onboardingReadyTitle => 'পাঠানোর জন্য প্রস্তুত';
+
+  @override
+  String get onboardingReadyDescription =>
+      'আপনার অ্যাপ দ্রুত তৈরি এবং পাঠানোর জন্য আপনার প্রয়োজনীয় সবকিছু।';
+
+  @override
+  String get onboardingSkip => 'স্কিপ';
+
+  @override
+  String get onboardingBack => 'পূর্ববর্তী';
+
+  @override
+  String get onboardingNext => 'পরবর্তী';
+
+  @override
+  String get onboardingGetStarted => 'শুরু করুন';
+
+  @override
+  String get notificationsDisabled => 'নোটিফিকেশন নিষ্ক্রিয় করা হয়েছে';
 }

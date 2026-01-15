@@ -210,12 +210,16 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 /// Provider for the app router.
 ///
 /// Uses [appLifecycleListenableProvider] to refresh when lifecycle state changes.
+/// Also watches [sessionStateProvider] for immediate redirection on auth changes.
 /// This enables reactive routing based on session state, maintenance mode, etc.
 @Riverpod(keepAlive: true)
 GoRouter appRouter(final Ref ref) {
-  // Use lifecycle listenable for refresh - this triggers re-evaluation
-  // when session state changes, maintenance mode toggles, etc.
+  // Watch lifecycle state for initialization/maintenance transitions
   final lifecycleListenable = ref.watch(appLifecycleListenableProvider);
+
+  // Watch session state for immediate auth changes (login/logout)
+  // This ensures we redirect to login immediately when user logs out
+  ref.watch(sessionStateProvider);
 
   // Get analytics observer for screen tracking
   final analyticsObserver = ref.watch(analyticsObserverProvider);

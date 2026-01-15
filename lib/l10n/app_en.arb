@@ -432,5 +432,225 @@
   "bengali": "Bengali (বাংলা)",
   "@bengali": {
     "description": "Bengali language option"
+  },
+
+  "featureShowcase": "Feature Showcase",
+  "@featureShowcase": {
+    "description": "Feature showcase widget title"
+  },
+
+  "featureShowcaseDescription": "Explore the boilerplate's built-in utilities and components.",
+  "@featureShowcaseDescription": {
+    "description": "Feature showcase description"
+  },
+
+  "feedbackDemo": "Feedback Service",
+  "@feedbackDemo": {
+    "description": "Feedback service demo title"
+  },
+
+  "feedbackDemoDescription": "Show different types of snackbar messages.",
+  "@feedbackDemoDescription": {
+    "description": "Feedback demo description"
+  },
+
+  "success": "Success",
+  "@success": {
+    "description": "Success button label"
+  },
+
+  "error": "Error",
+  "@error": {
+    "description": "Error button label"
+  },
+
+  "info": "Info",
+  "@info": {
+    "description": "Info button label"
+  },
+
+  "dialogDemo": "Dialogs",
+  "@dialogDemo": {
+    "description": "Dialog demo title"
+  },
+
+  "dialogDemoDescription": "Show confirmation dialogs using AppDialogs.",
+  "@dialogDemoDescription": {
+    "description": "Dialog demo description"
+  },
+
+  "showDialog": "Show Dialog",
+  "@showDialog": {
+    "description": "Show dialog button label"
+  },
+
+  "navigationDemo": "Type-Safe Navigation",
+  "@navigationDemo": {
+    "description": "Navigation demo title"
+  },
+
+  "navigationDemoDescription": "Navigate using AppRoute enum for compile-time safety.",
+  "@navigationDemoDescription": {
+    "description": "Navigation demo description"
+  },
+
+  "goToSettings": "Go to Settings",
+  "@goToSettings": {
+    "description": "Navigate to settings button label"
+  },
+
+  "notificationsEnabled": "Notifications Enabled",
+  "@notificationsEnabled": {
+    "description": "Notifications toggle label"
+  },
+
+  "notificationsEnabledDescription": "Enable or disable push notifications for this app.",
+  "@notificationsEnabledDescription": {
+    "description": "Notifications settings description"
+  },
+
+  "notificationDemo": "Notifications",
+  "@notificationDemo": {
+    "description": "Notification demo title"
+  },
+
+  "notificationDemoDescription": "Send local notifications with scheduling support.",
+  "@notificationDemoDescription": {
+    "description": "Notification demo description"
+  },
+
+  "basicNotification": "Send Notification",
+  "@basicNotification": {
+    "description": "Send basic notification button label"
+  },
+
+  "confirmLogout": "Are you sure you want to sign out?",
+  "@confirmLogout": {
+    "description": "Logout confirmation message"
+  },
+
+  "logoutFailed": "Failed to sign out. Please try again.",
+  "@logoutFailed": {
+    "description": "Error message when logout fails"
+  },
+
+  "youAreAllSet": "You're all set!",
+  "@youAreAllSet": {
+    "description": "Welcome message on home page"
+  },
+
+  "startBuilding": "Start building your amazing app.",
+  "@startBuilding": {
+    "description": "Welcome card description"
+  },
+
+  "notificationTitle": "Hello!",
+  "@notificationTitle": {
+    "description": "Title for the basic notification demo"
+  },
+
+  "notificationBody": "This is a basic notification from the boilerplate.",
+  "@notificationBody": {
+    "description": "Body text for the basic notification demo"
+  },
+
+  "dialogConfirmTitle": "Confirm Action",
+  "@dialogConfirmTitle": {
+    "description": "Title for the dialog confirmation demo"
+  },
+
+  "dialogConfirmMessage": "This demonstrates the AppDialogs.confirm() helper.",
+  "@dialogConfirmMessage": {
+    "description": "Message text for the dialog confirmation demo"
+  },
+
+  "dialogConfirmButton": "Got it",
+  "@dialogConfirmButton": {
+    "description": "Confirm button text in the dialog demo"
+  },
+
+  "dialogConfirmed": "Dialog confirmed!",
+  "@dialogConfirmed": {
+    "description": "Snackbar message when dialog is confirmed"
+  },
+
+  "emailRequired": "Email is required",
+  "@emailRequired": {
+    "description": "Validation error message for empty email field"
+  },
+
+  "emailInvalid": "Please enter a valid email",
+  "@emailInvalid": {
+    "description": "Validation error message for invalid email format"
+  },
+
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Validation error message for empty password field"
+  },
+
+  "passwordWeak": "Password must be 8+ chars with uppercase, lowercase, number & special char",
+  "@passwordWeak": {
+    "description": "Validation error message for weak password"
+  },
+
+  "onboardingWelcomeTitle": "Welcome",
+  "@onboardingWelcomeTitle": {
+    "description": "Title for first onboarding page"
+  },
+
+  "onboardingWelcomeDescription": "Welcome to Flutter Boilerplate. A production-ready template for your next app.",
+  "@onboardingWelcomeDescription": {
+    "description": "Description for first onboarding page"
+  },
+
+  "onboardingArchitectureTitle": "Modern Architecture",
+  "@onboardingArchitectureTitle": {
+    "description": "Title for second onboarding page"
+  },
+
+  "onboardingArchitectureDescription": "Built with Riverpod, GoRouter, and clean architecture principles.",
+  "@onboardingArchitectureDescription": {
+    "description": "Description for second onboarding page"
+  },
+
+  "onboardingReadyTitle": "Ready to Ship",
+  "@onboardingReadyTitle": {
+    "description": "Title for third onboarding page"
+  },
+
+  "onboardingReadyDescription": "Everything you need to build and ship your app faster.",
+  "@onboardingReadyDescription": {
+    "description": "Description for third onboarding page"
+  },
+
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "Skip button text in onboarding"
+  },
+
+  "onboardingBack": "Back",
+  "@onboardingBack": {
+    "description": "Back button text in onboarding"
+  },
+
+  "onboardingNext": "Next",
+  "@onboardingNext": {
+    "description": "Next button text in onboarding"
+  },
+
+  "onboardingGetStarted": "Get Started",
+  "@onboardingGetStarted": {
+    "description": "Get started button text (final onboarding page)"
+  },
+
+  "notificationsEnabled": "Notifications enabled",
+  "@notificationsEnabled": {
+    "description": "Feedback message when notifications are enabled"
+  },
+
+  "notificationsDisabled": "Notifications disabled",
+  "@notificationsDisabled": {
+    "description": "Feedback message when notifications are disabled"
   }
 }

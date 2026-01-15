@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/constants/storage_keys.dart';
+import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/result/result.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories/auth_repository.dart';
@@ -10,14 +11,14 @@ import 'package:riverpod_go_router_boilerplate/features/auth/domain/repositories
 /// Use this for development and testing.
 ///
 /// Features:
-/// - Simulates network latency (500ms default)
+/// - Simulates network latency (200ms default)
 /// - Returns mock user data
 /// - Stores mock tokens in secure storage
 /// - Can simulate errors by using special email addresses
 ///
 /// Special email addresses for testing:
 /// - "error@test.com" - Simulates a login error
-/// - "slow@test.com" - Simulates a slow network (2s delay)
+/// - "slow@test.com" - Simulates a slow network (500ms delay)
 /// - Any other email - Successful login
 class AuthRepositoryMock implements AuthRepository {
   /// Creates a [AuthRepositoryMock] instance.
@@ -26,14 +27,12 @@ class AuthRepositoryMock implements AuthRepository {
   /// Secure storage for storing mock tokens.
   final FlutterSecureStorage secureStorage;
 
-  /// Simulated network delay
-  static const _defaultDelay = Duration(milliseconds: 500);
-  static const _slowDelay = Duration(seconds: 2);
-
   @override
   Future<Result<User>> login(final String email, final String password) async {
     // Simulate slow network for testing
-    final delay = email == 'slow@test.com' ? _slowDelay : _defaultDelay;
+    final delay = email == 'slow@test.com'
+        ? AppConstants.mockSlowNetworkDelay
+        : AppConstants.mockNetworkDelay;
     await Future<void>.delayed(delay);
 
     // Simulate error for testing
@@ -64,7 +63,7 @@ class AuthRepositoryMock implements AuthRepository {
 
   @override
   Future<Result<User>> restoreSession() async {
-    await Future<void>.delayed(_defaultDelay);
+    await Future<void>.delayed(AppConstants.mockNetworkDelay);
 
     final token = await secureStorage.read(key: StorageKeys.accessToken);
     final userId = await secureStorage.read(key: StorageKeys.userId);
@@ -82,7 +81,7 @@ class AuthRepositoryMock implements AuthRepository {
 
   @override
   Future<Result<void>> logout() async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
+    await Future<void>.delayed(AppConstants.mockQuickDelay);
 
     try {
       await secureStorage.delete(key: StorageKeys.accessToken);
@@ -112,9 +111,7 @@ class AuthRepositoryMock implements AuthRepository {
         .replaceAll(RegExp('[._-]'), ' ')
         .split(' ')
         .map(
-          (final word) => word.isNotEmpty
-              ? '${word[0].toUpperCase()}${word.substring(1)}'
-              : '',
+          (final word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '',
         )
         .join(' ');
   }

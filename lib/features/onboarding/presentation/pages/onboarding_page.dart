@@ -5,47 +5,25 @@ import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifie
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/onboarding/data/onboarding_service.dart';
-
-/// Onboarding page data model
-class OnboardingPageData {
-  /// Creates an [OnboardingPageData] instance.
-  const OnboardingPageData({
-    required this.title,
-    required this.description,
-    required this.icon,
-    this.color,
-  });
-
-  /// Title of the onboarding page
-  final String title;
-
-  /// Description of the onboarding page
-  final String description;
-
-  /// Icon representing the onboarding page
-  final IconData icon;
-
-  /// Optional color for the icon background
-  final Color? color;
-}
+import 'package:riverpod_go_router_boilerplate/features/onboarding/presentation/widgets/onboarding_page_content.dart';
+import 'package:riverpod_go_router_boilerplate/features/onboarding/presentation/widgets/page_indicator.dart';
+import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Onboarding pages - customize these for your app
-const _pages = [
+List<OnboardingPageData> _buildPages(final AppLocalizations l10n) => [
   OnboardingPageData(
-    title: 'Welcome',
-    description:
-        'Welcome to Flutter Boilerplate. A production-ready template for your next app.',
+    title: l10n.onboardingWelcomeTitle,
+    description: l10n.onboardingWelcomeDescription,
     icon: Icons.flutter_dash,
   ),
   OnboardingPageData(
-    title: 'Modern Architecture',
-    description:
-        'Built with Riverpod, GoRouter, and clean architecture principles.',
+    title: l10n.onboardingArchitectureTitle,
+    description: l10n.onboardingArchitectureDescription,
     icon: Icons.architecture,
   ),
   OnboardingPageData(
-    title: 'Ready to Ship',
-    description: 'Everything you need to build and ship your app faster.',
+    title: l10n.onboardingReadyTitle,
+    description: l10n.onboardingReadyDescription,
     icon: Icons.rocket_launch,
   ),
 ];
@@ -60,6 +38,11 @@ class OnboardingPage extends HookConsumerWidget {
     final pageController = usePageController();
     final currentPage = useState(0);
     final theme = context.theme;
+    final l10n = AppLocalizations.of(context);
+    final pages = _buildPages(l10n);
+
+    // Track screen view
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'onboarding');
 
     return Scaffold(
       body: SafeArea(
@@ -71,7 +54,7 @@ class OnboardingPage extends HookConsumerWidget {
               child: AppButton(
                 variant: .text,
                 onPressed: () => _completeOnboarding(context, ref),
-                label: 'Skip',
+                label: l10n.onboardingSkip,
               ),
             ),
 
@@ -79,11 +62,11 @@ class OnboardingPage extends HookConsumerWidget {
             Expanded(
               child: PageView.builder(
                 controller: pageController,
-                itemCount: _pages.length,
+                itemCount: pages.length,
                 onPageChanged: (final index) => currentPage.value = index,
                 itemBuilder: (final context, final index) {
-                  final page = _pages[index];
-                  return _OnboardingPageContent(page: page);
+                  final page = pages[index];
+                  return OnboardingPageContent(page: page);
                 },
               ),
             ),
@@ -93,8 +76,8 @@ class OnboardingPage extends HookConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _pages.length,
-                  (final index) => _PageIndicator(
+                  pages.length,
+                  (final index) => PageIndicator(
                     isActive: index == currentPage.value,
                     color: theme.colorScheme.primary,
                   ),
@@ -110,10 +93,10 @@ class OnboardingPage extends HookConsumerWidget {
                     Expanded(
                       child: AppButton(
                         variant: .secondary,
-                        label: 'Back',
+                        label: l10n.onboardingBack,
                         onPressed: () {
                           pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
+                            duration: AppConstants.animationNormal,
                             curve: Curves.easeInOut,
                           );
                         },
@@ -122,15 +105,15 @@ class OnboardingPage extends HookConsumerWidget {
                   if (currentPage.value > 0) const HorizontalSpace.md(),
                   Expanded(
                     child: AppButton(
-                      label: currentPage.value == _pages.length - 1
-                          ? 'Get Started'
-                          : 'Next',
+                      label: currentPage.value == pages.length - 1
+                          ? l10n.onboardingGetStarted
+                          : l10n.onboardingNext,
                       onPressed: () {
-                        if (currentPage.value == _pages.length - 1) {
+                        if (currentPage.value == pages.length - 1) {
                           _completeOnboarding(context, ref);
                         } else {
                           pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
+                            duration: AppConstants.animationNormal,
                             curve: Curves.easeInOut,
                           );
                         }
@@ -154,6 +137,9 @@ class OnboardingPage extends HookConsumerWidget {
     final onboardingService = ref.read(onboardingServiceProvider);
     await onboardingService.complete();
 
+    // Track onboarding completion event
+    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.login);
+
     // Notify lifecycle notifier
     final lifecycleNotifier = ref.read(appLifecycleNotifierProvider.notifier);
     await lifecycleNotifier.onOnboardingCompleted();
@@ -164,76 +150,5 @@ class OnboardingPage extends HookConsumerWidget {
       final route = StartupRouteMapper.map(currentState);
       context.go(route);
     }
-  }
-}
-
-class _OnboardingPageContent extends StatelessWidget {
-  const _OnboardingPageContent({required this.page});
-
-  final OnboardingPageData page;
-
-  @override
-  Widget build(final BuildContext context) {
-    final theme = context.theme;
-
-    return ResponsivePadding(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: (page.color ?? theme.colorScheme.primary).withValues(
-                alpha: 0.1,
-              ),
-              borderRadius: BorderRadius.circular(AppConstants.borderRadiusXXL),
-            ),
-            child: Icon(
-              page.icon,
-              size: 64,
-              color: page.color ?? theme.colorScheme.primary,
-            ),
-          ),
-          const VerticalSpace.lg(),
-          Text(
-            page.title,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const VerticalSpace.md(),
-          Text(
-            page.description,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PageIndicator extends StatelessWidget {
-  const _PageIndicator({required this.isActive, required this.color});
-
-  final bool isActive;
-  final Color color;
-
-  @override
-  Widget build(final BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      width: isActive ? 24 : 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: isActive ? color : color.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
-      ),
-    );
   }
 }

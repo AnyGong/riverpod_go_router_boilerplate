@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
-import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifier.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/domain/entities/user.dart';
 import 'package:riverpod_go_router_boilerplate/features/auth/presentation/providers/auth_notifier.dart';
-import 'package:riverpod_go_router_boilerplate/features/home/presentation/widgets/notification_demo.dart';
+import 'package:riverpod_go_router_boilerplate/features/home/presentation/widgets/feature_showcase.dart';
+import 'package:riverpod_go_router_boilerplate/features/home/presentation/widgets/welcome_card.dart';
+import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Home page shown after successful authentication.
 class HomePage extends ConsumerWidget {
@@ -16,10 +17,14 @@ class HomePage extends ConsumerWidget {
   Widget build(final BuildContext context, final WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final theme = context.theme;
+    final l10n = AppLocalizations.of(context);
+
+    // Track screen view for analytics
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'home');
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(l10n.home),
         actions: [
           const ConnectivityIndicator(),
           AppIconButton(
@@ -32,7 +37,7 @@ class HomePage extends ConsumerWidget {
         value: authState,
         data: (final user) {
           if (user == null) {
-            return const Center(child: Text('No user data'));
+            return Center(child: Text(l10n.noData));
           }
           return _HomeContent(user: user, theme: theme);
         },
@@ -82,11 +87,11 @@ class _HomeContent extends ConsumerWidget {
             ),
             const VerticalSpace.md(),
             // Welcome message
-            _WelcomeCard(theme: theme),
+            WelcomeCard(theme: theme),
             const VerticalSpace.md(),
 
-            // Demo: Notification with Deep Linking & Badges
-            const NotificationDeepLinkDemo(),
+            // Feature showcase demonstrating boilerplate capabilities
+            const FeatureShowcase(),
             const VerticalSpace.md(),
             // Logout button
             AppButton(
@@ -95,7 +100,7 @@ class _HomeContent extends ConsumerWidget {
               isExpanded: true,
               onPressed: () => _handleLogout(context, ref),
               icon: Icons.logout,
-              label: 'Sign Out',
+              label: AppLocalizations.of(context).logout,
             ),
             const VerticalSpace.md(),
           ],
@@ -108,76 +113,29 @@ class _HomeContent extends ConsumerWidget {
     final BuildContext context,
     final WidgetRef ref,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (final dialogContext) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          AppButton(
-            variant: AppButtonVariant.text,
-            isExpanded: false,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            label: 'Cancel',
-          ),
-          AppButton(
-            variant: AppButtonVariant.primary,
-            isExpanded: false,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            label: 'Sign Out',
-          ),
-        ],
-      ),
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await AppDialogs.confirm(
+      context,
+      title: l10n.logout,
+      message: l10n.confirmLogout,
+      confirmText: l10n.logout,
+      cancelText: l10n.cancel,
     );
 
     if (confirmed ?? false) {
       try {
-        // End session first (clears tokens)
-        final sessionService = ref.read(sessionServiceProvider);
-        await sessionService.endSession();
+        final authNotifier = ref.read(authProvider.notifier);
+        await authNotifier.logout();
+        // Router will automatically redirect to login when authState becomes null
       } catch (e) {
-        // Log error but continue with logout
-        // Session cleanup is best-effort
-      } finally {
-        // Always notify lifecycle notifier to trigger navigation
-        final lifecycleNotifier = ref.read(
-          appLifecycleNotifierProvider.notifier,
-        );
-        await lifecycleNotifier.onUserLoggedOut();
+        if (context.mounted) {
+          ref
+              .read(feedbackServiceProvider)
+              .showError(
+                l10n.logoutFailed,
+              );
+        }
       }
     }
-  }
-}
-
-class _WelcomeCard extends StatelessWidget {
-  const _WelcomeCard({required this.theme});
-
-  final ThemeData theme;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Card(
-      child: ResponsivePadding(
-        child: Column(
-          children: [
-            Icon(
-              Icons.check_circle,
-              size: 48,
-              color: theme.colorScheme.primary,
-            ),
-            const VerticalSpace.md(),
-            Text("You're all set!", style: theme.textTheme.titleLarge),
-            const VerticalSpace.sm(),
-            Text(
-              'Start building your amazing app.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -289,4 +289,145 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bengali => 'Bengali (বাংলা)';
+
+  @override
+  String get featureShowcase => 'Feature Showcase';
+
+  @override
+  String get featureShowcaseDescription =>
+      'Explore the boilerplate\'s built-in utilities and components.';
+
+  @override
+  String get feedbackDemo => 'Feedback Service';
+
+  @override
+  String get feedbackDemoDescription =>
+      'Show different types of snackbar messages.';
+
+  @override
+  String get success => 'Success';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get info => 'Info';
+
+  @override
+  String get dialogDemo => 'Dialogs';
+
+  @override
+  String get dialogDemoDescription =>
+      'Show confirmation dialogs using AppDialogs.';
+
+  @override
+  String get showDialog => 'Show Dialog';
+
+  @override
+  String get navigationDemo => 'Type-Safe Navigation';
+
+  @override
+  String get navigationDemoDescription =>
+      'Navigate using AppRoute enum for compile-time safety.';
+
+  @override
+  String get goToSettings => 'Go to Settings';
+
+  @override
+  String get notificationsEnabled => 'Notifications enabled';
+
+  @override
+  String get notificationsEnabledDescription =>
+      'Enable or disable push notifications for this app.';
+
+  @override
+  String get notificationDemo => 'Notifications';
+
+  @override
+  String get notificationDemoDescription =>
+      'Send local notifications with scheduling support.';
+
+  @override
+  String get basicNotification => 'Send Notification';
+
+  @override
+  String get confirmLogout => 'Are you sure you want to sign out?';
+
+  @override
+  String get logoutFailed => 'Failed to sign out. Please try again.';
+
+  @override
+  String get youAreAllSet => 'You\'re all set!';
+
+  @override
+  String get startBuilding => 'Start building your amazing app.';
+
+  @override
+  String get notificationTitle => 'Hello!';
+
+  @override
+  String get notificationBody =>
+      'This is a basic notification from the boilerplate.';
+
+  @override
+  String get dialogConfirmTitle => 'Confirm Action';
+
+  @override
+  String get dialogConfirmMessage =>
+      'This demonstrates the AppDialogs.confirm() helper.';
+
+  @override
+  String get dialogConfirmButton => 'Got it';
+
+  @override
+  String get dialogConfirmed => 'Dialog confirmed!';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get emailInvalid => 'Please enter a valid email';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get passwordWeak =>
+      'Password must be 8+ chars with uppercase, lowercase, number & special char';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Welcome to Flutter Boilerplate. A production-ready template for your next app.';
+
+  @override
+  String get onboardingArchitectureTitle => 'Modern Architecture';
+
+  @override
+  String get onboardingArchitectureDescription =>
+      'Built with Riverpod, GoRouter, and clean architecture principles.';
+
+  @override
+  String get onboardingReadyTitle => 'Ready to Ship';
+
+  @override
+  String get onboardingReadyDescription =>
+      'Everything you need to build and ship your app faster.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingGetStarted => 'Get Started';
+
+  @override
+  String get notificationsDisabled => 'Notifications disabled';
 }

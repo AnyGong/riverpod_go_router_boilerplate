@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/language_selection_dialog.dart';
+import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/theme_selection_dialog.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/providers/package_info_provider.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/notification_badge_settings.dart';
 import 'package:riverpod_go_router_boilerplate/features/settings/presentation/widgets/settings_section_header.dart';
@@ -18,6 +20,9 @@ class SettingsPage extends ConsumerWidget {
     final packageInfo = ref.watch(packageInfoProvider);
     final l10n = AppLocalizations.of(context);
 
+    // Track screen view
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'settings');
+
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
@@ -29,7 +34,7 @@ class SettingsPage extends ConsumerWidget {
             title: Text(l10n.theme),
             subtitle: Text(_themeModeLabel(themeMode, l10n)),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showThemeDialog(context, ref, l10n),
+            onTap: () => showThemeSelectionDialog(context, ref, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.language_outlined),
@@ -38,14 +43,14 @@ class SettingsPage extends ConsumerWidget {
               _languageLabel(currentLocale ?? const Locale('en'), l10n),
             ),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLanguageDialog(context, ref, l10n),
+            onTap: () => showLanguageSelectionDialog(context, ref, l10n),
           ),
 
           const Divider(),
 
           // Notifications section
           SettingsSectionHeader(title: l10n.notifications),
-          const NotificationBadgeSettings(),
+          const NotificationSettings(),
 
           const Divider(),
 
@@ -85,7 +90,7 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: Text(l10n.termsOfService),
-            trailing: const Icon(Icons.open_in_new, size: 20),
+            trailing: const Icon(Icons.open_in_new, size: AppConstants.iconSizeMD),
             onTap: () {
               // TODO: Open terms of service
             },
@@ -93,7 +98,7 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(l10n.privacyPolicy),
-            trailing: const Icon(Icons.open_in_new, size: 20),
+            trailing: const Icon(Icons.open_in_new, size: AppConstants.iconSizeMD),
             onTap: () {
               // TODO: Open privacy policy
             },
@@ -125,122 +130,4 @@ class SettingsPage extends ConsumerWidget {
     final Locale locale,
     final AppLocalizations l10n,
   ) => locale.languageCode == 'bn' ? l10n.bengali : l10n.english;
-
-  void _showThemeDialog(
-    final BuildContext context,
-    final WidgetRef ref,
-    final AppLocalizations l10n,
-  ) {
-    final currentMode = ref.read(themeNotifierProvider);
-
-    showDialog<void>(
-      context: context,
-      builder: (final dialogContext) => SimpleDialog(
-        title: Text(l10n.chooseTheme),
-        children: ThemeMode.values.map((final mode) {
-          final isSelected = mode == currentMode;
-          return SimpleDialogOption(
-            onPressed: () {
-              ref.read(themeNotifierProvider.notifier).setThemeMode(mode);
-              Navigator.of(dialogContext).pop();
-            },
-            child: Row(
-              children: [
-                Icon(
-                  isSelected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked,
-                  color: isSelected ? dialogContext.colorScheme.primary : null,
-                ),
-                const HorizontalSpace.sm(),
-                Text(
-                  _themeModeLabel(mode, l10n),
-                  style: isSelected
-                      ? TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: dialogContext.colorScheme.primary,
-                        )
-                      : null,
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  void _showLanguageDialog(
-    final BuildContext context,
-    final WidgetRef ref,
-    final AppLocalizations l10n,
-  ) {
-    final currentLocale =
-        ref.read(localeNotifierProvider) ?? const Locale('en');
-
-    showDialog<void>(
-      context: context,
-      builder: (final dialogContext) => SimpleDialog(
-        title: Text(l10n.chooseLanguage),
-        children: [
-          _buildLanguageOption(
-            dialogContext,
-            'en',
-            l10n.english,
-            currentLocale.languageCode == 'en',
-            () {
-              ref
-                  .read(localeNotifierProvider.notifier)
-                  .setLocale(const Locale('en'));
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-          _buildLanguageOption(
-            dialogContext,
-            'bn',
-            l10n.bengali,
-            currentLocale.languageCode == 'bn',
-            () {
-              ref
-                  .read(localeNotifierProvider.notifier)
-                  .setLocale(const Locale('bn'));
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  SimpleDialogOption _buildLanguageOption(
-    final BuildContext context,
-    final String languageCode,
-    final String languageName,
-    final bool isSelected,
-    final VoidCallback onTap,
-  ) {
-    return SimpleDialogOption(
-      onPressed: onTap,
-      child: Row(
-        children: [
-          Icon(
-            isSelected
-                ? Icons.radio_button_checked
-                : Icons.radio_button_unchecked,
-            color: isSelected ? context.colorScheme.primary : null,
-          ),
-          const HorizontalSpace.sm(),
-          Text(
-            languageName,
-            style: isSelected
-                ? TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: context.colorScheme.primary,
-                  )
-                : null,
-          ),
-        ],
-      ),
-    );
-  }
 }

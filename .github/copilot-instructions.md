@@ -8,6 +8,8 @@ You are an expert Flutter developer working on a production-grade boilerplate pr
 
 ## ⚠️ Critical: Architectural Constraints
 
+### File Size & Organization
+
 You must strictly adhere to the following file size limits to ensure maintainability. If a file exceeds these limits, you **MUST** refactor it immediately by extracting widgets, configuration, or logic into separate files.
 
 | File Type            | Max Lines     | Action if Exceeded                              |
@@ -17,6 +19,25 @@ You must strictly adhere to the following file size limits to ensure maintainabi
 | **Test Files**       | ~300 lines    | Split by test group if possible (flexible).     |
 
 **Never** bypass these limits. If you write code that exceeds them, stop and refactor.
+
+### One Class Per File
+
+- **Rule**: One public class/widget per file (one responsibility per file)
+- **Benefits**: Easier to navigate, maintain, test, and reason about code
+- **Exception**: Private helper classes/widgets are acceptable if they only serve one specific parent class
+- **When to extract**: If you have multiple independent classes/widgets, give each their own file
+
+```dart
+// ✅ Good - one widget per file
+// button.dart
+class MyButton extends StatelessWidget { ... }
+
+// ❌ Avoid - multiple unrelated classes in one file
+// button.dart
+class MyButton extends StatelessWidget { ... }
+class MyCard extends StatelessWidget { ... }
+class MyDialog extends StatelessWidget { ... }
+```
 
 ---
 
@@ -256,12 +277,82 @@ ref.read(firebaseRemoteConfigServiceProvider).isMaintenanceMode;
 
 ### Hard Constraints
 
-- **No Magic Numbers**: Use `AppSpacing.md`, `AppConstants.borderRadiusMD`, etc.
+- **No Magic Numbers**: CRITICAL - Every numeric value must use a pre-defined constant (see detailed rules below)
 - **No Direct Colors**: Use `context.colorScheme.primary` (via extension).
 - **No Raw SizedBox for Spacing**: Use `VerticalSpace.md()` or `HorizontalSpace.sm()`.
 - **No Custom Loading Widgets**: Use `LoadingWidget`.
 - **No Custom Error Widgets**: Use `AppErrorWidget`.
+- **No Hardcoded Strings**: ALL user-facing text must be localized (see section below).
 - **Enum Shorthand**: Use Dart 3 enum shorthand syntax (e.g., `variant: .primary` instead of `variant: AppButtonVariant.primary`).
+
+### No Magic Numbers - Detailed Rules
+
+**NEVER use raw numeric values in your code.** Every number must come from a pre-defined constant.
+
+#### Where to find constants:
+
+| Category               | Constants Class | Location               | Examples                                                                |
+| :--------------------- | :-------------- | :--------------------- | :---------------------------------------------------------------------- |
+| **Animations**         | `AppConstants`  | `lib/core/constants/`  | `animationNormal` (300ms), `pageIndicatorAnimation` (200ms)             |
+| **Spacing**            | `AppSpacing`    | `lib/core/extensions/` | `.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`                             |
+| **Border Radius**      | `AppConstants`  | `lib/core/constants/`  | `borderRadiusSM` (4px), `borderRadiusMD` (8px), `borderRadiusXL` (16px) |
+| **Icon Sizes**         | `AppConstants`  | `lib/core/constants/`  | `iconSizeSM` (16px), `iconSizeMD` (24px), `iconSizeLG` (32px)           |
+| **Component Heights**  | `AppConstants`  | `lib/core/constants/`  | `buttonHeight` (48px), `inputHeight` (56px)                             |
+| **Component Widths**   | `AppConstants`  | `lib/core/constants/`  | `pageIndicatorActiveWidth` (24px), `pageIndicatorInactiveWidth` (8px)   |
+| **Opacity/Alpha**      | `AppConstants`  | `lib/core/constants/`  | `pageIndicatorInactiveOpacity` (0.3)                                    |
+| **Timeouts**           | `AppConstants`  | `lib/core/constants/`  | `connectTimeout`, `receiveTimeout`                                      |
+| **Validation Lengths** | `AppConstants`  | `lib/core/constants/`  | `minPasswordLength` (8), `minUsernameLength` (3)                        |
+| **API Config**         | `ApiEndpoints`  | `lib/core/constants/`  | API paths and endpoints                                                 |
+| **Storage Keys**       | `StorageKeys`   | `lib/core/constants/`  | Secure storage and shared prefs keys                                    |
+| **Asset Paths**        | `Assets`        | `lib/core/constants/`  | Image, icon, animation file paths                                       |
+
+#### Examples of violations (❌ WRONG):
+
+```dart
+// ❌ Raw duration
+AnimatedContainer(duration: const Duration(milliseconds: 200))
+
+// ❌ Raw numbers for dimensions
+width: 24,
+height: 8,
+
+// ❌ Raw opacity
+color.withValues(alpha: 0.3)
+
+// ❌ Raw border radius
+borderRadius: BorderRadius.circular(4)
+
+// ❌ Raw spacing
+padding: const EdgeInsets.all(16)
+```
+
+#### Examples of correct usage (✅ CORRECT):
+
+```dart
+// ✅ Use AppConstants for animations
+AnimatedContainer(duration: AppConstants.pageIndicatorAnimation)
+
+// ✅ Use AppConstants for dimensions
+width: AppConstants.pageIndicatorActiveWidth,
+height: AppConstants.pageIndicatorHeight,
+
+// ✅ Use AppConstants for opacity
+color.withValues(alpha: AppConstants.pageIndicatorInactiveOpacity)
+
+// ✅ Use AppConstants for border radius
+borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM)
+
+// ✅ Use AppSpacing for spacing
+padding: const EdgeInsets.all(AppSpacing.md)
+```
+
+#### Before submitting code:
+
+1. **Search for any numeric literals** in your code (regex: `\d+` for numbers in contexts like dimensions, opacity, duration)
+2. **Check if a constant exists** - look in `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`
+3. **If no constant exists, CREATE IT** - add it to the appropriate constants file with proper documentation
+4. **Replace all raw numbers** with the corresponding constant
+5. **Never add a magic number thinking "it's just this once"** - the boilerplate is a template that will be reused across projects
 
 ### Naming Conventions
 
@@ -311,6 +402,48 @@ TextFormField(
 ```
 
 **Note**: `Validators.strongPassword()` requires 8+ characters with uppercase, lowercase, number, and special character. Don't add redundant `minLength` validators.
+
+---
+
+## 🌍 Localization & i18n
+
+- **All user-facing text MUST be localized** in `lib/l10n/` files (`.arb` format)
+- Use `AppLocalizations.of(context)` to access localized strings
+- Never hardcode UI text like button labels, titles, or messages
+- Support at least English and one additional language (Bengali in this boilerplate)
+
+```dart
+// ✅ Correct
+Text(AppLocalizations.of(context).loginButtonLabel)
+
+// ❌ Wrong - hardcoded string
+Text('Login')
+```
+
+---
+
+## 📊 Analytics & Screen Tracking
+
+- **Track screen views** for all new pages using `AnalyticsService`:
+
+```dart
+@override
+Widget build(final BuildContext context, final WidgetRef ref) {
+  // Log screen view at the start of build
+  ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_feature');
+
+  return Scaffold(...);
+}
+```
+
+- **Track user actions** like button clicks and form submissions:
+
+```dart
+ref.read(analyticsServiceProvider).logEvent(
+  AnalyticsEvents.featureUsed,
+  parameters: {'feature_name': 'checkout'},
+);
+```
 
 ---
 
@@ -412,8 +545,22 @@ make prepare   # Full setup (clean + l10n + gen)
 1. **Don't** use `StatefulWidget` for business logic
 2. **Don't** call `ref.read` in `build()` — use `ref.watch`
 3. **Don't** create custom loading/error widgets
-4. **Don't** use magic numbers for spacing/dimensions
+4. **🔴 CRITICAL: Don't** use magic numbers for spacing/dimensions/durations/opacity. **ALWAYS** use constants from `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`. This includes:
+   - Durations: Use `AppConstants.animationNormal` instead of `Duration(milliseconds: 300)`
+   - Dimensions: Use `AppConstants.pageIndicatorActiveWidth` instead of `24`
+   - Opacity: Use `AppConstants.pageIndicatorInactiveOpacity` instead of `0.3`
+   - Border radius: Use `AppConstants.borderRadiusSM` instead of `4`
+   - Spacing: Use `AppSpacing.md` instead of `16`
+   - **Rule**: Before submitting, search your code for numeric literals and replace with constants
 5. **Don't** store tokens in plain SharedPreferences
 6. **Don't** ignore `Result` failures
 7. **Don't** use `!` bang operator without checking null first
-8. **Don't** duplicate constants across files
+8. **🔴 CRITICAL: Don't** hardcode ANY user-facing strings in code. **ALL** text must use localization keys from `app_en.arb` and `app_bn.arb`. This includes:
+   - Button labels, titles, descriptions
+   - Dialog/snackbar messages
+   - Placeholder texts, error messages
+   - ANY text displayed to users
+   - **Rule**: Before submitting code, search for quoted strings and ensure they use `l10n.<key>` instead
+9. **Don't** forget to track screen views in new pages via `AnalyticsService`
+10. **Don't** bypass file size limits — refactor immediately if exceeded
+11. **Don't** forget try-catch blocks for operations that can fail (especially async operations)
