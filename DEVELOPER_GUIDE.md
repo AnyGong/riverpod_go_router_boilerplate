@@ -6,6 +6,59 @@ This guide documents **every reusable component** in the boilerplate. Use these 
 
 ---
 
+## 🚀 Quick Start for New Developers
+
+### 1. Setup the Project
+
+```bash
+# Clone and setup
+git clone https://github.com/ShahriarHossainRifat/riverpod_go_router_boilerplate.git my_app
+cd my_app
+rm -rf .git && git init
+
+# Rename to your project
+make rename NAME=myapp ORG=com.yourcompany DISPLAY="Your App Name"
+
+# Install dependencies and generate code
+make prepare
+
+# Run the app
+flutter run
+```
+
+### 2. Understand the Core Concepts
+
+Before diving in, familiarize yourself with:
+
+| Concept                | What It Is                            | Where to Learn                                                   |
+| :--------------------- | :------------------------------------ | :--------------------------------------------------------------- |
+| **Riverpod**           | State management with code generation | [riverpod.dev](https://riverpod.dev)                             |
+| **GoRouter**           | Declarative navigation                | [pub.dev/packages/go_router](https://pub.dev/packages/go_router) |
+| **Result Pattern**     | Error handling without exceptions     | See `lib/core/result/`                                           |
+| **Clean Architecture** | Separation of concerns                | See [Architecture](#-architecture) section                       |
+
+### 3. Key Rules to Follow
+
+| ❌ Don't                          | ✅ Do                                                           |
+| :-------------------------------- | :-------------------------------------------------------------- |
+| Use magic numbers (`16`, `300ms`) | Use constants (`AppSpacing.md`, `AppConstants.animationNormal`) |
+| Track analytics in `build()`      | Use `useOnMount()` or `initState()`                             |
+| Create custom loading widgets     | Use `LoadingWidget`, `AsyncValueWidget`                         |
+| Use `SizedBox` for spacing        | Use `VerticalSpace.md()`, `HorizontalSpace.sm()`                |
+| Hardcode strings                  | Use localization (`AppLocalizations.of(context).key`)           |
+| Use `StatefulWidget` for logic    | Use Riverpod Notifiers                                          |
+
+### 4. Daily Commands
+
+```bash
+make gen       # Run code generation after modifying providers/models
+make format    # Format code before committing
+make lint      # Check for issues
+make test      # Run tests
+```
+
+---
+
 ## Table of Contents
 
 - [🏗️ Architecture](#-architecture)
@@ -165,6 +218,28 @@ PrefsKeys.shownTooltips      // Feature discovery
 
 **Path**: `lib/core/widgets/`
 
+The widgets are organized into separate files for better maintainability. The main `inputs.dart`, `animations.dart`, and `dialogs.dart` files act as barrel exports.
+
+### Widget File Structure
+
+| File                        | Contents                                                             |
+| :-------------------------- | :------------------------------------------------------------------- |
+| `async_value_widget.dart`   | `AsyncValueWidget`, `LoadingWidget`, `AppErrorWidget`, `EmptyWidget` |
+| `buttons.dart`              | `AppButton`, `AppIconButton`                                         |
+| `spacing.dart`              | `VerticalSpace`, `HorizontalSpace`, `ResponsivePadding`              |
+| `text_fields.dart`          | `AppTextField`, `AppSearchField`                                     |
+| `chips.dart`                | `AppChip`, `AppChipVariant`                                          |
+| `badges.dart`               | `AppBadge`, `AppBadgeSize`, `AppBadgePosition`                       |
+| `status_indicators.dart`    | `StatusDot`, `StatusType`                                            |
+| `dividers.dart`             | `AppDivider`                                                         |
+| `app_dialogs.dart`          | `AppDialogs` (confirm, alert, error, etc.)                           |
+| `bottom_sheets.dart`        | `AppBottomSheets`, `BottomSheetAction`                               |
+| `entry_animations.dart`     | `FadeIn`, `SlideIn`, `ScaleIn`, `SlideDirection`                     |
+| `staggered_list.dart`       | `StaggeredList`                                                      |
+| `attention_animations.dart` | `ShakeWidget`, `ShakeController`, `Pulse`                            |
+| `app_animations.dart`       | `AppAnimations` (static utilities)                                   |
+| `shimmer_loading.dart`      | `ShimmerLoading`, `ShimmerListTile`, etc.                            |
+
 ### Async State Widgets
 
 | Widget                | Purpose                                            |
@@ -269,14 +344,16 @@ ResponsiveBuilder(
 
 ### Input Widgets
 
-| Widget           | Purpose                                   |
-| :--------------- | :---------------------------------------- |
-| `AppTextField`   | Styled text field with consistent styling |
-| `AppSearchField` | Search input with clear button            |
-| `AppChip`        | Filter/input chips                        |
-| `AppBadge`       | Count/status badges                       |
-| `AppDivider`     | Divider with optional label               |
-| `StatusDot`      | Status indicator (online/offline/busy)    |
+**Files**: `text_fields.dart`, `chips.dart`, `badges.dart`, `status_indicators.dart`, `dividers.dart`
+
+| Widget           | Purpose                                   | File                     |
+| :--------------- | :---------------------------------------- | :----------------------- |
+| `AppTextField`   | Styled text field with consistent styling | `text_fields.dart`       |
+| `AppSearchField` | Search input with clear button            | `text_fields.dart`       |
+| `AppChip`        | Filter/input chips                        | `chips.dart`             |
+| `AppBadge`       | Count/status badges                       | `badges.dart`            |
+| `AppDivider`     | Divider with optional label               | `dividers.dart`          |
+| `StatusDot`      | Status indicator (online/offline/busy)    | `status_indicators.dart` |
 
 ```dart
 AppTextField(
@@ -307,17 +384,17 @@ StatusDot.busy()    // Red dot
 
 ### Dialogs & Bottom Sheets
 
-**File**: `lib/core/widgets/dialogs.dart`
+**Files**: `app_dialogs.dart`, `bottom_sheets.dart`
 
-| Helper                 | Purpose                          |
-| :--------------------- | :------------------------------- |
-| `AppDialogs.confirm()` | Confirmation dialog              |
-| `AppDialogs.alert()`   | Simple alert                     |
-| `AppDialogs.error()`   | Error dialog with icon           |
-| `AppDialogs.success()` | Success dialog with icon         |
-| `AppDialogs.input()`   | Input dialog with validation     |
-| `AppDialogs.select()`  | Selection dialog                 |
-| `AppDialogs.loading()` | Loading dialog (returns dismiss) |
+| Helper                 | Purpose                          | File               |
+| :--------------------- | :------------------------------- | :----------------- |
+| `AppDialogs.confirm()` | Confirmation dialog              | `app_dialogs.dart` |
+| `AppDialogs.alert()`   | Simple alert                     | `app_dialogs.dart` |
+| `AppDialogs.error()`   | Error dialog with icon           | `app_dialogs.dart` |
+| `AppDialogs.success()` | Success dialog with icon         | `app_dialogs.dart` |
+| `AppDialogs.input()`   | Input dialog with validation     | `app_dialogs.dart` |
+| `AppDialogs.select()`  | Selection dialog                 | `app_dialogs.dart` |
+| `AppDialogs.loading()` | Loading dialog (returns dismiss) | `app_dialogs.dart` |
 
 ```dart
 final confirmed = await AppDialogs.confirm(
@@ -368,16 +445,30 @@ AppBottomSheets.actions<String>(
 
 **Path**: `lib/core/widgets/`
 
-The boilerplate includes a comprehensive set of animation widgets for creating polished, modern UIs.
+The boilerplate includes a comprehensive set of animation widgets for creating polished, modern UIs. Animation widgets are organized into separate files:
+
+| File                        | Contents                                         |
+| :-------------------------- | :----------------------------------------------- |
+| `entry_animations.dart`     | `FadeIn`, `SlideIn`, `ScaleIn`, `SlideDirection` |
+| `staggered_list.dart`       | `StaggeredList`                                  |
+| `attention_animations.dart` | `ShakeWidget`, `ShakeController`, `Pulse`        |
+| `app_animations.dart`       | `AppAnimations` (static utilities)               |
+| `bounce.dart`               | `Bounce`                                         |
+| `flip_card.dart`            | `FlipCard`, `FlipCardController`                 |
+| `expandable_widget.dart`    | `ExpandableWidget`                               |
+| `animated_counter.dart`     | `AnimatedCounter`                                |
+| `animated_progress.dart`    | `AnimatedProgress`, `AnimatedCircularProgress`   |
+| `typewriter_text.dart`      | `TypewriterText`                                 |
+| `shimmer_loading.dart`      | `ShimmerLoading`, `ShimmerListTile`, etc.        |
 
 #### Entry Animations
 
-| Widget          | Purpose                        | File              |
-| :-------------- | :----------------------------- | :---------------- |
-| `FadeIn`        | Fade in on mount               | `animations.dart` |
-| `SlideIn`       | Slide in from direction        | `animations.dart` |
-| `ScaleIn`       | Scale in on mount              | `animations.dart` |
-| `StaggeredList` | Staggered list item animations | `animations.dart` |
+| Widget          | Purpose                        | File                    |
+| :-------------- | :----------------------------- | :---------------------- |
+| `FadeIn`        | Fade in on mount               | `entry_animations.dart` |
+| `SlideIn`       | Slide in from direction        | `entry_animations.dart` |
+| `ScaleIn`       | Scale in on mount              | `entry_animations.dart` |
+| `StaggeredList` | Staggered list item animations | `staggered_list.dart`   |
 
 ```dart
 // Automatic fade-in animation
@@ -421,11 +512,11 @@ StaggeredList(
 
 #### Attention & Feedback Animations
 
-| Widget        | Purpose                   | File              |
-| :------------ | :------------------------ | :---------------- |
-| `ShakeWidget` | Shake effect (for errors) | `animations.dart` |
-| `Pulse`       | Pulsing animation         | `animations.dart` |
-| `Bounce`      | Bounce attention effect   | `bounce.dart`     |
+| Widget        | Purpose                   | File                        |
+| :------------ | :------------------------ | :-------------------------- |
+| `ShakeWidget` | Shake effect (for errors) | `attention_animations.dart` |
+| `Pulse`       | Pulsing animation         | `attention_animations.dart` |
+| `Bounce`      | Bounce attention effect   | `bounce.dart`               |
 
 ```dart
 // Shake on error
@@ -808,26 +899,95 @@ Duration(minutes: 45).roundToHours     // Duration(hours: 1)
 
 **Path**: `lib/core/hooks/`
 
-Use in `HookWidget` classes only.
+Use in `HookWidget` or `HookConsumerWidget` classes only.
 
-| Hook                        | Purpose                 |
-| :-------------------------- | :---------------------- |
-| `useDebounce(value, delay)` | Debounced value         |
-| `useToggle(initial)`        | Boolean toggle state    |
-| `usePreviousValue(value)`   | Previous render's value |
-| `useAsyncState<T>()`        | Async operation state   |
-| `useCountdown(duration)`    | Countdown timer         |
-| `usePagination(fetcher)`    | Infinite scroll helper  |
-| `useFormState()`            | Lightweight form state  |
+| Hook                        | Purpose                            |
+| :-------------------------- | :--------------------------------- |
+| `useOnMount(callback)`      | **One-time effect on mount**       |
+| `useDebounce(value, delay)` | Debounced value                    |
+| `useToggle(initial)`        | Boolean toggle state               |
+| `usePrevious(value)`        | Previous render's value            |
+| `useTextController()`       | TextEditingController with dispose |
+| `useFocusNode()`            | FocusNode with auto-dispose        |
+| `useScrollController()`     | ScrollController with dispose      |
+| `usePageController()`       | PageController with dispose        |
+
+### `useOnMount` - Critical for Analytics
+
+**Always use `useOnMount` for screen tracking and one-time initialization:**
 
 ```dart
-class MyPage extends HookWidget {
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ✅ Correct: Track screen view once on mount
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+
+    return Scaffold(...);
+  }
+}
+
+// ❌ WRONG: This fires on EVERY rebuild!
+class BadPage extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // This will track screen view every time the widget rebuilds
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'bad_page');
+    return Scaffold(...);
+  }
+}
+```
+
+### Other Hooks Usage
+
+```dart
+class SearchPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    // Toggle state
     final (isVisible, toggleVisible) = useToggle(false);
-    final searchDebounced = useDebounce(searchText, 500.ms);
 
-    return ...;
+    // Debounced search
+    final searchController = useTextController();
+    final searchDebounced = useDebounce(searchController.text, 500.ms);
+
+    // Track previous value
+    final prevSearch = usePrevious(searchDebounced);
+
+    return Column(
+      children: [
+        AppSearchField(controller: searchController),
+        if (isVisible) SearchResults(query: searchDebounced),
+      ],
+    );
+  }
+}
+```
+
+### For ConsumerStatefulWidget (Alternative Pattern)
+
+If you can't use hooks, track analytics in `initState`:
+
+```dart
+class MyPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends ConsumerState<MyPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(...);
   }
 }
 ```
@@ -945,6 +1105,49 @@ ref.read(crashlyticsServiceProvider).setUserId('user_123');
 ```
 
 #### Analytics (`lib/core/analytics/`)
+
+**⚠️ IMPORTANT: Screen tracking must be done correctly!**
+
+```dart
+// ✅ CORRECT: Use useOnMount in HookConsumerWidget
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+    return Scaffold(...);
+  }
+}
+
+// ✅ CORRECT: Use initState in ConsumerStatefulWidget
+class MyPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<MyPage> createState() => _MyPageState();
+}
+class _MyPageState extends ConsumerState<MyPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+  }
+  @override
+  Widget build(BuildContext context) => Scaffold(...);
+}
+
+// ❌ WRONG: Never track in build() - fires on every rebuild!
+class BadPage extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'bad'); // BAD!
+    return Scaffold(...);
+  }
+}
+```
+
+**Standard Analytics Events:**
 
 ```dart
 final analytics = ref.read(analyticsServiceProvider);
@@ -1251,6 +1454,24 @@ A: The `strongPassword()` validator already includes the 8-character minimum req
 
 **Q: How do I handle fresh install on iOS?**
 A: The `FreshInstallHandler` automatically clears stale Keychain data on fresh installs.
+
+**Q: How do I track screen views correctly?**
+A: Use `useOnMount()` hook in `HookConsumerWidget` or `initState()` with `addPostFrameCallback` in `ConsumerStatefulWidget`. **Never** track in `build()`.
+
+**Q: Why use HookConsumerWidget over ConsumerWidget?**
+A: `HookConsumerWidget` combines Riverpod and Flutter Hooks, allowing you to use hooks like `useOnMount`, `useDebounce`, `useToggle` for cleaner code.
+
+**Q: Where are the animation widgets located?**
+A: Split across files in `lib/core/widgets/`: `entry_animations.dart`, `attention_animations.dart`, `staggered_list.dart`, etc. Import from `animations.dart` barrel file.
+
+**Q: Where are the dialog helpers?**
+A: `AppDialogs` in `lib/core/widgets/app_dialogs.dart`, `AppBottomSheets` in `lib/core/widgets/bottom_sheets.dart`. Import from `dialogs.dart` barrel file.
+
+**Q: How do I avoid magic numbers?**
+A: Use constants from `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`. Never hardcode numbers for spacing, durations, dimensions, etc.
+
+**Q: What's the maximum file size allowed?**
+A: Services/Logic: 200 lines, UI Widgets: 250 lines, Test files: ~300 lines. Split files if exceeded.
 
 ---
 

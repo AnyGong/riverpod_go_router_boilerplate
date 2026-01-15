@@ -102,6 +102,20 @@ features/<feature_name>/
 
 ## 🔄 State Management (Riverpod)
 
+### Widget Class Selection
+
+Choose the appropriate widget class based on your needs:
+
+| Widget Type              | When to Use                                     |
+| :----------------------- | :---------------------------------------------- |
+| `HookConsumerWidget`     | **Default for pages** - Riverpod + Hooks access |
+| `ConsumerWidget`         | Simple widgets needing only Riverpod            |
+| `HookWidget`             | Widgets needing only hooks (no Riverpod)        |
+| `ConsumerStatefulWidget` | When you need `initState`/`dispose` lifecycle   |
+| `StatelessWidget`        | Pure UI with no state or providers              |
+
+**Recommendation**: Use `HookConsumerWidget` for all pages to leverage `useOnMount` for analytics.
+
 ### Rules
 
 - **Mandatory**: Use **Riverpod** for all state management.
@@ -187,27 +201,36 @@ context.push('/settings');
 
 ### Widgets (`lib/core/widgets/`)
 
-| Widget                               | Use For                                                     |
-| :----------------------------------- | :---------------------------------------------------------- |
-| `AsyncValueWidget<T>`                | Displaying Riverpod `AsyncValue` (loading/error/data)       |
-| `LoadingWidget`                      | Any loading state                                           |
-| `AppErrorWidget`                     | Any error state with retry action                           |
-| `EmptyWidget`                        | Empty lists / no data states                                |
-| `AppButton`                          | All buttons (use `AppButtonVariant.primary/secondary/text`) |
-| `AppIconButton`                      | All icon buttons                                            |
-| `VerticalSpace` / `HorizontalSpace`  | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`)   |
-| `CachedImage`                        | All network images                                          |
-| `ResponsiveBuilder`                  | Adaptive layouts                                            |
-| `AppDialogs.confirm()`               | Confirmation dialogs                                        |
-| `FadeIn` / `SlideIn` / `ScaleIn`     | Entry animations                                            |
-| `StaggeredList`                      | Staggered list animations                                   |
-| `Bounce` / `Pulse` / `ShakeWidget`   | Attention/feedback animations                               |
-| `FlipCard`                           | 3D flip transitions                                         |
-| `ExpandableWidget`                   | Expand/collapse sections                                    |
-| `AnimatedCounter`                    | Animated number changes                                     |
-| `AnimatedProgress`                   | Animated progress bars                                      |
-| `TypewriterText`                     | Typewriter text effect                                      |
-| `ShimmerLoading` / `ShimmerListTile` | Skeleton loading states                                     |
+Widgets are organized into separate files. Use barrel exports (`animations.dart`, `dialogs.dart`, `inputs.dart`) for imports.
+
+| Widget                               | Use For                                                     | File                        |
+| :----------------------------------- | :---------------------------------------------------------- | :-------------------------- |
+| `AsyncValueWidget<T>`                | Displaying Riverpod `AsyncValue` (loading/error/data)       | `async_value_widget.dart`   |
+| `LoadingWidget`                      | Any loading state                                           | `async_value_widget.dart`   |
+| `AppErrorWidget`                     | Any error state with retry action                           | `async_value_widget.dart`   |
+| `EmptyWidget`                        | Empty lists / no data states                                | `async_value_widget.dart`   |
+| `AppButton`                          | All buttons (use `AppButtonVariant.primary/secondary/text`) | `buttons.dart`              |
+| `AppIconButton`                      | All icon buttons                                            | `buttons.dart`              |
+| `VerticalSpace` / `HorizontalSpace`  | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`)   | `spacing.dart`              |
+| `AppTextField`                       | Text input fields                                           | `text_fields.dart`          |
+| `AppSearchField`                     | Search input with clear button                              | `text_fields.dart`          |
+| `AppChip`                            | Filter/input chips                                          | `chips.dart`                |
+| `AppBadge`                           | Count/status badges                                         | `badges.dart`               |
+| `StatusDot`                          | Status indicators (online/offline/busy)                     | `status_indicators.dart`    |
+| `AppDivider`                         | Dividers with optional labels                               | `dividers.dart`             |
+| `CachedImage`                        | All network images                                          | `cached_image.dart`         |
+| `ResponsiveBuilder`                  | Adaptive layouts                                            | `responsive_builder.dart`   |
+| `AppDialogs.confirm()`               | Confirmation dialogs                                        | `app_dialogs.dart`          |
+| `AppBottomSheets.confirm()`          | Bottom sheet confirmations                                  | `bottom_sheets.dart`        |
+| `FadeIn` / `SlideIn` / `ScaleIn`     | Entry animations (use `.staggered()` for lists)             | `entry_animations.dart`     |
+| `StaggeredList`                      | Staggered list animations                                   | `staggered_list.dart`       |
+| `Bounce` / `Pulse` / `ShakeWidget`   | Attention/feedback animations                               | `attention_animations.dart` |
+| `FlipCard`                           | 3D flip transitions                                         | `flip_card.dart`            |
+| `ExpandableWidget`                   | Expand/collapse sections                                    | `expandable_widget.dart`    |
+| `AnimatedCounter`                    | Animated number changes                                     | `animated_counter.dart`     |
+| `AnimatedProgress`                   | Animated progress bars                                      | `animated_progress.dart`    |
+| `TypewriterText`                     | Typewriter text effect                                      | `typewriter_text.dart`      |
+| `ShimmerLoading` / `ShimmerListTile` | Skeleton loading states                                     | `shimmer_loading.dart`      |
 
 ### Constants (`lib/core/constants/`)
 
@@ -266,13 +289,41 @@ DateTime.now().timeAgo      // date formatting
 
 ### Hooks (`lib/core/hooks/`)
 
-For `HookWidget` and `HookConsumerWidget` classes:
+For `HookWidget` and `HookConsumerWidget` classes. **Prefer `HookConsumerWidget` for pages** as it combines Riverpod access with hooks.
+
+| Hook                        | Use For                                        |
+| :-------------------------- | :--------------------------------------------- |
+| `useOnMount(callback)`      | **One-time effect on mount** (analytics, init) |
+| `useDebounce(value, delay)` | Debounced values (search fields)               |
+| `useToggle(initial)`        | Boolean toggle state                           |
+| `usePrevious(value)`        | Previous render's value                        |
+| `useTextController()`       | TextEditingController with auto-dispose        |
+| `useFocusNode()`            | FocusNode with auto-dispose                    |
+| `useScrollController()`     | ScrollController with auto-dispose             |
+| `usePageController()`       | PageController with auto-dispose               |
+
+**Critical**: Always use `useOnMount` for analytics tracking, never track in `build()`:
 
 ```dart
-useOnMount(callback)        // one-time effect on mount (analytics, init)
-useDebounce(value, delay)   // debounced values
-useToggle(initial)          // boolean toggle
-usePagination(fetcher)      // infinite scroll
+// ✅ Correct - tracks once on mount
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+    return Scaffold(...);
+  }
+}
+
+// ❌ Wrong - tracks on every rebuild!
+class BadPage extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(analyticsServiceProvider).logScreenView(screenName: 'bad'); // BAD!
+    return Scaffold(...);
+  }
+}
 ```
 
 ### Firebase Services (`lib/core/`)

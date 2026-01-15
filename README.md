@@ -4,9 +4,10 @@
 
 ### A Production-Ready, Opinionated Flutter Starter Template
 
-![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-3.10+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Riverpod](https://img.shields.io/badge/Riverpod-3.x-0553B1?style=for-the-badge)
-![GoRouter](https://img.shields.io/badge/GoRouter-13.x-4CAF50?style=for-the-badge)
+![GoRouter](https://img.shields.io/badge/GoRouter-17.x-4CAF50?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-9C27B0?style=for-the-badge)
 
 **Clone → Build → Ship.** No architecture debates. No rewrites at scale.
@@ -50,6 +51,8 @@
 - You value **clean architecture** and **testability**
 - You're building apps that need to **scale**
 - You want to skip weeks of initial setup
+- You need **offline-first** capabilities
+- You want built-in **Firebase integration**
 
 </td>
 <td width="50%">
@@ -60,12 +63,13 @@
 - A minimal starter (it's comprehensive)
 - A flexible "choose your own adventure" template
 - A playground for experimentation
+- A beginner-level project
 
 </td>
 </tr>
 </table>
 
-> 💡 **Philosophy**: This boilerplate enforces **feature-first Clean Architecture** with **Riverpod Code Generation** to ensure consistency across teams and projects.
+> 💡 **Philosophy**: This boilerplate enforces **feature-first Clean Architecture** with **Riverpod Code Generation** to ensure consistency across teams and projects. Every decision is made for you—just code your features.
 
 ---
 
@@ -78,21 +82,23 @@
 ### 🏗️ Architecture
 
 - ✅ Feature-first Clean Architecture
-- ✅ Riverpod 3.x (Codegen)
+- ✅ Riverpod 3.x (Code Generation)
 - ✅ Dependency Injection
 - ✅ Result Pattern (Error Handling)
-- ✅ Strict Lints & Rules
+- ✅ Strict Lints (very_good_analysis)
+- ✅ SOLID Principles
 
 </td>
 <td width="33%">
 
 ### 📱 State & Navigation
 
-- ✅ Type-safe GoRouter
+- ✅ Type-safe GoRouter 17.x
 - ✅ Auth Guards & Redirects
 - ✅ Deep Links (Universal Links)
 - ✅ Event-driven Startup Logic
 - ✅ Reactive Forms
+- ✅ Flutter Hooks Integration
 
 </td>
 <td width="33%">
@@ -101,8 +107,9 @@
 
 - ✅ Dio with Interceptors
 - ✅ Offline-First Caching (Drift)
-- ✅ Token Refresh & Retry
+- ✅ Auto Token Refresh & Retry
 - ✅ HTTP/3 & Brotli Support
+- ✅ ETag Caching
 
 </td>
 </tr>
@@ -112,9 +119,10 @@
 ### 💾 Storage
 
 - ✅ Secure Storage (Encrypted)
-- ✅ SQLite (Drift)
+- ✅ SQLite (Drift ORM)
 - ✅ SharedPreferences
-- ✅ ETag Support
+- ✅ Fresh Install Handler (iOS)
+- ✅ Cache Expiry Management
 
 </td>
 <td width="33%">
@@ -124,7 +132,8 @@
 - ✅ Biometric Auth (Face/Touch ID)
 - ✅ Secure Token Management
 - ✅ Auto-Session Expiry
-- ✅ Fresh Install Handling (iOS)
+- ✅ Concurrent Token Refresh
+- ✅ iOS Keychain Handling
 
 </td>
 <td width="33%">
@@ -133,7 +142,8 @@
 
 - ✅ Material 3 Theming
 - ✅ Light/Dark/System Modes
-- ✅ Custom Hooks & Animations
+- ✅ 25+ Animation Widgets
+- ✅ Shimmer Loading States
 - ✅ Localized (en/bn)
 
 </td>
@@ -147,6 +157,7 @@
 - ✅ Analytics (User Tracking)
 - ✅ Performance Monitoring
 - ✅ Remote Config (Feature Flags)
+- ✅ Screen Trace Auto-Tracking
 
 </td>
 <td width="33%">
@@ -156,6 +167,7 @@
 - ✅ Local Notifications
 - ✅ Scheduled Notifications
 - ✅ In-App Review Prompts
+- ✅ Badge Management
 
 </td>
 <td width="33%">
@@ -165,6 +177,7 @@
 - ✅ Runtime Permissions
 - ✅ Permission Rationale
 - ✅ Settings Deep Links
+- ✅ Platform-Specific Handling
 
 </td>
 </tr>
@@ -174,17 +187,23 @@
 
 ## 🛠️ Tech Stack
 
-| Category       | Technology                  | Description                      |
-| :------------- | :-------------------------- | :------------------------------- |
-| **State**      | `riverpod_generator`        | Compile-safe state management    |
-| **Routing**    | `go_router`                 | Declarative routing              |
-| **Network**    | `dio` + `drift`             | HTTP client with offline caching |
-| **Forms**      | `reactive_forms`            | Reactive form validation         |
-| **Auth**       | `local_auth`                | Biometrics                       |
-| **Firebase**   | `firebase_*`                | Analytics, Performance, Config   |
-| **I18n**       | `flutter_localizations`     | Intl with ARB files              |
-| **Code Style** | `very_good_analysis`        | Strict lint rules                |
-| **Testing**    | `mocktail` + `flutter_test` | Unit & Widget tests              |
+| Category          | Technology                      | Description                      |
+| :---------------- | :------------------------------ | :------------------------------- |
+| **Framework**     | `Flutter 3.10+`                 | Cross-platform UI toolkit        |
+| **Language**      | `Dart 3.x`                      | Modern, null-safe language       |
+| **State**         | `riverpod_generator`            | Compile-safe state management    |
+| **Hooks**         | `flutter_hooks`                 | React-like hooks for Flutter     |
+| **Routing**       | `go_router`                     | Declarative routing with guards  |
+| **Network**       | `dio` + `native_dio_adapter`    | HTTP client with HTTP/3 support  |
+| **Database**      | `drift`                         | Reactive SQLite ORM              |
+| **Forms**         | `reactive_forms`                | Model-driven form validation     |
+| **Auth**          | `local_auth`                    | Biometric authentication         |
+| **Firebase**      | `firebase_*`                    | Analytics, Crashlytics, Perf, RC |
+| **I18n**          | `flutter_localizations`         | Intl with ARB files              |
+| **Animations**    | `flutter_animate`               | Declarative animations           |
+| **Code Style**    | `very_good_analysis`            | Strict lint rules (500+ rules)   |
+| **Testing**       | `mocktail` + `flutter_test`     | Unit & Widget tests              |
+| **Serialization** | `freezed` + `json_serializable` | Immutable models with codegen    |
 
 ---
 
@@ -192,10 +211,12 @@
 
 ### Prerequisites
 
-- Flutter SDK **3.19+** ([Install Flutter](https://docs.flutter.dev/get-started/install))
+- Flutter SDK **3.10+** ([Install Flutter](https://docs.flutter.dev/get-started/install))
 - Dart SDK **3.x** (included with Flutter)
 - Git ([Download](https://git-scm.com/downloads))
 - A code editor (VS Code recommended with Flutter extension)
+- Xcode (for iOS development on macOS)
+- Android Studio (for Android development)
 
 ### 5-Minute Setup
 
@@ -372,8 +393,10 @@ lib/
 | :------------ | :---------------------------------------------------------- |
 | `constants/`  | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`     |
 | `extensions/` | `context.colorScheme`, `'str'.capitalized`, `123.formatted` |
-| `widgets/`    | `AppButton`, `AppErrorWidget`, `AsyncValueWidget`, `FadeIn` |
-| `hooks/`      | `useDebounce`, `useToggle`, `usePagination`                 |
+| `widgets/`    | 25+ reusable widgets (buttons, animations, dialogs, inputs) |
+| `hooks/`      | `useOnMount`, `useDebounce`, `useToggle`, `usePagination`   |
+| `analytics/`  | Screen tracking, event logging, user properties             |
+| `network/`    | API client, interceptors, caching, token refresh            |
 
 ---
 
@@ -440,9 +463,37 @@ AppButton(
 )
 
 VerticalSpace.md()  // 16px gap
+HorizontalSpace.sm() // 8px gap
+
+// Staggered list animations
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) => FadeIn.staggered(
+    index: index,
+    child: ListTile(title: Text(items[index].name)),
+  ),
+)
 
 // ❌ Don't create custom alternatives
 SizedBox(height: 16)  // Use VerticalSpace.md() instead
+Duration(milliseconds: 300)  // Use AppConstants.animationNormal instead
+```
+
+### Screen Analytics (Important!)
+
+```dart
+// ✅ Track screen views using useOnMount (HookConsumerWidget)
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useOnMount(() {
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'my_page');
+    });
+    return Scaffold(...);
+  }
+}
+
+// ❌ NEVER track analytics in build() - fires on every rebuild!
 ```
 
 ---
