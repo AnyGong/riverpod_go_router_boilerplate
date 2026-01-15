@@ -278,7 +278,7 @@ class AppChip extends StatelessWidget {
     if (onDeleted != null) {
       return InputChip(
         label: Text(label),
-        avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
+        avatar: avatar ?? (icon != null ? Icon(icon, size: AppConstants.chipIconSize) : null),
         selected: selected,
         onSelected: onSelected,
         onDeleted: onDeleted,
@@ -289,13 +289,13 @@ class AppChip extends StatelessWidget {
       return switch (variant) {
         .filled => FilterChip(
           label: Text(label),
-          avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
+          avatar: avatar ?? (icon != null ? Icon(icon, size: AppConstants.chipIconSize) : null),
           selected: selected,
           onSelected: onSelected,
         ),
         .outlined => FilterChip.elevated(
           label: Text(label),
-          avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
+          avatar: avatar ?? (icon != null ? Icon(icon, size: AppConstants.chipIconSize) : null),
           selected: selected,
           onSelected: onSelected,
         ),
@@ -304,7 +304,7 @@ class AppChip extends StatelessWidget {
 
     return Chip(
       label: Text(label),
-      avatar: avatar ?? (icon != null ? Icon(icon, size: 18) : null),
+      avatar: avatar ?? (icon != null ? Icon(icon, size: AppConstants.chipIconSize) : null),
     );
   }
 }
@@ -617,8 +617,7 @@ class _PulsingDot extends StatefulWidget {
   State<_PulsingDot> createState() => _PulsingDotState();
 }
 
-class _PulsingDotState extends State<_PulsingDot>
-    with SingleTickerProviderStateMixin {
+class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 

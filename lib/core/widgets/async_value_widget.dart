@@ -134,7 +134,11 @@ class AppErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            Icon(icon, size: 64, color: theme.colorScheme.error),
+            Icon(
+              icon,
+              size: AppConstants.onboardingIconSize,
+              color: theme.colorScheme.error,
+            ),
             const VerticalSpace.md(),
             Text(
               'Something went wrong',
@@ -196,7 +200,11 @@ class EmptyWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            Icon(icon, size: 80, color: theme.colorScheme.outline),
+            Icon(
+              icon,
+              size: AppConstants.iconSizeXXL,
+              color: theme.colorScheme.outline,
+            ),
             const VerticalSpace.md(),
             Text(
               message,

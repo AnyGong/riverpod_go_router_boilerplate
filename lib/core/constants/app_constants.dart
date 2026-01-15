@@ -26,6 +26,33 @@ abstract class AppConstants {
   /// Page indicator animation duration (200ms) - carousel indicators.
   static const Duration pageIndicatorAnimation = Duration(milliseconds: 200);
 
+  /// Stagger delay between list items (50ms).
+  static const Duration staggerDelay = Duration(milliseconds: 50);
+
+  /// Typewriter effect character delay (50ms).
+  static const Duration typewriterCharDelay = Duration(milliseconds: 50);
+
+  /// Counter animation duration (800ms).
+  static const Duration counterAnimation = Duration(milliseconds: 800);
+
+  /// Flip animation duration (400ms).
+  static const Duration flipAnimation = Duration(milliseconds: 400);
+
+  /// Bounce animation duration (600ms).
+  static const Duration bounceAnimation = Duration(milliseconds: 600);
+
+  /// Expand/collapse animation duration (250ms).
+  static const Duration expandAnimation = Duration(milliseconds: 250);
+
+  /// Shake animation duration (500ms).
+  static const Duration shakeAnimation = Duration(milliseconds: 500);
+
+  /// Pulse animation duration (1000ms).
+  static const Duration pulseAnimation = Duration(milliseconds: 1000);
+
+  /// Cursor blink animation duration (500ms).
+  static const Duration cursorBlinkAnimation = Duration(milliseconds: 500);
+
   // ─────────────────────────────────────────────────────────────────────────────
   // NETWORK TIMEOUTS
   // ─────────────────────────────────────────────────────────────────────────────
@@ -164,6 +191,12 @@ abstract class AppConstants {
   /// Extra large icon size (48px).
   static const double iconSizeXL = 48;
 
+  /// Extra extra large icon size (80px) - large placeholders.
+  static const double iconSizeXXL = 80;
+
+  /// Dialog icon size (48px).
+  static const double dialogIconSize = 48;
+
   /// Onboarding icon size (64px).
   static const double onboardingIconSize = 64;
 
@@ -184,6 +217,60 @@ abstract class AppConstants {
 
   /// Page indicator opacity when inactive (0.3).
   static const double pageIndicatorInactiveOpacity = 0.3;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - ANIMATION VALUES
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Default slide offset for slide animations (0.3 = 30% of widget size).
+  static const double slideOffsetDefault = 0.3;
+
+  /// Default scale start value for scale-in animations.
+  static const double scaleInStart = 0.0;
+
+  /// Bounce scale minimum (0.95).
+  static const double bounceScaleMin = 0.95;
+
+  /// Bounce scale maximum (1.05).
+  static const double bounceScaleMax = 1.05;
+
+  /// Flip card perspective value.
+  static const double flipPerspective = 0.001;
+
+  /// Pulse scale minimum (0.95).
+  static const double pulseScaleMin = 0.95;
+
+  /// Pulse scale maximum (1.0).
+  static const double pulseScaleMax = 1.0;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - SHIMMER DEFAULTS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Shimmer line default height (16px).
+  static const double shimmerLineHeight = 16;
+
+  /// Shimmer circle default size (48px).
+  static const double shimmerCircleSize = 48;
+
+  /// Shimmer title line height (14px).
+  static const double shimmerTitleHeight = 14;
+
+  /// Shimmer subtitle line height (12px).
+  static const double shimmerSubtitleHeight = 12;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UI DIMENSIONS - CONNECTIVITY BANNER
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Connectivity banner icon size (18px).
+  static const double connectivityIconSize = 18;
+
+  /// Connectivity banner font size (13px).
+  static const double connectivityFontSize = 13;
+
+  /// Chip icon size (18px).
+  static const double chipIconSize = 18;
 
   // Legacy aliases
   /// @deprecated Use [iconSizeSM] instead.

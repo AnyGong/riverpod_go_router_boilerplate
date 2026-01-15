@@ -9,6 +9,9 @@ import 'package:riverpod_go_router_boilerplate/features/settings/presentation/wi
 import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.dart';
 
 /// Settings page demonstrating theme switching and app info.
+///
+/// Demonstrates animation widgets including `FadeIn`, `SlideIn`, and
+/// `StaggeredList` for a polished user experience.
 class SettingsPage extends ConsumerWidget {
   /// Creates a [SettingsPage] instance.
   const SettingsPage({super.key});
@@ -27,95 +30,143 @@ class SettingsPage extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
-          // Appearance section
-          SettingsSectionHeader(title: l10n.appearance),
-          ListTile(
-            leading: const Icon(Icons.palette_outlined),
-            title: Text(l10n.theme),
-            subtitle: Text(_themeModeLabel(themeMode, l10n)),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => showThemeSelectionDialog(context, ref, l10n),
+          // Appearance section with staggered animations
+          FadeIn(
+            child: SettingsSectionHeader(title: l10n.appearance),
           ),
-          ListTile(
-            leading: const Icon(Icons.language_outlined),
-            title: Text(l10n.language),
-            subtitle: Text(
-              _languageLabel(currentLocale ?? const Locale('en'), l10n),
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay,
+            child: ListTile(
+              leading: const Icon(Icons.palette_outlined),
+              title: Text(l10n.theme),
+              subtitle: Text(_themeModeLabel(themeMode, l10n)),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showThemeSelectionDialog(context, ref, l10n),
             ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => showLanguageSelectionDialog(context, ref, l10n),
+          ),
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 2,
+            child: ListTile(
+              leading: const Icon(Icons.language_outlined),
+              title: Text(l10n.language),
+              subtitle: Text(
+                _languageLabel(currentLocale ?? const Locale('en'), l10n),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLanguageSelectionDialog(context, ref, l10n),
+            ),
           ),
 
-          const Divider(),
+          FadeIn(
+            delay: AppConstants.staggerDelay * 3,
+            child: const Divider(),
+          ),
 
           // Notifications section
-          SettingsSectionHeader(title: l10n.notifications),
-          const NotificationSettings(),
+          FadeIn(
+            delay: AppConstants.staggerDelay * 3,
+            child: SettingsSectionHeader(title: l10n.notifications),
+          ),
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 4,
+            child: const NotificationSettings(),
+          ),
 
-          const Divider(),
+          FadeIn(
+            delay: AppConstants.staggerDelay * 5,
+            child: const Divider(),
+          ),
 
           // About section
-          SettingsSectionHeader(title: l10n.about),
-          packageInfo.when(
-            data: (final info) => Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: Text(l10n.versionLabel),
-                  subtitle: Text('${info.version} (${info.buildNumber})'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.apps),
-                  title: Text(l10n.packageName),
-                  subtitle: Text(info.packageName),
-                ),
-              ],
-            ),
-            loading: () => ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.versionLabel),
-              subtitle: Text(l10n.loading),
-            ),
-            error: (_, _) => ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.versionLabel),
-              subtitle: Text(l10n.errorGeneric),
+          FadeIn(
+            delay: AppConstants.staggerDelay * 5,
+            child: SettingsSectionHeader(title: l10n.about),
+          ),
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 6,
+            child: packageInfo.when(
+              data: (final info) => Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.info_outline),
+                    title: Text(l10n.versionLabel),
+                    subtitle: Text('${info.version} (${info.buildNumber})'),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.apps),
+                    title: Text(l10n.packageName),
+                    subtitle: Text(info.packageName),
+                  ),
+                ],
+              ),
+              loading: () => ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(l10n.versionLabel),
+                subtitle: Text(l10n.loading),
+              ),
+              error: (_, _) => ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(l10n.versionLabel),
+                subtitle: Text(l10n.errorGeneric),
+              ),
             ),
           ),
 
-          const Divider(),
+          FadeIn(
+            delay: AppConstants.staggerDelay * 7,
+            child: const Divider(),
+          ),
 
           // Legal section
-          SettingsSectionHeader(title: l10n.legal),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: Text(l10n.termsOfService),
-            trailing: const Icon(
-              Icons.open_in_new,
-              size: AppConstants.iconSizeMD,
-            ),
-            onTap: () {
-              // TODO: Open terms of service
-            },
+          FadeIn(
+            delay: AppConstants.staggerDelay * 7,
+            child: SettingsSectionHeader(title: l10n.legal),
           ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(l10n.privacyPolicy),
-            trailing: const Icon(
-              Icons.open_in_new,
-              size: AppConstants.iconSizeMD,
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 8,
+            child: ListTile(
+              leading: const Icon(Icons.description_outlined),
+              title: Text(l10n.termsOfService),
+              trailing: const Icon(
+                Icons.open_in_new,
+                size: AppConstants.iconSizeMD,
+              ),
+              onTap: () {
+                // TODO: Open terms of service
+              },
             ),
-            onTap: () {
-              // TODO: Open privacy policy
-            },
           ),
-          ListTile(
-            leading: const Icon(Icons.article_outlined),
-            title: Text(l10n.openSourceLicenses),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => showLicensePage(
-              context: context,
-              applicationName: l10n.appTitle,
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 9,
+            child: ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: Text(l10n.privacyPolicy),
+              trailing: const Icon(
+                Icons.open_in_new,
+                size: AppConstants.iconSizeMD,
+              ),
+              onTap: () {
+                // TODO: Open privacy policy
+              },
+            ),
+          ),
+          SlideIn(
+            direction: .fromLeft,
+            delay: AppConstants.staggerDelay * 10,
+            child: ListTile(
+              leading: const Icon(Icons.article_outlined),
+              title: Text(l10n.openSourceLicenses),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLicensePage(
+                context: context,
+                applicationName: l10n.appTitle,
+              ),
             ),
           ),
         ],

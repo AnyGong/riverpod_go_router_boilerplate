@@ -29,6 +29,9 @@ List<OnboardingPageData> _buildPages(final AppLocalizations l10n) => [
 ];
 
 /// Onboarding page shown to first-time users.
+///
+/// Demonstrates animation widgets including `FadeIn`, `SlideIn`, and
+/// page transitions.
 class OnboardingPage extends HookConsumerWidget {
   /// Creates an [OnboardingPage] instance.
   const OnboardingPage({super.key});
@@ -48,13 +51,15 @@ class OnboardingPage extends HookConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Skip button
-            Align(
-              alignment: Alignment.topRight,
-              child: AppButton(
-                variant: .text,
-                onPressed: () => _completeOnboarding(context, ref),
-                label: l10n.onboardingSkip,
+            // Skip button with fade animation
+            FadeIn(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: AppButton(
+                  variant: .text,
+                  onPressed: () => _completeOnboarding(context, ref),
+                  label: l10n.onboardingSkip,
+                ),
               ),
             ),
 
@@ -71,56 +76,94 @@ class OnboardingPage extends HookConsumerWidget {
               ),
             ),
 
-            // Page indicators
-            ResponsivePadding(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  pages.length,
-                  (final index) => PageIndicator(
-                    isActive: index == currentPage.value,
-                    color: theme.colorScheme.primary,
+            // Page indicators with animation
+            FadeIn(
+              delay: AppConstants.staggerDelay * 4,
+              child: ResponsivePadding(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    pages.length,
+                    (final index) => PageIndicator(
+                      isActive: index == currentPage.value,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
             ),
 
-            // Navigation buttons
-            ResponsivePadding(
-              child: Row(
-                children: [
-                  if (currentPage.value > 0)
-                    Expanded(
-                      child: AppButton(
-                        variant: .secondary,
-                        label: l10n.onboardingBack,
-                        onPressed: () {
-                          pageController.previousPage(
-                            duration: AppConstants.animationNormal,
-                            curve: Curves.easeInOut,
+            // Navigation buttons with slide animation
+            SlideIn(
+              direction: .fromBottom,
+              delay: AppConstants.staggerDelay * 6,
+              child: ResponsivePadding(
+                child: AnimatedSize(
+                  duration: AppConstants.animationNormal,
+                  curve: Curves.easeInOut,
+                  child: Row(
+                    children: [
+                      // Back button with animated width transition
+                      AnimatedSwitcher(
+                        duration: AppConstants.animationNormal,
+                        transitionBuilder: (final child, final animation) {
+                          return SizeTransition(
+                            sizeFactor: animation,
+                            axis: Axis.horizontal,
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
                           );
                         },
+                        child: currentPage.value > 0
+                            ? Row(
+                                key: const ValueKey('back-button'),
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width:
+                                        (context.screenWidth - AppSpacing.lg * 2 - AppSpacing.md) /
+                                        2,
+                                    child: AppButton(
+                                      variant: .secondary,
+                                      label: l10n.onboardingBack,
+                                      onPressed: () {
+                                        pageController.previousPage(
+                                          duration: AppConstants.animationNormal,
+                                          curve: Curves.easeInOut,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const HorizontalSpace.md(),
+                                ],
+                              )
+                            : const SizedBox.shrink(
+                                key: ValueKey('no-back-button'),
+                              ),
                       ),
-                    ),
-                  if (currentPage.value > 0) const HorizontalSpace.md(),
-                  Expanded(
-                    child: AppButton(
-                      label: currentPage.value == pages.length - 1
-                          ? l10n.onboardingGetStarted
-                          : l10n.onboardingNext,
-                      onPressed: () {
-                        if (currentPage.value == pages.length - 1) {
-                          _completeOnboarding(context, ref);
-                        } else {
-                          pageController.nextPage(
-                            duration: AppConstants.animationNormal,
-                            curve: Curves.easeInOut,
-                          );
-                        }
-                      },
-                    ),
+                      // Next/Get Started button
+                      Expanded(
+                        child: AppButton(
+                          label: currentPage.value == pages.length - 1
+                              ? l10n.onboardingGetStarted
+                              : l10n.onboardingNext,
+                          onPressed: () {
+                            if (currentPage.value == pages.length - 1) {
+                              _completeOnboarding(context, ref);
+                            } else {
+                              pageController.nextPage(
+                                duration: AppConstants.animationNormal,
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ],

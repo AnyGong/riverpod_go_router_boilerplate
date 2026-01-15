@@ -187,19 +187,27 @@ context.push('/settings');
 
 ### Widgets (`lib/core/widgets/`)
 
-| Widget                              | Use For                                                     |
-| :---------------------------------- | :---------------------------------------------------------- |
-| `AsyncValueWidget<T>`               | Displaying Riverpod `AsyncValue` (loading/error/data)       |
-| `LoadingWidget`                     | Any loading state                                           |
-| `AppErrorWidget`                    | Any error state with retry action                           |
-| `EmptyWidget`                       | Empty lists / no data states                                |
-| `AppButton`                         | All buttons (use `AppButtonVariant.primary/secondary/text`) |
-| `AppIconButton`                     | All icon buttons                                            |
-| `VerticalSpace` / `HorizontalSpace` | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`)   |
-| `CachedImage`                       | All network images                                          |
-| `ResponsiveBuilder`                 | Adaptive layouts                                            |
-| `AppDialogs.confirm()`              | Confirmation dialogs                                        |
-| `FadeIn` / `SlideIn` / `ScaleIn`    | Entry animations                                            |
+| Widget                               | Use For                                                     |
+| :----------------------------------- | :---------------------------------------------------------- |
+| `AsyncValueWidget<T>`                | Displaying Riverpod `AsyncValue` (loading/error/data)       |
+| `LoadingWidget`                      | Any loading state                                           |
+| `AppErrorWidget`                     | Any error state with retry action                           |
+| `EmptyWidget`                        | Empty lists / no data states                                |
+| `AppButton`                          | All buttons (use `AppButtonVariant.primary/secondary/text`) |
+| `AppIconButton`                      | All icon buttons                                            |
+| `VerticalSpace` / `HorizontalSpace`  | All spacing (`.xs()`, `.sm()`, `.md()`, `.lg()`, `.xl()`)   |
+| `CachedImage`                        | All network images                                          |
+| `ResponsiveBuilder`                  | Adaptive layouts                                            |
+| `AppDialogs.confirm()`               | Confirmation dialogs                                        |
+| `FadeIn` / `SlideIn` / `ScaleIn`     | Entry animations                                            |
+| `StaggeredList`                      | Staggered list animations                                   |
+| `Bounce` / `Pulse` / `ShakeWidget`   | Attention/feedback animations                               |
+| `FlipCard`                           | 3D flip transitions                                         |
+| `ExpandableWidget`                   | Expand/collapse sections                                    |
+| `AnimatedCounter`                    | Animated number changes                                     |
+| `AnimatedProgress`                   | Animated progress bars                                      |
+| `TypewriterText`                     | Typewriter text effect                                      |
+| `ShimmerLoading` / `ShimmerListTile` | Skeleton loading states                                     |
 
 ### Constants (`lib/core/constants/`)
 
@@ -210,18 +218,35 @@ context.push('/settings');
 | `assets.dart`        | Image, icon, animation paths      |
 | `storage_keys.dart`  | Secure storage and prefs keys     |
 
-| Constant Class                   | Use For              |
-| :------------------------------- | :------------------- |
-| `AppConstants.animationNormal`   | Animation durations  |
-| `AppConstants.borderRadiusMD`    | Border radii         |
-| `AppConstants.debounceDelay`     | Debounce delays      |
-| `AppConstants.defaultPageSize`   | Pagination           |
-| `ApiEndpoints.login`             | API endpoint paths   |
-| `StorageKeys.accessToken`        | Secure storage keys  |
-| `Assets.logo`                    | Asset paths          |
-| `AppIcons.home`                  | Icon paths           |
-| `AnalyticsEvents.login`          | Analytics event keys |
-| `RemoteConfigKeys.minAppVersion` | Remote config keys   |
+| Constant Class                   | Use For               |
+| :------------------------------- | :-------------------- |
+| `AppConstants.animationFast`     | Fast transitions      |
+| `AppConstants.animationNormal`   | Standard animations   |
+| `AppConstants.animationSlow`     | Emphasized animations |
+| `AppConstants.staggerDelay`      | List item stagger     |
+| `AppConstants.counterAnimation`  | Counter animations    |
+| `AppConstants.flipAnimation`     | Flip card duration    |
+| `AppConstants.bounceAnimation`   | Bounce effects        |
+| `AppConstants.expandAnimation`   | Expand/collapse       |
+| `AppConstants.shakeAnimation`    | Shake effects         |
+| `AppConstants.pulseAnimation`    | Pulse effects         |
+| `AppConstants.borderRadiusSM`    | Small border radii    |
+| `AppConstants.borderRadiusMD`    | Medium border radii   |
+| `AppConstants.borderRadiusLG`    | Large border radii    |
+| `AppConstants.iconSizeSM`        | Small icons (16px)    |
+| `AppConstants.iconSizeMD`        | Medium icons (24px)   |
+| `AppConstants.iconSizeXL`        | Large icons (48px)    |
+| `AppConstants.iconSizeXXL`       | XL icons (80px)       |
+| `AppConstants.dialogIconSize`    | Dialog icons (48px)   |
+| `AppConstants.chipIconSize`      | Chip icons (18px)     |
+| `AppConstants.debounceDelay`     | Debounce delays       |
+| `AppConstants.defaultPageSize`   | Pagination            |
+| `ApiEndpoints.login`             | API endpoint paths    |
+| `StorageKeys.accessToken`        | Secure storage keys   |
+| `Assets.logo`                    | Asset paths           |
+| `AppIcons.home`                  | Icon paths            |
+| `AnalyticsEvents.login`          | Analytics event keys  |
+| `RemoteConfigKeys.minAppVersion` | Remote config keys    |
 
 ### Extensions (`lib/core/extensions/`)
 
@@ -547,6 +572,8 @@ make prepare   # Full setup (clean + l10n + gen)
 3. **Don't** create custom loading/error widgets
 4. **🔴 CRITICAL: Don't** use magic numbers for spacing/dimensions/durations/opacity. **ALWAYS** use constants from `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`. This includes:
    - Durations: Use `AppConstants.animationNormal` instead of `Duration(milliseconds: 300)`
+   - Stagger delays: Use `AppConstants.staggerDelay * N` instead of `Duration(milliseconds: N * 50)`
+   - Icon sizes: Use `AppConstants.iconSizeMD` (24px), `iconSizeXL` (48px), `iconSizeXXL` (80px)
    - Dimensions: Use `AppConstants.pageIndicatorActiveWidth` instead of `24`
    - Opacity: Use `AppConstants.pageIndicatorInactiveOpacity` instead of `0.3`
    - Border radius: Use `AppConstants.borderRadiusSM` instead of `4`
@@ -564,3 +591,4 @@ make prepare   # Full setup (clean + l10n + gen)
 9. **Don't** forget to track screen views in new pages via `AnalyticsService`
 10. **Don't** bypass file size limits — refactor immediately if exceeded
 11. **Don't** forget try-catch blocks for operations that can fail (especially async operations)
+12. **Do** use `.staggered()` factories for list animations instead of manually calculating delays

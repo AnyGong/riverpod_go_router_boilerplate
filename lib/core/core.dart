@@ -60,13 +60,19 @@ export 'forms/forms.dart';
 // Version (Force Update)
 export 'version/version.dart';
 // Widgets
+export 'widgets/animated_counter.dart';
+export 'widgets/animated_progress.dart';
 export 'widgets/animations.dart';
 export 'widgets/async_value_widget.dart';
+export 'widgets/bounce.dart';
 export 'widgets/buttons.dart';
 export 'widgets/cached_image.dart';
 export 'widgets/connectivity_wrapper.dart';
 export 'widgets/dialogs.dart';
+export 'widgets/expandable_widget.dart';
+export 'widgets/flip_card.dart';
 export 'widgets/inputs.dart';
 export 'widgets/responsive_builder.dart';
 export 'widgets/shimmer_loading.dart';
 export 'widgets/spacing.dart';
+export 'widgets/typewriter_text.dart';

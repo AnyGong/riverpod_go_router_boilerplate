@@ -98,6 +98,34 @@ class FadeIn extends StatefulWidget {
     this.curve = Curves.easeOut,
   });
 
+  /// Creates a [FadeIn] with staggered delay based on index.
+  ///
+  /// Useful for list items with automatic delay calculation:
+  /// ```dart
+  /// ListView.builder(
+  ///   itemBuilder: (context, index) => FadeIn.staggered(
+  ///     index: index,
+  ///     child: ListTile(...),
+  ///   ),
+  /// )
+  /// ```
+  factory FadeIn.staggered({
+    required final Widget child,
+    required final int index,
+    final Key? key,
+    final Duration duration = AppConstants.animationNormal,
+    final Duration baseDelay = AppConstants.staggerDelay,
+    final Curve curve = Curves.easeOut,
+  }) {
+    return FadeIn(
+      key: key,
+      duration: duration,
+      delay: baseDelay * index,
+      curve: curve,
+      child: child,
+    );
+  }
+
   /// Child widget to animate.
   final Widget child;
 
@@ -155,8 +183,40 @@ class SlideIn extends StatefulWidget {
     this.delay = .zero,
     this.curve = Curves.easeOut,
     this.direction = .fromBottom,
-    this.offset = 1.0,
+    this.offset = AppConstants.slideOffsetDefault,
   });
+
+  /// Creates a [SlideIn] with staggered delay based on index.
+  ///
+  /// Useful for list items with automatic delay calculation:
+  /// ```dart
+  /// ListView.builder(
+  ///   itemBuilder: (context, index) => SlideIn.staggered(
+  ///     index: index,
+  ///     child: ListTile(...),
+  ///   ),
+  /// )
+  /// ```
+  factory SlideIn.staggered({
+    required final Widget child,
+    required final int index,
+    final Key? key,
+    final Duration duration = AppConstants.animationNormal,
+    final Duration baseDelay = AppConstants.staggerDelay,
+    final Curve curve = Curves.easeOut,
+    final SlideDirection direction = .fromLeft,
+    final double offset = AppConstants.slideOffsetDefault,
+  }) {
+    return SlideIn(
+      key: key,
+      duration: duration,
+      delay: baseDelay * index,
+      curve: curve,
+      direction: direction,
+      offset: offset,
+      child: child,
+    );
+  }
 
   /// Child widget to animate.
   final Widget child;
@@ -245,9 +305,31 @@ class ScaleIn extends StatefulWidget {
     this.duration = AppConstants.animationNormal,
     this.delay = .zero,
     this.curve = Curves.easeOut,
-    this.begin = 0.0,
+    this.begin = AppConstants.scaleInStart,
     this.alignment = .center,
   });
+
+  /// Creates a [ScaleIn] with staggered delay based on index.
+  factory ScaleIn.staggered({
+    required final Widget child,
+    required final int index,
+    final Key? key,
+    final Duration duration = AppConstants.animationNormal,
+    final Duration baseDelay = AppConstants.staggerDelay,
+    final Curve curve = Curves.easeOut,
+    final double begin = AppConstants.scaleInStart,
+    final Alignment alignment = .center,
+  }) {
+    return ScaleIn(
+      key: key,
+      duration: duration,
+      delay: baseDelay * index,
+      curve: curve,
+      begin: begin,
+      alignment: alignment,
+      child: child,
+    );
+  }
 
   /// Child widget to animate.
   final Widget child;
@@ -314,8 +396,8 @@ class StaggeredList extends StatelessWidget {
   const StaggeredList({
     required this.children,
     super.key,
-    this.itemDuration = const Duration(milliseconds: 200),
-    this.staggerDelay = const Duration(milliseconds: 50),
+    this.itemDuration = AppConstants.animationFast,
+    this.staggerDelay = AppConstants.staggerDelay,
     this.curve = Curves.easeOut,
     this.direction = .fromBottom,
   });
@@ -348,7 +430,7 @@ class StaggeredList extends StatelessWidget {
             delay: staggerDelay * entry.key,
             curve: curve,
             direction: direction,
-            offset: 0.3,
+            offset: AppConstants.slideOffsetDefault,
             child: entry.value,
           ),
         );
@@ -364,7 +446,7 @@ class ShakeWidget extends StatefulWidget {
     required this.child,
     required this.controller,
     super.key,
-    this.duration = const Duration(milliseconds: 500),
+    this.duration = AppConstants.shakeAnimation,
     this.shakeCount = 3,
     this.shakeOffset = 10.0,
   });
@@ -388,8 +470,7 @@ class ShakeWidget extends StatefulWidget {
   State<ShakeWidget> createState() => _ShakeWidgetState();
 }
 
-class _ShakeWidgetState extends State<ShakeWidget>
-    with SingleTickerProviderStateMixin {
+class _ShakeWidgetState extends State<ShakeWidget> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -462,9 +543,9 @@ class Pulse extends StatefulWidget {
   const Pulse({
     required this.child,
     super.key,
-    this.duration = const Duration(milliseconds: 1000),
-    this.minScale = 0.95,
-    this.maxScale = 1.0,
+    this.duration = AppConstants.pulseAnimation,
+    this.minScale = AppConstants.pulseScaleMin,
+    this.maxScale = AppConstants.pulseScaleMax,
     this.enabled = true,
   });
 

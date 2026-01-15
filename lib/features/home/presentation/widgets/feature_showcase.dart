@@ -14,6 +14,7 @@ import 'package:riverpod_go_router_boilerplate/l10n/generated/app_localizations.
 /// - AppDialogs for confirmations
 /// - Context extensions (theme, colorScheme)
 /// - Spacing widgets (VerticalSpace, HorizontalSpace)
+/// - Animation widgets (FadeIn, SlideIn, StaggeredList)
 class FeatureShowcase extends ConsumerWidget {
   /// Creates a [FeatureShowcase] instance.
   const FeatureShowcase({super.key});
@@ -23,88 +24,99 @@ class FeatureShowcase extends ConsumerWidget {
     final theme = context.theme;
     final l10n = AppLocalizations.of(context);
 
-    return Card(
-      child: ResponsivePadding(
-        horizontal: AppSpacing.md,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: theme.colorScheme.primary,
-                  size: 24,
+    return FadeIn(
+      child: Card(
+        child: ResponsivePadding(
+          horizontal: AppSpacing.md,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with slide animation
+              SlideIn(
+                direction: .fromLeft,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: theme.colorScheme.primary,
+                      size: AppConstants.iconSizeMD,
+                    ),
+                    const HorizontalSpace.sm(),
+                    Text(
+                      l10n.featureShowcase,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                const HorizontalSpace.sm(),
-                Text(
-                  l10n.featureShowcase,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+              ),
+              const VerticalSpace.sm(),
+              FadeIn(
+                delay: AppConstants.staggerDelay * 2,
+                child: Text(
+                  l10n.featureShowcaseDescription,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-              ],
-            ),
-            const VerticalSpace.sm(),
-            Text(
-              l10n.featureShowcaseDescription,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
               ),
-            ),
-            const VerticalSpace.lg(),
+              const VerticalSpace.lg(),
 
-            // Demo: Feedback Service
-            ShowcaseItem(
-              title: l10n.feedbackDemo,
-              description: l10n.feedbackDemoDescription,
-              child: FeedbackDemoButtons(ref: ref),
-            ),
-            const VerticalSpace.md(),
+              // Staggered showcase items
+              StaggeredList(
+                staggerDelay: AppConstants.staggerDelay,
+                children: [
+                  // Demo: Feedback Service
+                  ShowcaseItem(
+                    title: l10n.feedbackDemo,
+                    description: l10n.feedbackDemoDescription,
+                    child: FeedbackDemoButtons(ref: ref),
+                  ),
 
-            // Demo: Dialog
-            ShowcaseItem(
-              title: l10n.dialogDemo,
-              description: l10n.dialogDemoDescription,
-              child: AppButton(
-                variant: .text,
-                size: .medium,
-                onPressed: () => _showConfirmDialog(context, l10n),
-                icon: Icons.question_answer_outlined,
-                label: l10n.showDialog,
+                  // Demo: Dialog
+                  ShowcaseItem(
+                    title: l10n.dialogDemo,
+                    description: l10n.dialogDemoDescription,
+                    child: AppButton(
+                      variant: .text,
+                      size: .medium,
+                      onPressed: () => _showConfirmDialog(context, l10n),
+                      icon: Icons.question_answer_outlined,
+                      label: l10n.showDialog,
+                    ),
+                  ),
+
+                  // Demo: Notifications
+                  ShowcaseItem(
+                    title: l10n.notificationDemo,
+                    description: l10n.notificationDemoDescription,
+                    child: AppButton(
+                      variant: .secondary,
+                      size: .medium,
+                      isExpanded: true,
+                      onPressed: () => _sendBasicNotification(ref, l10n),
+                      icon: Icons.notifications_outlined,
+                      label: l10n.basicNotification,
+                    ),
+                  ),
+
+                  // Demo: Navigation
+                  ShowcaseItem(
+                    title: l10n.navigationDemo,
+                    description: l10n.navigationDemoDescription,
+                    child: AppButton(
+                      variant: .primary,
+                      size: .medium,
+                      onPressed: () => context.pushRoute(AppRoute.settings),
+                      icon: Icons.settings_outlined,
+                      label: l10n.goToSettings,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const VerticalSpace.md(),
-
-            // Demo: Notifications
-            ShowcaseItem(
-              title: l10n.notificationDemo,
-              description: l10n.notificationDemoDescription,
-              child: AppButton(
-                variant: .secondary,
-                size: .medium,
-                isExpanded: true,
-                onPressed: () => _sendBasicNotification(ref, l10n),
-                icon: Icons.notifications_outlined,
-                label: l10n.basicNotification,
-              ),
-            ),
-            const VerticalSpace.md(),
-
-            // Demo: Navigation
-            ShowcaseItem(
-              title: l10n.navigationDemo,
-              description: l10n.navigationDemoDescription,
-              child: AppButton(
-                variant: .primary,
-                size: .medium,
-                onPressed: () => context.pushRoute(AppRoute.settings),
-                icon: Icons.settings_outlined,
-                label: l10n.goToSettings,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

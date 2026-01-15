@@ -30,7 +30,7 @@ abstract class AppDialogs {
             label: cancelText,
           ),
           AppButton(
-            variant: isDangerous ? .primary : .primary,
+            variant: isDangerous ? .secondary : .primary,
             isExpanded: false,
             onPressed: () => Navigator.of(context).pop(true),
             label: confirmText,
@@ -54,7 +54,11 @@ abstract class AppDialogs {
       context: context,
       builder: (final context) => AlertDialog(
         icon: icon != null
-            ? Icon(icon, size: 48, color: theme.colorScheme.primary)
+            ? Icon(
+                icon,
+                size: AppConstants.dialogIconSize,
+                color: theme.colorScheme.primary,
+              )
             : null,
         title: Text(title),
         content: Text(message),
@@ -84,7 +88,7 @@ abstract class AppDialogs {
       builder: (final context) => AlertDialog(
         icon: Icon(
           Icons.error_outline,
-          size: 48,
+          size: AppConstants.dialogIconSize,
           color: theme.colorScheme.error,
         ),
         title: Text(title),
@@ -115,7 +119,7 @@ abstract class AppDialogs {
       builder: (final context) => AlertDialog(
         icon: Icon(
           Icons.check_circle_outline,
-          size: 48,
+          size: AppConstants.dialogIconSize,
           color: theme.colorScheme.primary,
         ),
         title: Text(title),
@@ -220,9 +224,7 @@ abstract class AppDialogs {
                 if (option.icon != null) ...[
                   Icon(
                     option.icon,
-                    color: isSelected
-                        ? context.theme.colorScheme.primary
-                        : null,
+                    color: isSelected ? context.theme.colorScheme.primary : null,
                   ),
                   const HorizontalSpace.md(),
                 ],
@@ -453,20 +455,14 @@ abstract class AppBottomSheets {
                 leading: action.icon != null
                     ? Icon(
                         action.icon,
-                        color: action.isDestructive
-                            ? theme.colorScheme.error
-                            : null,
+                        color: action.isDestructive ? theme.colorScheme.error : null,
                       )
                     : null,
                 title: Text(
                   action.label,
-                  style: action.isDestructive
-                      ? TextStyle(color: theme.colorScheme.error)
-                      : null,
+                  style: action.isDestructive ? TextStyle(color: theme.colorScheme.error) : null,
                 ),
-                subtitle: action.subtitle != null
-                    ? Text(action.subtitle!)
-                    : null,
+                subtitle: action.subtitle != null ? Text(action.subtitle!) : null,
                 onTap: () => Navigator.of(context).pop(action.value),
               ),
             ),

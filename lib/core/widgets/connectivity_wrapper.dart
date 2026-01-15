@@ -99,7 +99,7 @@ class _OfflineBanner extends StatelessWidget {
                   Icon(
                     Icons.wifi_off_rounded,
                     color: colorScheme.onError,
-                    size: 18,
+                    size: AppConstants.connectivityIconSize,
                   ),
                   const HorizontalSpace.sm(),
                   Text(
@@ -107,7 +107,7 @@ class _OfflineBanner extends StatelessWidget {
                     style: TextStyle(
                       color: colorScheme.onError,
                       fontWeight: .w500,
-                      fontSize: 13,
+                      fontSize: AppConstants.connectivityFontSize,
                     ),
                   ),
                 ],
@@ -119,10 +119,10 @@ class _OfflineBanner extends StatelessWidget {
         .slideY(
           begin: -1,
           end: 0,
-          duration: const Duration(milliseconds: 300),
+          duration: AppConstants.animationNormal,
           curve: Curves.easeOut,
         )
-        .fadeIn(duration: const Duration(milliseconds: 200));
+        .fadeIn(duration: AppConstants.animationFast);
   }
 }
 
@@ -163,9 +163,7 @@ class ConnectivityIndicator extends ConsumerWidget {
     return Icon(
       isOnline ? onlineIcon : offlineIcon,
       size: size,
-      color: isOnline
-          ? (onlineColor ?? colorScheme.primary)
-          : (offlineColor ?? colorScheme.error),
+      color: isOnline ? (onlineColor ?? colorScheme.primary) : (offlineColor ?? colorScheme.error),
     );
   }
 }

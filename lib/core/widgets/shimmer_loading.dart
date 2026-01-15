@@ -36,8 +36,7 @@ class ShimmerLoading extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!),
-      highlightColor:
-          highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
+      highlightColor: highlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!),
       child: child,
     );
   }
@@ -49,8 +48,8 @@ class ShimmerLine extends StatelessWidget {
   const ShimmerLine({
     super.key,
     this.width,
-    this.height = 16,
-    this.borderRadius = 4,
+    this.height = AppConstants.shimmerLineHeight,
+    this.borderRadius = AppConstants.borderRadiusSM,
   });
 
   /// Optional width of the line.
@@ -80,7 +79,7 @@ class ShimmerLine extends StatelessWidget {
 /// A shimmer loading placeholder representing a circular avatar.
 class ShimmerCircle extends StatelessWidget {
   /// Creates a [ShimmerCircle].
-  const ShimmerCircle({super.key, this.size = 48});
+  const ShimmerCircle({super.key, this.size = AppConstants.shimmerCircleSize});
 
   /// Diameter of the circle.
   final double size;
@@ -107,7 +106,7 @@ class ShimmerBox extends StatelessWidget {
     super.key,
     this.width,
     this.height,
-    this.borderRadius = 8,
+    this.borderRadius = AppConstants.borderRadiusMD,
   });
 
   /// Optional width of the box.
@@ -168,16 +167,19 @@ class ShimmerListTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                const ShimmerLine(width: 120, height: 14),
+                const ShimmerLine(
+                  width: 120,
+                  height: AppConstants.shimmerTitleHeight,
+                ),
                 if (lines > 1) ...[
                   const VerticalSpace.sm(),
-                  const ShimmerLine(height: 12),
+                  const ShimmerLine(height: AppConstants.shimmerSubtitleHeight),
                 ],
                 if (lines > 2) ...[
                   const VerticalSpace.sm(),
                   ShimmerLine(
                     width: MediaQuery.of(context).size.width * 0.6,
-                    height: 12,
+                    height: AppConstants.shimmerSubtitleHeight,
                   ),
                 ],
               ],

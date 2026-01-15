@@ -366,22 +366,24 @@ AppBottomSheets.actions<String>(
 
 ### Animation Widgets
 
-**File**: `lib/core/widgets/animations.dart`
+**Path**: `lib/core/widgets/`
 
-| Widget          | Purpose                        |
-| :-------------- | :----------------------------- |
-| `FadeIn`        | Fade in on mount               |
-| `SlideIn`       | Slide in from direction        |
-| `ScaleIn`       | Scale in on mount              |
-| `StaggeredList` | Staggered list item animations |
-| `ShakeWidget`   | Shake effect (for errors)      |
-| `Pulse`         | Pulsing animation              |
+The boilerplate includes a comprehensive set of animation widgets for creating polished, modern UIs.
+
+#### Entry Animations
+
+| Widget          | Purpose                        | File              |
+| :-------------- | :----------------------------- | :---------------- |
+| `FadeIn`        | Fade in on mount               | `animations.dart` |
+| `SlideIn`       | Slide in from direction        | `animations.dart` |
+| `ScaleIn`       | Scale in on mount              | `animations.dart` |
+| `StaggeredList` | Staggered list item animations | `animations.dart` |
 
 ```dart
 // Automatic fade-in animation
 FadeIn(
   duration: AppConstants.animationNormal,
-  delay: 100.ms,
+  delay: AppConstants.staggerDelay * 2,
   child: Text('Hello'),
 )
 
@@ -391,12 +393,41 @@ SlideIn(
   child: Card(...),
 )
 
-// Staggered list
-StaggeredList(
-  staggerDelay: 50.ms,
-  children: items.map((item) => ItemCard(item)).toList(),
+// ✨ NEW: Staggered factories for lists (cleaner than manual delay calculation)
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) => FadeIn.staggered(
+    index: index,
+    child: ListTile(title: Text(items[index].name)),
+  ),
 )
 
+// Or with SlideIn
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) => SlideIn.staggered(
+    index: index,
+    direction: SlideDirection.fromLeft,
+    child: ItemCard(item: items[index]),
+  ),
+)
+
+// Staggered list for beautiful list animations
+StaggeredList(
+  staggerDelay: AppConstants.staggerDelay,
+  children: items.map((item) => ItemCard(item)).toList(),
+)
+```
+
+#### Attention & Feedback Animations
+
+| Widget        | Purpose                   | File              |
+| :------------ | :------------------------ | :---------------- |
+| `ShakeWidget` | Shake effect (for errors) | `animations.dart` |
+| `Pulse`       | Pulsing animation         | `animations.dart` |
+| `Bounce`      | Bounce attention effect   | `bounce.dart`     |
+
+```dart
 // Shake on error
 final shakeController = ShakeController();
 ShakeWidget(
@@ -404,7 +435,151 @@ ShakeWidget(
   child: TextField(...),
 )
 // Trigger: shakeController.shake();
+
+// Bouncing attention animation
+Bounce(
+  repeat: true,
+  child: Icon(Icons.notification_important),
+)
+
+// Pulsing effect
+Pulse(
+  duration: const Duration(seconds: 1),
+  child: Badge(label: Text('New')),
+)
 ```
+
+#### Interactive Animations
+
+| Widget             | Purpose                | File                     |
+| :----------------- | :--------------------- | :----------------------- |
+| `FlipCard`         | 3D flip between faces  | `flip_card.dart`         |
+| `ExpandableWidget` | Smooth expand/collapse | `expandable_widget.dart` |
+
+```dart
+// Flip card with controller
+final flipController = FlipCardController();
+FlipCard(
+  controller: flipController,
+  front: CardFront(),
+  back: CardBack(),
+  direction: FlipDirection.horizontal,
+)
+// Trigger: flipController.flip();
+
+// Expandable section (FAQ, details)
+ExpandableWidget(
+  header: Text('Click to expand'),
+  child: Text('Expanded content here...'),
+  expandIcon: Icons.expand_more,
+)
+```
+
+#### Data Display Animations
+
+| Widget                     | Purpose                    | File                     |
+| :------------------------- | :------------------------- | :----------------------- |
+| `AnimatedCounter`          | Animated number changes    | `animated_counter.dart`  |
+| `AnimatedProgress`         | Animated progress bar      | `animated_progress.dart` |
+| `AnimatedCircularProgress` | Animated circular progress | `animated_progress.dart` |
+| `TypewriterText`           | Typing effect text         | `typewriter_text.dart`   |
+
+```dart
+// Animated counter for stats/scores
+AnimatedCounter(
+  value: 1234,
+  duration: AppConstants.counterAnimation,
+  prefix: '\$',
+  separator: ',',
+  style: Theme.of(context).textTheme.headlineLarge,
+)
+
+// Animated progress bar
+AnimatedProgress(
+  value: 0.75,
+  height: 8,
+  color: Theme.of(context).colorScheme.primary,
+)
+
+// Circular progress
+AnimatedCircularProgress(
+  value: 0.65,
+  size: 64,
+  child: Text('65%'),
+)
+
+// Typewriter text effect
+TypewriterText(
+  text: 'Welcome to the app!',
+  style: Theme.of(context).textTheme.headlineMedium,
+  onComplete: () => print('Done typing'),
+)
+```
+
+#### Skeleton Loading
+
+| Widget            | Purpose                | File                   |
+| :---------------- | :--------------------- | :--------------------- |
+| `ShimmerLoading`  | Shimmer effect wrapper | `shimmer_loading.dart` |
+| `ShimmerLine`     | Text line placeholder  | `shimmer_loading.dart` |
+| `ShimmerCircle`   | Avatar placeholder     | `shimmer_loading.dart` |
+| `ShimmerBox`      | Rectangle placeholder  | `shimmer_loading.dart` |
+| `ShimmerListTile` | List tile skeleton     | `shimmer_loading.dart` |
+| `ShimmerCard`     | Card skeleton          | `shimmer_loading.dart` |
+| `ShimmerList`     | List of shimmer tiles  | `shimmer_loading.dart` |
+
+```dart
+// Shimmer wrapper for custom content
+ShimmerLoading(
+  child: Container(width: 100, height: 100, color: Colors.white),
+)
+
+// Basic shimmer shapes
+ShimmerLine(width: 200, height: 16)
+ShimmerCircle(size: 48)
+ShimmerBox(width: 100, height: 100)
+
+// Pre-built shimmer components
+ShimmerListTile(
+  hasLeading: true,
+  lines: 2,
+)
+
+ShimmerCard(
+  imageHeight: 120,
+)
+
+// Multiple shimmer list items
+ShimmerList(
+  itemCount: 5,
+  hasLeading: true,
+)
+```
+
+#### Animation Constants
+
+Use these constants for consistent animation timing:
+
+| Constant               | Value  | Use Case                 |
+| :--------------------- | :----- | :----------------------- |
+| `animationFast`        | 150ms  | Quick micro-interactions |
+| `animationNormal`      | 300ms  | Standard animations      |
+| `animationSlow`        | 500ms  | Emphasized animations    |
+| `staggerDelay`         | 50ms   | List item delays         |
+| `typewriterCharDelay`  | 50ms   | Typewriter effect        |
+| `counterAnimation`     | 800ms  | Counter animations       |
+| `flipAnimation`        | 400ms  | Card flip                |
+| `bounceAnimation`      | 600ms  | Bounce effects           |
+| `expandAnimation`      | 250ms  | Expand/collapse          |
+| `shakeAnimation`       | 500ms  | Shake effects            |
+| `pulseAnimation`       | 1000ms | Pulsing effects          |
+| `cursorBlinkAnimation` | 500ms  | Cursor blink             |
+
+**Best Practices:**
+
+- Always use `AppConstants.staggerDelay * N` for delay calculations
+- Use `.staggered()` factory constructors for cleaner list animations
+- All animation widgets use constants as defaults—no magic numbers needed
 
 ---
 
