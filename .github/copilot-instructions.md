@@ -6,6 +6,62 @@ You are an expert Flutter developer working on a production-grade boilerplate pr
 
 ---
 
+## 🤖 Self-Updating Instructions
+
+**This document is a living guide.** When you encounter new patterns, integrations, or conventions that are important for future development, you **MUST** update this file.
+
+### When to Add New Instructions
+
+Add new sections or update existing ones when:
+
+1. **New Core Module Added**: Document the service, its provider, and usage examples
+2. **New Reusable Widget Created**: Add to the widgets table with use case and file location
+3. **New Constant Category Introduced**: Document in the constants section
+4. **New Third-Party Integration**: Document setup, providers, and usage patterns
+5. **New Architectural Pattern**: If you establish a new pattern (e.g., pagination, offline-first), document it
+6. **New Anti-Pattern Discovered**: Add to the anti-patterns section to prevent future mistakes
+7. **Platform-Specific Handling**: Document any iOS/Android specific implementations
+
+### How to Update
+
+1. **Find the relevant section** in this file
+2. **Add documentation** following the existing format (tables, code examples, bullet points)
+3. **Keep it concise** — focus on what AI needs to know to write correct code
+4. **Include examples** — show correct ✅ and incorrect ❌ usage where applicable
+5. **Update `DEVELOPER_GUIDE.md`** if the change affects developer-facing documentation
+
+### Example: Adding a New Core Module
+
+If you create a new core module (e.g., `lib/core/push_notifications/`), add:
+
+```markdown
+### Push Notifications (`lib/core/push_notifications/`)
+
+| Service                   | Provider                   | Use For                   |
+| :------------------------ | :------------------------- | :------------------------ |
+| `PushNotificationService` | `pushNotificationProvider` | FCM token & notifications |
+
+**Usage:**
+\`\`\`dart
+// Register for push notifications
+await ref.read(pushNotificationProvider).requestPermission();
+
+// Get FCM token
+final token = await ref.read(pushNotificationProvider).getToken();
+\`\`\`
+```
+
+### Validation Before Completion
+
+Before finishing any task that introduces new reusable patterns:
+
+- [ ] Did I create something that future tasks will need? → **Update this file**
+- [ ] Did I add a new constant category? → **Document it**
+- [ ] Did I discover a gotcha or edge case? → **Add to anti-patterns**
+- [ ] Did I integrate a new package? → **Document the pattern**
+
+---
+
 ## ⚠️ Critical: Architectural Constraints
 
 ### File Size & Organization
