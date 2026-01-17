@@ -1070,18 +1070,20 @@ StorageKeys.onboardingCompleted // 'onboarding_completed'
 
 ### Other Services
 
-| Service                    | Purpose                 |
-| :------------------------- | :---------------------- |
-| `BiometricService`         | Face ID / Touch ID      |
-| `LocalNotificationService` | Local notifications     |
-| `PermissionService`        | Runtime permissions     |
-| `FeedbackService`          | Context-free snackbars  |
-| `DeepLinkService`          | Universal link handling |
-| `InAppReviewService`       | App store reviews       |
-| `CrashlyticsService`       | Crash reporting         |
-| `AnalyticsService`         | User analytics          |
-| `PerformanceService`       | Performance monitoring  |
-| `RemoteConfigService`      | Feature flags & config  |
+| Service                    | Purpose                      |
+| :------------------------- | :--------------------------- |
+| `BiometricService`         | Face ID / Touch ID           |
+| `LocalNotificationService` | Local notifications          |
+| `PermissionService`        | Runtime permissions          |
+| `FeedbackService`          | Context-free snackbars       |
+| `DeepLinkService`          | Universal link handling      |
+| `InAppReviewService`       | App store reviews            |
+| `AppVersionService`        | Version check & force update |
+| `LocaleNotifier`           | Locale management            |
+| `CrashlyticsService`       | Crash reporting              |
+| `AnalyticsService`         | User analytics               |
+| `PerformanceService`       | Performance monitoring       |
+| `RemoteConfigService`      | Feature flags & config       |
 
 ### Firebase Suite (`lib/core/`)
 

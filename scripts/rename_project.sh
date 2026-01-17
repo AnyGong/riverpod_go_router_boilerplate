@@ -71,8 +71,9 @@ OLD_ANDROID_PACKAGE="${OLD_ORG}.${OLD_PACKAGE_NAME}"
 NEW_ANDROID_PACKAGE="${NEW_ORG}.${NEW_PACKAGE_NAME}"
 
 # iOS uses camelCase for bundle identifier
-OLD_IOS_BUNDLE_SUFFIX=$(echo "$OLD_PACKAGE_NAME" | sed -r 's/(^|_)([a-z])/\U\2/g' | sed 's/^./\l&/')
-NEW_IOS_BUNDLE_SUFFIX=$(echo "$NEW_PACKAGE_NAME" | sed -r 's/(^|_)([a-z])/\U\2/g' | sed 's/^./\l&/')
+# Using sed -E for macOS compatibility (instead of sed -r)
+OLD_IOS_BUNDLE_SUFFIX=$(echo "$OLD_PACKAGE_NAME" | sed -E 's/(^|_)([a-z])/\U\2/g' | sed 's/^./\l&/')
+NEW_IOS_BUNDLE_SUFFIX=$(echo "$NEW_PACKAGE_NAME" | sed -E 's/(^|_)([a-z])/\U\2/g' | sed 's/^./\l&/')
 OLD_IOS_BUNDLE="${OLD_ORG}.${OLD_IOS_BUNDLE_SUFFIX}"
 NEW_IOS_BUNDLE="${NEW_ORG}.${NEW_IOS_BUNDLE_SUFFIX}"
 

@@ -119,15 +119,17 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Extract version
-        id: version
+      - name: Extract project metadata
+        id: meta
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')
+          NAME=$(grep '^name:' pubspec.yaml | sed 's/name: //' | tr -d '[:space:]' | tr '_' '-')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
 
       - name: Validate release version
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.meta.outputs.version }}"
           if [[ "$VERSION" == *"-dev"* ]]; then
             echo "::error::❌ Cannot publish dev version '$VERSION' to main branch"
             echo "::error::Dev versions can only be published to dev branch"
@@ -136,24 +138,28 @@ jobs:
           fi
           echo "✅ Version validation passed: $VERSION"
 
-      - name: Build Release APK
-        run: flutter build apk --release
+      - name: Build Release APKs (split per ABI)
+        run: flutter build apk --release --split-per-abi
 
-      - name: Rename APK
+      - name: Rename APKs
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk \
-             build/app/outputs/flutter-apk/riverpod-boilerplate-v${{ steps.version.outputs.version }}.apk
+          VERSION="${{ steps.meta.outputs.version }}"
+          NAME="${{ steps.meta.outputs.name }}"
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk "${NAME}-v${VERSION}-arm64-v8a.apk"
+          mv app-armeabi-v7a-release.apk "${NAME}-v${VERSION}-armeabi-v7a.apk"
+          mv app-x86_64-release.apk "${NAME}-v${VERSION}-x86_64.apk"
 
-      - name: Upload APK artifact
+      - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/*.apk
+          name: release-apks
+          path: build/app/outputs/flutter-apk/${{ steps.meta.outputs.name }}-*.apk
 
       - name: Read changelog entry
         id: changelog
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.meta.outputs.version }}"
           # Extract changelog section for this version
           CHANGELOG=$(sed -n "/## \[${VERSION}\]/,/## \[/p" CHANGELOG.md | sed '$d')
           # Handle multiline output
@@ -165,23 +171,32 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: Release v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.meta.outputs.version }}
+          name: Release v${{ steps.meta.outputs.version }}
           body: |
-            ## 🚀 Release v${{ steps.version.outputs.version }}
+            ## 🚀 Release v${{ steps.meta.outputs.version }}
 
             ### What's New
             ${{ steps.changelog.outputs.content }}
 
+            ### Downloads
+            Choose the APK that matches your device architecture:
+
+            | APK | Architecture | Devices |
+            |-----|--------------|--------|
+            | `arm64-v8a` | 64-bit ARM | Most modern Android phones (2017+) |
+            | `armeabi-v7a` | 32-bit ARM | Older Android phones |
+            | `x86_64` | 64-bit x86 | Android emulators, Chromebooks |
+
             ### Installation
-            Download the APK and install it on your Android device:
             ```bash
-            adb install riverpod-boilerplate-v${{ steps.version.outputs.version }}.apk
+            # For most modern devices (64-bit ARM)
+            adb install ${{ steps.meta.outputs.name }}-v${{ steps.meta.outputs.version }}-arm64-v8a.apk
             ```
 
             ---
             **View full changelog**: [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
-          files: build/app/outputs/flutter-apk/*.apk
+          files: build/app/outputs/flutter-apk/${{ steps.meta.outputs.name }}-*.apk
           draft: false
           prerelease: false
         env:
@@ -213,11 +228,13 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Extract version
-        id: version
+      - name: Extract project metadata
+        id: meta
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')
+          NAME=$(grep '^name:' pubspec.yaml | sed 's/name: //' | tr -d '[:space:]' | tr '_' '-')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
 
       - name: Generate build metadata
         id: build
@@ -225,27 +242,32 @@ jobs:
           echo "number=$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Build Debug APK
-        run: flutter build apk --debug
+      - name: Build Debug APKs (split per ABI)
+        run: flutter build apk --debug --split-per-abi
 
-      - name: Rename APK
+      - name: Rename APKs
         run: |
-          mv build/app/outputs/flutter-apk/app-debug.apk \
-             build/app/outputs/flutter-apk/riverpod-boilerplate-v${{ steps.version.outputs.version }}-dev.${{ steps.build.outputs.number }}.apk
+          VERSION="${{ steps.meta.outputs.version }}"
+          NAME="${{ steps.meta.outputs.name }}"
+          BUILD="${{ steps.build.outputs.number }}"
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-debug.apk "${NAME}-v${VERSION}-dev.${BUILD}-arm64-v8a.apk"
+          mv app-armeabi-v7a-debug.apk "${NAME}-v${VERSION}-dev.${BUILD}-armeabi-v7a.apk"
+          mv app-x86_64-debug.apk "${NAME}-v${VERSION}-dev.${BUILD}-x86_64.apk"
 
-      - name: Upload APK artifact
+      - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
-          path: build/app/outputs/flutter-apk/*.apk
+          name: debug-apks
+          path: build/app/outputs/flutter-apk/${{ steps.meta.outputs.name }}-*.apk
 
       - name: Create GitHub Pre-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}-dev.${{ steps.build.outputs.number }}
-          name: Pre-release v${{ steps.version.outputs.version }}-dev.${{ steps.build.outputs.number }}
+          tag_name: v${{ steps.meta.outputs.version }}-dev.${{ steps.build.outputs.number }}
+          name: Pre-release v${{ steps.meta.outputs.version }}-dev.${{ steps.build.outputs.number }}
           body: |
-            ## 🧪 Pre-release v${{ steps.version.outputs.version }}-dev.${{ steps.build.outputs.number }}
+            ## 🧪 Pre-release v${{ steps.meta.outputs.version }}-dev.${{ steps.build.outputs.number }}
 
             > ⚠️ **This is a development build for testing purposes only.**
 
@@ -254,6 +276,15 @@ jobs:
             - **Commit**: `${{ steps.build.outputs.sha }}`
             - **Build Timestamp**: `${{ steps.build.outputs.number }}`
 
+            ### Downloads
+            Choose the APK that matches your device architecture:
+
+            | APK | Architecture | Devices |
+            |-----|--------------|--------|
+            | `arm64-v8a` | 64-bit ARM | Most modern Android phones (2017+) |
+            | `armeabi-v7a` | 32-bit ARM | Older Android phones |
+            | `x86_64` | 64-bit x86 | Android emulators, Chromebooks |
+
             ### ⚡ Testing Notes
             - This build contains the latest features from the `dev` branch
             - Use this for testing before release
@@ -261,7 +292,7 @@ jobs:
 
             ---
             **Note**: This build may contain experimental features and should not be used in production.
-          files: build/app/outputs/flutter-apk/*.apk
+          files: build/app/outputs/flutter-apk/${{ steps.meta.outputs.name }}-*.apk
           draft: false
           prerelease: true
         env:

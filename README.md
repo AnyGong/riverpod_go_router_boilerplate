@@ -32,6 +32,7 @@
 - [Creating Your First Feature](#-creating-your-first-feature)
 - [Firebase Setup](#-firebase-setup)
 - [Testing](#-testing)
+- [CI/CD Pipeline](#-cicd-pipeline)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -358,26 +359,31 @@ lib/
 │   ├── router/            # GoRouter configuration & routes
 │   └── startup/           # App lifecycle & startup logic
 ├── config/                # Environment configuration
-├── core/                  # Shared kernel
+├── core/                  # Shared kernel (27 modules)
 │   ├── analytics/         # Firebase Analytics
 │   ├── biometric/         # Biometric authentication
 │   ├── cache/             # Offline caching (Drift)
 │   ├── constants/         # App constants, API endpoints
 │   ├── crashlytics/       # Firebase Crashlytics
+│   ├── deep_link/         # Deep links & universal links
 │   ├── extensions/        # Dart/Flutter extensions
+│   ├── feedback/          # Context-free snackbars/dialogs
 │   ├── forms/             # Reactive Forms configs
 │   ├── hooks/             # Custom Flutter Hooks
+│   ├── localization/      # Locale management & persistence
 │   ├── network/           # Dio, interceptors, API client
 │   ├── notifications/     # Local notifications
 │   ├── performance/       # Firebase Performance
 │   ├── permissions/       # Permission handling
 │   ├── remote_config/     # Firebase Remote Config
 │   ├── result/            # Result monad
+│   ├── review/            # In-app review prompts
 │   ├── session/           # Session state
 │   ├── storage/           # Secure storage
 │   ├── theme/             # App theming
 │   ├── utils/             # Validators, logger, etc.
-│   └── widgets/           # Reusable UI components
+│   ├── version/           # App version & force update
+│   └── widgets/           # Reusable UI components (25+)
 ├── features/              # Feature modules
 │   ├── auth/              # Authentication
 │   ├── home/              # Home screen
@@ -389,14 +395,19 @@ lib/
 
 ### Core Module Highlights
 
-| Directory     | Contents                                                    |
-| :------------ | :---------------------------------------------------------- |
-| `constants/`  | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`     |
-| `extensions/` | `context.colorScheme`, `'str'.capitalized`, `123.formatted` |
-| `widgets/`    | 25+ reusable widgets (buttons, animations, dialogs, inputs) |
-| `hooks/`      | `useOnMount`, `useDebounce`, `useToggle`, `usePagination`   |
-| `analytics/`  | Screen tracking, event logging, user properties             |
-| `network/`    | API client, interceptors, caching, token refresh            |
+| Directory       | Contents                                                       |
+| :-------------- | :------------------------------------------------------------- |
+| `constants/`    | `AppConstants`, `ApiEndpoints`, `Assets`, `StorageKeys`        |
+| `extensions/`   | `context.colorScheme`, `'str'.capitalized`, `123.formatted`    |
+| `widgets/`      | 25+ reusable widgets (buttons, animations, dialogs, inputs)    |
+| `hooks/`        | `useOnMount`, `useDebounce`, `useToggle`, `usePagination`      |
+| `analytics/`    | Screen tracking, event logging, user properties                |
+| `network/`      | API client, interceptors, caching, token refresh               |
+| `deep_link/`    | Universal links (iOS) & App Links (Android) handling           |
+| `feedback/`     | Context-free `FeedbackService` for snackbars/dialogs           |
+| `review/`       | Smart in-app review prompting with eligibility tracking        |
+| `version/`      | App version checking, force update & optional update prompts   |
+| `localization/` | `LocaleNotifier` with persistence, supports en/bn (extensible) |
 
 ---
 
@@ -739,7 +750,62 @@ when(() => mockRepo.login(any(), any()))
 
 ---
 
-## 🔧 Troubleshooting
+## � CI/CD Pipeline
+
+The project includes a comprehensive GitHub Actions workflow (`.github/workflows/ci.yml`).
+
+### Pipeline Overview
+
+| Trigger            | Jobs                           | Output                       |
+| ------------------ | ------------------------------ | ---------------------------- |
+| **Pull Request**   | Analyze & Test                 | Coverage report              |
+| **Push to `main`** | Analyze & Test → Build Release | GitHub Release with APKs     |
+| **Push to `dev`**  | Analyze & Test → Build Debug   | GitHub Pre-release with APKs |
+
+### Analyze & Test Job
+
+Runs on every PR and push:
+
+- ✅ Dependency installation
+- ✅ Code generation verification
+- ✅ Format checking (`dart format`)
+- ✅ Static analysis (`flutter analyze --fatal-infos`)
+- ✅ Unit & widget tests with coverage
+- ✅ Coverage upload to Codecov
+
+### Build Outputs
+
+APKs are built with `--split-per-abi` for optimized file sizes. The project name is automatically extracted from `pubspec.yaml`:
+
+| Architecture  | Target Devices                | APK Name Format                        |
+| ------------- | ----------------------------- | -------------------------------------- |
+| `arm64-v8a`   | Modern Android phones (2017+) | `{project}-v{version}-arm64-v8a.apk`   |
+| `armeabi-v7a` | Older 32-bit Android phones   | `{project}-v{version}-armeabi-v7a.apk` |
+| `x86_64`      | Emulators, Chromebooks        | `{project}-v{version}-x86_64.apk`      |
+
+> **Note**: When you rename your project using `scripts/rename_project.sh`, the CI/CD pipeline automatically uses the new project name for APK artifacts.
+
+### Version Control Philosophy
+
+Versioning is **manual and intentional**:
+
+```yaml
+# pubspec.yaml
+version: 1.0.0+1 # X.Y.Z+build_number
+```
+
+- **X.Y.Z** = Semantic version (developer controls)
+- **+N** = Build number (optional tracking)
+
+**CI Guardrails:**
+
+- ❌ Blocks `-dev` versions from shipping to `main`
+- ✅ Validates CHANGELOG.md is updated
+- ✅ Creates proper GitHub Releases with tags
+
+---
+
+## �🔧 Troubleshooting
 
 ### Common Issues
 

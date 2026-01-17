@@ -53,26 +53,31 @@ lib/
 │   ├── router/             # GoRouter configuration & routes
 │   └── startup/            # App lifecycle & startup state machine
 ├── config/                 # Environment configuration
-├── core/                   # Shared utilities & foundational code
+├── core/                   # Shared utilities & foundational code (27 modules)
 │   ├── analytics/          # Firebase Analytics
 │   ├── biometric/          # Biometric authentication
 │   ├── cache/              # Offline-first caching (Drift)
 │   ├── constants/          # App-wide constants
 │   ├── crashlytics/        # Firebase Crashlytics
+│   ├── deep_link/          # Deep links & universal links
 │   ├── extensions/         # Dart/Flutter extensions
+│   ├── feedback/           # Context-free snackbars/dialogs
 │   ├── forms/              # Reactive Forms configurations
 │   ├── hooks/              # Flutter Hooks utilities
+│   ├── localization/       # Locale management & persistence
 │   ├── network/            # Dio, interceptors, API client
 │   ├── notifications/      # Local notifications
 │   ├── performance/        # Firebase Performance
 │   ├── permissions/        # Permission handling
 │   ├── remote_config/      # Firebase Remote Config
 │   ├── result/             # Result monad for error handling
+│   ├── review/             # In-app review prompts
 │   ├── session/            # Session state management
 │   ├── storage/            # Secure storage utilities
 │   ├── theme/              # App theming
 │   ├── utils/              # Validators, logger, etc.
-│   └── widgets/            # Reusable UI components
+│   ├── version/            # App version & force update
+│   └── widgets/            # Reusable UI components (25+)
 ├── features/               # Feature modules
 │   ├── auth/               # Authentication feature
 │   ├── home/               # Home feature
@@ -334,6 +339,19 @@ class BadPage extends ConsumerWidget {
 | `AnalyticsService`            | `analytics/`     | User analytics & event tracking |
 | `PerformanceService`          | `performance/`   | Performance monitoring & traces |
 | `FirebaseRemoteConfigService` | `remote_config/` | Feature flags & A/B testing     |
+
+### Other Core Services (`lib/core/`)
+
+| Service                    | Path             | Use For                          |
+| :------------------------- | :--------------- | :------------------------------- |
+| `DeepLinkService`          | `deep_link/`     | Universal links & app links      |
+| `FeedbackService`          | `feedback/`      | Context-free snackbars & dialogs |
+| `InAppReviewService`       | `review/`        | Smart in-app review prompting    |
+| `AppVersionService`        | `version/`       | Version check & force update     |
+| `LocaleNotifier`           | `localization/`  | Locale management & persistence  |
+| `BiometricService`         | `biometric/`     | Face ID / Touch ID auth          |
+| `LocalNotificationService` | `notifications/` | Local push notifications         |
+| `PermissionService`        | `permissions/`   | Runtime permission handling      |
 
 ```dart
 // Analytics
