@@ -172,6 +172,7 @@ class Validators {
       if (uri == null ||
           !uri.hasScheme ||
           !uri.hasAuthority ||
+          uri.host.isEmpty ||
           (!uri.isScheme('http') && !uri.isScheme('https'))) {
         return message ?? 'Please enter a valid URL';
       }
