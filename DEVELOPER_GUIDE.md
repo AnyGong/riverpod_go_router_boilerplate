@@ -1275,6 +1275,34 @@ make test      # Run all tests
 make prepare   # Full setup (clean + l10n + gen)
 ```
 
+### Releasing a New Version
+
+Follow these steps when preparing a release:
+
+1. **Update CHANGELOG.md** - Add your changes under `[Unreleased]` or create a new version section
+2. **Update version** in `pubspec.yaml` (e.g., `1.0.1+2`)
+3. **Run tests** - `make test`
+4. **Commit** with message: `chore: release vX.Y.Z`
+5. **Push to `main`** - CI will automatically create a GitHub Release
+
+**Changelog Format** (Keep a Changelog):
+
+```markdown
+## [1.1.0] - 2026-02-01
+
+### Added
+
+- New feature X
+
+### Changed
+
+- Updated behavior of Y
+
+### Fixed
+
+- Bug in Z
+```
+
 ---
 
 ## ⚡ State Management

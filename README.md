@@ -33,6 +33,7 @@
 - [Firebase Setup](#-firebase-setup)
 - [Testing](#-testing)
 - [CI/CD Pipeline](#-cicd-pipeline)
+- [Changelog](#-changelog)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -805,7 +806,35 @@ version: 1.0.0+1 # X.Y.Z+build_number
 
 ---
 
-## �🔧 Troubleshooting
+## 📋 Changelog
+
+All notable changes are documented in [CHANGELOG.md](CHANGELOG.md), following the [Keep a Changelog](https://keepachangelog.com/) format.
+
+### Version Format
+
+```
+X.Y.Z+N
+```
+
+| Part   | Meaning                               | Example   |
+| ------ | ------------------------------------- | --------- |
+| **X**  | Major (breaking changes)              | `2.0.0`   |
+| **Y**  | Minor (new features, backward compat) | `1.1.0`   |
+| **Z**  | Patch (bug fixes)                     | `1.0.1`   |
+| **+N** | Build number (optional)               | `1.0.0+5` |
+
+### Updating the Changelog
+
+When releasing a new version:
+
+1. Move items from `[Unreleased]` to a new version section
+2. Update `pubspec.yaml` version
+3. Commit: `git commit -m "chore: release vX.Y.Z"`
+4. Push to `main` — CI creates the GitHub Release automatically
+
+---
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 

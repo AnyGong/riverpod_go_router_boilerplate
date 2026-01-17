@@ -59,6 +59,27 @@ Before finishing any task that introduces new reusable patterns:
 - [ ] Did I add a new constant category? → **Document it**
 - [ ] Did I discover a gotcha or edge case? → **Add to anti-patterns**
 - [ ] Did I integrate a new package? → **Document the pattern**
+- [ ] Did I make a significant change worth noting? → **Update CHANGELOG.md**
+
+### Updating CHANGELOG.md
+
+When making significant changes (new features, bug fixes, breaking changes), update `CHANGELOG.md`:
+
+1. Add entry under `## [Unreleased]` section
+2. Use appropriate category: `Added`, `Changed`, `Fixed`, `Removed`, `Security`
+3. Keep entries concise but descriptive
+
+```markdown
+## [Unreleased]
+
+### Added
+
+- New `useNetworkStatus` hook for connectivity monitoring
+
+### Fixed
+
+- URL validator now correctly rejects URLs without host
+```
 
 ---
 
