@@ -105,7 +105,8 @@ class CrashlyticsService {
       final crashlytics = FirebaseCrashlytics.instance;
 
       // Enable/disable based on environment
-      final shouldEnable = enableInDebug || (!kDebugMode && environment == Environment.prod);
+      final shouldEnable =
+          enableInDebug || (!kDebugMode && environment == Environment.prod);
       await crashlytics.setCrashlyticsCollectionEnabled(shouldEnable);
 
       if (shouldEnable) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lottie/lottie.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
@@ -9,11 +10,12 @@ void main() {
   group('AsyncValueWidget', () {
     testWidgets('shows loading widget when loading', (final tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: Scaffold(
             body: AsyncValueWidget<String>(
-              value: AsyncValue.loading(),
+              value: const AsyncValue.loading(),
               data: Text.new,
+              loading: () => const LoadingWidget(useLottie: false),
             ),
           ),
         ),
@@ -72,9 +74,21 @@ void main() {
   });
 
   group('LoadingWidget', () {
-    testWidgets('shows circular progress indicator', (final tester) async {
+    testWidgets('shows Lottie animation by default', (final tester) async {
       await tester.pumpWidget(
         const MaterialApp(home: Scaffold(body: LoadingWidget())),
+      );
+
+      expect(find.byType(LottieBuilder), findsOneWidget);
+    });
+
+    testWidgets('shows circular progress indicator when useLottie is false', (
+      final tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: LoadingWidget(useLottie: false)),
+        ),
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -92,7 +106,9 @@ void main() {
 
     testWidgets('respects custom size', (final tester) async {
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: LoadingWidget(size: 100))),
+        const MaterialApp(
+          home: Scaffold(body: LoadingWidget(size: 100, useLottie: false)),
+        ),
       );
 
       final sizedBox = tester.widget<SizedBox>(

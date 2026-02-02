@@ -5,6 +5,7 @@ import 'package:riverpod_go_router_boilerplate/app/startup/app_lifecycle_notifie
 import 'package:riverpod_go_router_boilerplate/app/startup/startup_route_mapper.dart';
 import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
 import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
+import 'package:riverpod_go_router_boilerplate/core/widgets/async_value_widget.dart';
 import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
 
 /// Splash page shown during app initialization.
@@ -118,10 +119,6 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return const SizedBox(
-      width: 40,
-      height: 40,
-      child: CircularProgressIndicator(strokeWidth: 3),
-    );
+    return const LoadingWidget();
   }
 }

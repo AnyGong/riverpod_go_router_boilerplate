@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
 import 'package:riverpod_go_router_boilerplate/core/core.dart';
 import 'package:riverpod_go_router_boilerplate/features/home/presentation/widgets/feedback_demo_buttons.dart';
@@ -111,6 +112,15 @@ class FeatureShowcase extends ConsumerWidget {
                       onPressed: () => context.pushRoute(AppRoute.settings),
                       icon: Icons.settings_outlined,
                       label: l10n.goToSettings,
+                    ),
+                  ),
+                  ShowcaseItem(
+                    title: 'Crash Button',
+                    description: 'Crash Button Description',
+                    child: AppButton(
+                      variant: .secondary,
+                      onPressed: () => context.push('/invalid_route'),
+                      label: 'Crash!',
                     ),
                   ),
                 ],

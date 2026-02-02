@@ -92,7 +92,8 @@ extension BuildContextExtensions on BuildContext {
   void unfocus() => FocusScope.of(this).unfocus();
 
   /// Request focus on a specific node
-  void requestFocus(final FocusNode node) => FocusScope.of(this).requestFocus(node);
+  void requestFocus(final FocusNode node) =>
+      FocusScope.of(this).requestFocus(node);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // SNACKBAR

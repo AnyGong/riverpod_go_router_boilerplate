@@ -27,10 +27,14 @@ class WelcomeCard extends StatelessWidget {
                 delay: AppConstants.animationFast,
                 child: Bounce(
                   delay: AppConstants.animationNormal,
-                  child: Icon(
-                    Icons.check_circle,
-                    size: AppConstants.iconSizeXL,
-                    color: theme.colorScheme.primary,
+                  child: LottieAnimationWidget(
+                    repeat: false,
+                    assetPath: Assets.successAnimation,
+                    fallback: Icon(
+                      Icons.check_circle,
+                      size: AppConstants.iconSizeXL,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ),

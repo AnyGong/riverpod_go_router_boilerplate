@@ -72,6 +72,7 @@ export 'widgets/dialogs.dart';
 export 'widgets/expandable_widget.dart';
 export 'widgets/flip_card.dart';
 export 'widgets/inputs.dart';
+export 'widgets/lottie_animation.dart';
 export 'widgets/responsive_builder.dart';
 export 'widgets/shimmer_loading.dart';
 export 'widgets/spacing.dart';

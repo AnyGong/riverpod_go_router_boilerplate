@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
-import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart';
-import 'package:riverpod_go_router_boilerplate/core/extensions/context_extensions.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/buttons.dart';
-import 'package:riverpod_go_router_boilerplate/core/widgets/spacing.dart';
+import 'package:riverpod_go_router_boilerplate/core/core.dart';
 
 /// Error page shown when a route is not found (404).
 ///
@@ -24,7 +21,7 @@ class ErrorPage extends StatelessWidget {
           child: ResponsivePadding(
             horizontal: AppSpacing.lg,
             child: Column(
-              mainAxisAlignment: .center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildErrorIcon(context),
                 const VerticalSpace.lg(),
@@ -41,20 +38,22 @@ class ErrorPage extends StatelessWidget {
     );
   }
 
-  /// Builds the error icon container.
+  /// Builds the error icon/animation container.
   Widget _buildErrorIcon(final BuildContext context) {
     final colorScheme = context.colorScheme;
-
-    return Container(
-      padding: const .all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        shape: .circle,
-      ),
-      child: Icon(
-        Icons.error_outline,
-        size: 48,
-        color: colorScheme.error,
+    return LottieAnimationWidget(
+      assetPath: Assets.errorAnimation,
+      fallback: Container(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: colorScheme.errorContainer,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.error_outline,
+          size: AppConstants.iconSizeXL,
+          color: colorScheme.error,
+        ),
       ),
     );
   }
@@ -66,9 +65,9 @@ class ErrorPage extends StatelessWidget {
     return Text(
       'Page Not Found',
       style: textTheme.headlineSmall?.copyWith(
-        fontWeight: .bold,
+        fontWeight: FontWeight.bold,
       ),
-      textAlign: .center,
+      textAlign: TextAlign.center,
     );
   }
 
@@ -78,13 +77,13 @@ class ErrorPage extends StatelessWidget {
     final textTheme = context.textTheme;
 
     return Container(
-      padding: const .symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: .circular(AppConstants.borderRadiusSmall),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusSM),
       ),
       child: Text(
         path,
@@ -92,7 +91,7 @@ class ErrorPage extends StatelessWidget {
           color: colorScheme.onSurfaceVariant,
           fontFamily: 'monospace',
         ),
-        textAlign: .center,
+        textAlign: TextAlign.center,
       ),
     );
   }

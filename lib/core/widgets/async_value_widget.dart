@@ -49,23 +49,30 @@ class AsyncValueWidget<T> extends StatelessWidget {
 }
 
 /// A widget that displays a centered loading indicator.
+///
+/// By default uses a Lottie animation for a polished look.
+/// Set [useLottie] to false to use a simple CircularProgressIndicator.
 class LoadingWidget extends StatelessWidget {
   /// Creates a [LoadingWidget].
   const LoadingWidget({
     super.key,
-    this.size = 40.0,
+    this.size = AppConstants.lottieAnimationSize,
     this.strokeWidth = 3.0,
     this.message,
+    this.useLottie = true,
   });
 
   /// Size of the loading indicator.
   final double size;
 
-  /// Stroke width of the loading indicator.
+  /// Stroke width of the loading indicator (when not using Lottie).
   final double strokeWidth;
 
   /// Optional message displayed below the indicator.
   final String? message;
+
+  /// Whether to use Lottie animation instead of CircularProgressIndicator.
+  final bool useLottie;
 
   @override
   Widget build(final BuildContext context) {
@@ -73,13 +80,24 @@ class LoadingWidget extends StatelessWidget {
 
     return Center(
       child: Column(
-        mainAxisAlignment: .center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            width: size,
-            height: size,
-            child: CircularProgressIndicator(strokeWidth: strokeWidth),
-          ),
+          if (useLottie)
+            LottieAnimationWidget(
+              assetPath: Assets.loadingAnimation,
+              size: size,
+              fallback: SizedBox(
+                width: size,
+                height: size,
+                child: CircularProgressIndicator(strokeWidth: strokeWidth),
+              ),
+            )
+          else
+            SizedBox(
+              width: size,
+              height: size,
+              child: CircularProgressIndicator(strokeWidth: strokeWidth),
+            ),
           if (message != null) ...[
             const VerticalSpace.md(),
             Text(
@@ -98,6 +116,7 @@ class LoadingWidget extends StatelessWidget {
 /// A widget that displays an error message with an optional retry action.
 ///
 /// Named `AppErrorWidget` to avoid collision with Flutter's built-in `ErrorWidget`.
+/// By default uses a Lottie animation for a polished look.
 class AppErrorWidget extends StatelessWidget {
   /// Creates an [AppErrorWidget].
   const AppErrorWidget({
@@ -105,14 +124,21 @@ class AppErrorWidget extends StatelessWidget {
     super.key,
     this.onRetry,
     this.icon = Icons.error_outline,
+    this.useLottie = true,
+    this.animationSize = AppConstants.lottieAnimationSize,
   });
 
   /// Builds an [AppErrorWidget] from an error object.
   factory AppErrorWidget.fromError({
     required final Object error,
     final VoidCallback? onRetry,
+    final bool useLottie = true,
   }) {
-    return AppErrorWidget(message: error.toString(), onRetry: onRetry);
+    return AppErrorWidget(
+      message: error.toString(),
+      onRetry: onRetry,
+      useLottie: useLottie,
+    );
   }
 
   /// Error message to display.
@@ -121,8 +147,14 @@ class AppErrorWidget extends StatelessWidget {
   /// Optional retry callback.
   final VoidCallback? onRetry;
 
-  /// Icon displayed above the message.
+  /// Icon displayed above the message (when not using Lottie).
   final IconData icon;
+
+  /// Whether to use Lottie animation instead of an icon.
+  final bool useLottie;
+
+  /// Size of the animation or icon.
+  final double animationSize;
 
   @override
   Widget build(final BuildContext context) {
@@ -130,15 +162,26 @@ class AppErrorWidget extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const .all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: AppConstants.onboardingIconSize,
-              color: theme.colorScheme.error,
-            ),
+            if (useLottie)
+              LottieAnimationWidget(
+                assetPath: Assets.errorAnimation,
+                size: animationSize,
+                fallback: Icon(
+                  icon,
+                  size: AppConstants.onboardingIconSize,
+                  color: theme.colorScheme.error,
+                ),
+              )
+            else
+              Icon(
+                icon,
+                size: AppConstants.onboardingIconSize,
+                color: theme.colorScheme.error,
+              ),
             const VerticalSpace.md(),
             Text(
               'Something went wrong',
@@ -147,7 +190,7 @@ class AppErrorWidget extends StatelessWidget {
             const VerticalSpace.sm(),
             Text(
               message,
-              textAlign: .center,
+              textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -168,6 +211,8 @@ class AppErrorWidget extends StatelessWidget {
 }
 
 /// A widget that displays an empty or no-content state.
+///
+/// By default uses a Lottie animation for a polished look.
 class EmptyWidget extends StatelessWidget {
   /// Creates an [EmptyWidget].
   const EmptyWidget({
@@ -176,12 +221,14 @@ class EmptyWidget extends StatelessWidget {
     this.icon = Icons.inbox_outlined,
     this.action,
     this.actionLabel,
+    this.useLottie = true,
+    this.animationSize = AppConstants.lottieAnimationSize,
   });
 
   /// Message describing the empty state.
   final String message;
 
-  /// Icon displayed above the message.
+  /// Icon displayed above the message (when not using Lottie).
   final IconData icon;
 
   /// Optional action callback.
@@ -190,25 +237,42 @@ class EmptyWidget extends StatelessWidget {
   /// Label for the optional action button.
   final String? actionLabel;
 
+  /// Whether to use Lottie animation instead of an icon.
+  final bool useLottie;
+
+  /// Size of the animation or icon.
+  final double animationSize;
+
   @override
   Widget build(final BuildContext context) {
     final theme = context.theme;
 
     return Center(
       child: Padding(
-        padding: const .all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: AppConstants.iconSizeXXL,
-              color: theme.colorScheme.outline,
-            ),
+            if (useLottie)
+              LottieAnimationWidget(
+                assetPath: Assets.emptyAnimation,
+                size: animationSize,
+                fallback: Icon(
+                  icon,
+                  size: AppConstants.iconSizeXXL,
+                  color: theme.colorScheme.outline,
+                ),
+              )
+            else
+              Icon(
+                icon,
+                size: AppConstants.iconSizeXXL,
+                color: theme.colorScheme.outline,
+              ),
             const VerticalSpace.md(),
             Text(
               message,
-              textAlign: .center,
+              textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

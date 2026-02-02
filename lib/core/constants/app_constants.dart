@@ -194,6 +194,9 @@ abstract class AppConstants {
   /// Extra extra large icon size (80px) - large placeholders.
   static const double iconSizeXXL = 80;
 
+  /// Default Lottie animation size (120px).
+  static const double lottieAnimationSize = 120;
+
   /// Dialog icon size (48px).
   static const double dialogIconSize = 48;
 
