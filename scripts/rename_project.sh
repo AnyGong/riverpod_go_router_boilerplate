@@ -181,6 +181,8 @@ fi
 # Update Android manifests
 replace_in_files "AndroidManifest.xml" "$OLD_ANDROID_PACKAGE" "$NEW_ANDROID_PACKAGE"
 replace_in_files "AndroidManifest.xml" "android:label=\"$OLD_DISPLAY_NAME\"" "android:label=\"$NEW_DISPLAY_NAME\""
+# Also handle case where label is just the old package name (fallback)
+replace_in_files "AndroidManifest.xml" "android:label=\"$OLD_PACKAGE_NAME\"" "android:label=\"$NEW_DISPLAY_NAME\""
 
 # =============================================================================
 # Step 4: Update iOS configuration
@@ -250,12 +252,56 @@ find . -name "*.freezed.dart" -type f -delete 2>/dev/null || true
 echo -e "  ${GREEN}✓${NC} Cleaned build artifacts and generated files"
 
 # =============================================================================
+# Verification
+# =============================================================================
+echo ""
+echo -e "${YELLOW}Verifying rename...${NC}"
+
+# Check if old package name still exists in critical files
+VERIFICATION_PASSED=true
+
+if grep -r "$OLD_PACKAGE_NAME" pubspec.yaml 2>/dev/null | grep -q "name:"; then
+    echo -e "  ${RED}✗${NC} pubspec.yaml: Package name not updated correctly"
+    VERIFICATION_PASSED=false
+else
+    echo -e "  ${GREEN}✓${NC} pubspec.yaml: Package name updated"
+fi
+
+if grep -r "$OLD_ANDROID_PACKAGE" android/app/build.gradle.kts 2>/dev/null; then
+    echo -e "  ${RED}✗${NC} Android: Package ID not updated in build.gradle.kts"
+    VERIFICATION_PASSED=false
+else
+    echo -e "  ${GREEN}✓${NC} Android: Package ID updated"
+fi
+
+if grep -r "PRODUCT_BUNDLE_IDENTIFIER = $OLD_IOS_BUNDLE" ios/Runner.xcodeproj/project.pbxproj 2>/dev/null; then
+    echo -e "  ${RED}✗${NC} iOS: Bundle ID not updated in project.pbxproj"
+    VERIFICATION_PASSED=false
+else
+    echo -e "  ${GREEN}✓${NC} iOS: Bundle ID updated"
+fi
+
+if grep -r "PRODUCT_BUNDLE_IDENTIFIER = $OLD_IOS_BUNDLE" macos/Runner.xcodeproj/project.pbxproj 2>/dev/null; then
+    echo -e "  ${RED}✗${NC} macOS: Bundle ID not updated in project.pbxproj"
+    VERIFICATION_PASSED=false
+else
+    echo -e "  ${GREEN}✓${NC} macOS: Bundle ID updated"
+fi
+
+# =============================================================================
 # Finalize
 # =============================================================================
 echo ""
-echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}                    Rename Complete! 🎉                         ${NC}"
-echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+
+if [ "$VERIFICATION_PASSED" = true ]; then
+    echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}                    Rename Complete! 🎉                         ${NC}"
+    echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+else
+    echo -e "${YELLOW}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${YELLOW}                Rename Mostly Complete (See Above)              ${NC}"
+    echo -e "${YELLOW}═══════════════════════════════════════════════════════════════${NC}"
+fi
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Run: flutter pub get"

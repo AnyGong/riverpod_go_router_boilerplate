@@ -313,6 +313,7 @@ Widgets are organized into separate files. Use barrel exports (`animations.dart`
 | `AnimatedProgress`                   | Animated progress bars                                      | `animated_progress.dart`    |
 | `TypewriterText`                     | Typewriter text effect                                      | `typewriter_text.dart`      |
 | `ShimmerLoading` / `ShimmerListTile` | Skeleton loading states                                     | `shimmer_loading.dart`      |
+| `Lottie.asset()`                     | High-performance vector animations                          | `lottie` package            |
 
 ### Constants (`lib/core/constants/`)
 
@@ -323,35 +324,36 @@ Widgets are organized into separate files. Use barrel exports (`animations.dart`
 | `assets.dart`        | Image, icon, animation paths      |
 | `storage_keys.dart`  | Secure storage and prefs keys     |
 
-| Constant Class                   | Use For               |
-| :------------------------------- | :-------------------- |
-| `AppConstants.animationFast`     | Fast transitions      |
-| `AppConstants.animationNormal`   | Standard animations   |
-| `AppConstants.animationSlow`     | Emphasized animations |
-| `AppConstants.staggerDelay`      | List item stagger     |
-| `AppConstants.counterAnimation`  | Counter animations    |
-| `AppConstants.flipAnimation`     | Flip card duration    |
-| `AppConstants.bounceAnimation`   | Bounce effects        |
-| `AppConstants.expandAnimation`   | Expand/collapse       |
-| `AppConstants.shakeAnimation`    | Shake effects         |
-| `AppConstants.pulseAnimation`    | Pulse effects         |
-| `AppConstants.borderRadiusSM`    | Small border radii    |
-| `AppConstants.borderRadiusMD`    | Medium border radii   |
-| `AppConstants.borderRadiusLG`    | Large border radii    |
-| `AppConstants.iconSizeSM`        | Small icons (16px)    |
-| `AppConstants.iconSizeMD`        | Medium icons (24px)   |
-| `AppConstants.iconSizeXL`        | Large icons (48px)    |
-| `AppConstants.iconSizeXXL`       | XL icons (80px)       |
-| `AppConstants.dialogIconSize`    | Dialog icons (48px)   |
-| `AppConstants.chipIconSize`      | Chip icons (18px)     |
-| `AppConstants.debounceDelay`     | Debounce delays       |
-| `AppConstants.defaultPageSize`   | Pagination            |
-| `ApiEndpoints.login`             | API endpoint paths    |
-| `StorageKeys.accessToken`        | Secure storage keys   |
-| `Assets.logo`                    | Asset paths           |
-| `AppIcons.home`                  | Icon paths            |
-| `AnalyticsEvents.login`          | Analytics event keys  |
-| `RemoteConfigKeys.minAppVersion` | Remote config keys    |
+| Constant Class                   | Use For                |
+| :------------------------------- | :--------------------- |
+| `AppConstants.animationFast`     | Fast transitions       |
+| `AppConstants.animationNormal`   | Standard animations    |
+| `AppConstants.animationSlow`     | Emphasized animations  |
+| `AppConstants.staggerDelay`      | List item stagger      |
+| `AppConstants.counterAnimation`  | Counter animations     |
+| `AppConstants.flipAnimation`     | Flip card duration     |
+| `AppConstants.bounceAnimation`   | Bounce effects         |
+| `AppConstants.expandAnimation`   | Expand/collapse        |
+| `AppConstants.shakeAnimation`    | Shake effects          |
+| `AppConstants.pulseAnimation`    | Pulse effects          |
+| `AppConstants.borderRadiusSM`    | Small border radii     |
+| `AppConstants.borderRadiusMD`    | Medium border radii    |
+| `AppConstants.borderRadiusLG`    | Large border radii     |
+| `AppConstants.iconSizeSM`        | Small icons (16px)     |
+| `AppConstants.iconSizeMD`        | Medium icons (24px)    |
+| `AppConstants.iconSizeXL`        | Large icons (48px)     |
+| `AppConstants.iconSizeXXL`       | XL icons (80px)        |
+| `AppConstants.dialogIconSize`    | Dialog icons (48px)    |
+| `AppConstants.chipIconSize`      | Chip icons (18px)      |
+| `AppConstants.debounceDelay`     | Debounce delays        |
+| `AppConstants.defaultPageSize`   | Pagination             |
+| `ApiEndpoints.login`             | API endpoint paths     |
+| `StorageKeys.accessToken`        | Secure storage keys    |
+| `Assets.logo`                    | Asset paths            |
+| `Assets.loadingAnimation`        | Lottie animation paths |
+| `AppIcons.home`                  | Icon paths             |
+| `AnalyticsEvents.login`          | Analytics event keys   |
+| `RemoteConfigKeys.minAppVersion` | Remote config keys     |
 
 ### Extensions (`lib/core/extensions/`)
 
@@ -367,6 +369,11 @@ context.showSnackBar(msg)   // show snackbar
 context.showErrorSnackBar() // error snackbar
 'hello'.capitalized         // string utilities
 DateTime.now().timeAgo      // date formatting
+
+// Auth-Aware Navigation (requires WidgetRef from ConsumerWidget/HookConsumerWidget)
+context.pushRouteIfAuthenticatedElse(widgetRef: ref, authenticatedRoute: AppRoute.settings, unauthenticatedRoute: AppRoute.login)
+context.goRouteIfAuthenticatedElse(widgetRef: ref, authenticatedRoute: AppRoute.home, unauthenticatedRoute: AppRoute.login)
+context.executeIfAuthenticatedElse(widgetRef: ref, action: () => doAction(), unauthenticatedRoute: AppRoute.login)
 ```
 
 ### Hooks (`lib/core/hooks/`)
@@ -664,6 +671,16 @@ make test      # Run all tests
 make prepare   # Full setup (clean + l10n + gen)
 ```
 
+### App Icons & Splash Screen
+
+```bash
+# Generate app launcher icons (run after updating icon in assets/images/app_logo.png)
+dart run flutter_launcher_icons
+
+# Generate native splash screen
+dart run flutter_native_splash:create
+```
+
 ### Testing Guidelines
 
 - **Unit Tests**: For Logic/Repositories
@@ -689,6 +706,32 @@ make prepare   # Full setup (clean + l10n + gen)
 - **Spacing**: Use `VerticalSpace` / `HorizontalSpace` widgets.
 - **Lists**: Use `ListView.builder` for performance.
 - **Safe Areas**: Respect `SafeArea`.
+
+### Strict Responsive Guidelines
+
+**Breakpoints:**
+
+- Mobile: `< 600px` (single-column layouts)
+- Tablet: `600-1024px` (2-column, larger touch targets)
+- Desktop: `> 1024px` (multi-column, dense layouts)
+
+**Rules:**
+
+1. **Always test** on multiple screen sizes before submitting
+2. **Use responsive context extensions**: `context.isMobile`, `context.isTablet`, `context.isDesktop`
+3. **Use `context.responsive<T>()`** for dimension/layout values that vary by screen size
+4. **Use `ResponsiveVisibility`** to show/hide elements per breakpoint
+
+```dart
+// ✅ Responsive padding
+padding: EdgeInsets.all(
+  context.responsive<double>(
+    mobile: AppSpacing.sm,
+    tablet: AppSpacing.md,
+    desktop: AppSpacing.lg,
+  ),
+)
+```
 
 ### Accessibility
 

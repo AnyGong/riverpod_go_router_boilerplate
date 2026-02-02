@@ -7,7 +7,6 @@ import 'package:riverpod_go_router_boilerplate/core/constants/app_constants.dart
 import 'package:riverpod_go_router_boilerplate/core/constants/storage_keys.dart';
 import 'package:riverpod_go_router_boilerplate/core/storage/secure_storage.dart';
 import 'package:riverpod_go_router_boilerplate/core/utils/logger.dart';
-import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 
 /// Callback type for token refresh logic.
 /// Returns true if refresh was successful, false otherwise.
@@ -15,8 +14,7 @@ import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 typedef TokenRefreshCallback =
     Future<bool> Function(
       String? refreshToken,
-      Future<void> Function(String accessToken, String? refreshToken)
-      saveTokens,
+      Future<void> Function(String accessToken, String? refreshToken) saveTokens,
     );
 
 /// Callback type for handling authentication failures.
@@ -176,10 +174,9 @@ class AuthInterceptor extends QueuedInterceptor {
     // Notify about auth failure (triggers logout and redirect)
     if (onAuthFailure != null) {
       onAuthFailure!();
-    } else {
-      // Default behavior: invalidate auth provider
-      _ref.invalidate(authProvider);
     }
+    // Note: We do NOT invalidate authProvider here to avoid circular dependency errors.
+    // The auth provider will detect missing tokens on next build/read.
   }
 
   Future<void> _clearTokens() async {

@@ -202,7 +202,7 @@
 | **Auth**          | `local_auth`                    | Biometric authentication         |
 | **Firebase**      | `firebase_*`                    | Analytics, Crashlytics, Perf, RC |
 | **I18n**          | `flutter_localizations`         | Intl with ARB files              |
-| **Animations**    | `flutter_animate`               | Declarative animations           |
+| **Animations**    | `flutter_animate` + `lottie`    | Declarative & Lottie animations  |
 | **Code Style**    | `very_good_analysis`            | Strict lint rules (500+ rules)   |
 | **Testing**       | `mocktail` + `flutter_test`     | Unit & Widget tests              |
 | **Serialization** | `freezed` + `json_serializable` | Immutable models with codegen    |
@@ -529,6 +529,190 @@ We use `make` to simplify common tasks:
 | `make feature NAME=x` | Create new feature module              |
 | `make rename NAME=x`  | Rename the project                     |
 | `make help`           | Show all available commands            |
+
+---
+
+## 🎨 App Icons & Splash Screen
+
+### App Launcher Icons
+
+The boilerplate uses `flutter_launcher_icons` for generating app icons across all platforms.
+
+**Setup:**
+
+1. Place your icon file at `assets/images/app_logo.png` (1024x1024 recommended)
+2. Configure in `pubspec.yaml`:
+
+```yaml
+flutter_launcher_icons:
+  image_path: "assets/images/app_logo.png"
+  android: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_logo.png"
+  ios: true
+  remove_alpha_ios: true
+```
+
+3. Generate icons:
+
+```bash
+dart run flutter_launcher_icons
+```
+
+### Native Splash Screen
+
+The splash screen is configured via `flutter_native_splash`:
+
+```yaml
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/app_logo.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/app_logo.png
+```
+
+Generate:
+
+```bash
+dart run flutter_native_splash:create
+```
+
+---
+
+## 🎬 Lottie Animations
+
+Lottie enables high-performance, vector-based animations created in After Effects.
+
+### Usage
+
+```dart
+import 'package:lottie/lottie.dart';
+import 'package:your_app/core/constants/assets.dart';
+
+// Basic usage
+Lottie.asset(Assets.loadingAnimation)
+
+// With controller
+Lottie.asset(
+  Assets.successAnimation,
+  width: 100,
+  height: 100,
+  repeat: false,
+  onLoaded: (composition) {
+    // Animation loaded
+  },
+)
+
+// Network animations
+Lottie.network('https://example.com/animation.json')
+```
+
+### Available Placeholders
+
+| Asset                      | Path                              | Use For        |
+| :------------------------- | :-------------------------------- | :------------- |
+| `Assets.loadingAnimation`  | `assets/animations/loading.json`  | Loading states |
+| `Assets.successAnimation`  | `assets/animations/success.json`  | Success states |
+| `Assets.errorAnimation`    | `assets/animations/error.json`    | Error states   |
+| `Assets.emptyAnimation`    | `assets/animations/empty.json`    | Empty lists    |
+| `Assets.confettiAnimation` | `assets/animations/confetti.json` | Celebrations   |
+
+Find free animations at [LottieFiles.com](https://lottiefiles.com/).
+
+---
+
+## 📐 Responsive Design Guidelines
+
+The boilerplate enforces a strict responsive layout system. **Never use magic numbers for dimensions.**
+
+### Breakpoints
+
+| Breakpoint | Width        | Usage                          |
+| :--------- | :----------- | :----------------------------- |
+| Mobile     | `< 600px`    | Single-column layouts          |
+| Tablet     | `600-1024px` | 2-column layouts, larger touch |
+| Desktop    | `> 1024px`   | Multi-column, dense layouts    |
+
+### Responsive Widgets
+
+```dart
+// Check screen size
+if (context.isMobile) { ... }
+if (context.isTablet) { ... }
+if (context.isDesktop) { ... }
+
+// Responsive values
+final padding = context.responsive<double>(
+  mobile: 16,
+  tablet: 24,
+  desktop: 32,
+);
+
+// ResponsiveBuilder for complex layouts
+ResponsiveBuilder(
+  mobile: (context) => MobileLayout(),
+  tablet: (context) => TabletLayout(),
+  desktop: (context) => DesktopLayout(),
+)
+
+// Show/hide based on screen size
+ResponsiveVisibility(
+  hiddenOnMobile: true,
+  child: SideNavigationRail(),
+)
+```
+
+### Strict Rules
+
+1. **Always use `AppSpacing`** for padding/margin: `AppSpacing.sm`, `AppSpacing.md`, `AppSpacing.lg`
+2. **Always use `AppConstants`** for dimensions: `AppConstants.borderRadiusMD`, `AppConstants.iconSizeMD`
+3. **Test on multiple screen sizes** before submitting
+4. **Use `VerticalSpace` / `HorizontalSpace`** widgets instead of raw `SizedBox`
+
+---
+
+## 🔐 Auth-Aware Navigation
+
+The boilerplate includes convenient auth-aware navigation extensions.
+
+### Navigate Based on Auth Status
+
+```dart
+// Push authenticated route OR redirect to login
+context.pushRouteIfAuthenticatedElse(
+  widgetRef: ref,
+  authenticatedRoute: AppRoute.settings,
+  unauthenticatedRoute: AppRoute.login,
+);
+
+// Go (replace stack) based on auth
+context.goRouteIfAuthenticatedElse(
+  widgetRef: ref,
+  authenticatedRoute: AppRoute.home,
+  unauthenticatedRoute: AppRoute.login,
+);
+```
+
+### Execute Action Only If Authenticated
+
+```dart
+// Execute action if authenticated, else redirect to login
+context.executeIfAuthenticatedElse(
+  widgetRef: ref,
+  action: () => sendNotification(),
+  unauthenticatedRoute: AppRoute.login,
+);
+
+// Example with async action
+onPressed: () {
+  context.executeIfAuthenticatedElse(
+    widgetRef: ref,
+    action: () => _submitForm(ref),
+    unauthenticatedRoute: AppRoute.login,
+  );
+},
+```
 
 ---
 

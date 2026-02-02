@@ -176,12 +176,57 @@ Assets.onboarding.page1       // 'assets/images/onboarding_1.png'
 // Animations (Lottie)
 Assets.loadingAnimation       // 'assets/animations/loading.json'
 Assets.successAnimation       // 'assets/animations/success.json'
+Assets.errorAnimation         // 'assets/animations/error.json'
+Assets.emptyAnimation         // 'assets/animations/empty.json'
+Assets.confettiAnimation      // 'assets/animations/confetti.json'
 
 // Icons (SVG)
 AppIcons.home                 // 'assets/icons/home.svg'
 AppIcons.settings             // 'assets/icons/settings.svg'
 AppIcons.google               // 'assets/icons/google.svg'
 ```
+
+#### Lottie Animation Usage
+
+The boilerplate includes `lottie` package for high-performance vector animations.
+
+```dart
+import 'package:lottie/lottie.dart';
+
+// Basic usage
+Lottie.asset(Assets.loadingAnimation)
+
+// With size and repeat control
+Lottie.asset(
+  Assets.successAnimation,
+  width: 100,
+  height: 100,
+  repeat: false,  // Play once
+)
+
+// With animation controller
+class AnimatedWidget extends HookWidget {
+  @override
+  Widget build(BuildContext context) {
+    final controller = useAnimationController();
+
+    return Lottie.asset(
+      Assets.confettiAnimation,
+      controller: controller,
+      onLoaded: (composition) {
+        controller
+          ..duration = composition.duration
+          ..forward();
+      },
+    );
+  }
+}
+
+// From network (for dynamic content)
+Lottie.network('https://example.com/animation.json')
+```
+
+**Find animations**: [LottieFiles.com](https://lottiefiles.com) has thousands of free animations.
 
 ### `StorageKeys`
 
@@ -340,6 +385,49 @@ ResponsiveBuilder(
   tablet: TabletLayout(),
   desktop: DesktopLayout(),
 )
+```
+
+#### Responsive Design Guidelines
+
+**Breakpoints:**
+| Screen Type | Width | Usage |
+|:------------|:------|:------|
+| Mobile | `< 600px` | Single-column, full-width content |
+| Tablet | `600-1024px` | 2-column layouts, larger touch targets |
+| Desktop | `> 1024px` | Multi-column, dense information |
+
+**Strict Rules:**
+
+1. **Always use `AppSpacing`** for padding/margin (`AppSpacing.sm`, `AppSpacing.md`, `AppSpacing.lg`)
+2. **Always use `AppConstants`** for dimensions (`borderRadiusMD`, `iconSizeMD`, `buttonHeight`)
+3. **Test on multiple screen sizes** - use `flutter run -d <device>` with different screen sizes
+4. **Use responsive context extensions** - `context.isMobile`, `context.isTablet`, `context.isDesktop`
+
+```dart
+// ✅ Responsive padding
+padding: EdgeInsets.all(
+  context.responsive<double>(
+    mobile: AppSpacing.sm,
+    tablet: AppSpacing.md,
+    desktop: AppSpacing.lg,
+  ),
+)
+
+// ✅ Conditional layout
+if (context.isMobile) {
+  return SingleColumnLayout();
+} else {
+  return TwoColumnLayout();
+}
+
+// ✅ ResponsiveVisibility
+ResponsiveVisibility(
+  hiddenOnMobile: true,
+  child: SideNavigation(),
+)
+
+// ❌ DON'T use magic numbers
+padding: EdgeInsets.all(16)  // Use AppSpacing.md instead
 ```
 
 ### Input Widgets
@@ -771,6 +859,28 @@ context.unfocus()       // Dismiss keyboard
 context.showSnackBar('Message')
 context.showErrorSnackBar('Error!')
 context.showSuccessSnackBar('Success!')
+
+// Auth-Aware Navigation (requires WidgetRef)
+// Push to authenticated route OR redirect to login
+context.pushRouteIfAuthenticatedElse(
+  widgetRef: ref,
+  authenticatedRoute: AppRoute.settings,
+  unauthenticatedRoute: AppRoute.login,
+)
+
+// Go (replace) based on auth status
+context.goRouteIfAuthenticatedElse(
+  widgetRef: ref,
+  authenticatedRoute: AppRoute.home,
+  unauthenticatedRoute: AppRoute.login,
+)
+
+// Execute action if authenticated, else redirect
+context.executeIfAuthenticatedElse(
+  widgetRef: ref,
+  action: () => sendNotification(),
+  unauthenticatedRoute: AppRoute.login,
+)
 ```
 
 ### String Extensions
@@ -1273,6 +1383,28 @@ make format    # Format code & apply fixes
 make lint      # Run static analysis
 make test      # Run all tests
 make prepare   # Full setup (clean + l10n + gen)
+```
+
+### App Icons & Splash Screen
+
+```bash
+# Generate app launcher icons (run after updating icon in assets/images/app_logo.png)
+dart run flutter_launcher_icons
+
+# Generate native splash screen
+dart run flutter_native_splash:create
+```
+
+**Icon Configuration** (in `pubspec.yaml`):
+
+```yaml
+flutter_launcher_icons:
+  image_path: "assets/images/app_logo.png" # 1024x1024 recommended
+  android: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_logo.png"
+  ios: true
+  remove_alpha_ios: true
 ```
 
 ### Releasing a New Version

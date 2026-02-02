@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_go_router_boilerplate/app/router/app_router.dart';
+import 'package:riverpod_go_router_boilerplate/features/auth/auth.dart';
 
 /// BuildContext extension methods for common operations.
 extension BuildContextExtensions on BuildContext {
@@ -88,8 +92,7 @@ extension BuildContextExtensions on BuildContext {
   void unfocus() => FocusScope.of(this).unfocus();
 
   /// Request focus on a specific node
-  void requestFocus(final FocusNode node) =>
-      FocusScope.of(this).requestFocus(node);
+  void requestFocus(final FocusNode node) => FocusScope.of(this).requestFocus(node);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // SNACKBAR
@@ -126,5 +129,94 @@ extension BuildContextExtensions on BuildContext {
     ).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // NAVIGATION (with Authentication Check)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Navigate to a route based on authentication status.
+  ///
+  /// If the user is authenticated, navigates to [authenticatedRoute].
+  /// Otherwise, navigates to [unauthenticatedRoute] (typically login).
+  ///
+  /// **Requires [widgetRef]** - Pass the WidgetRef from your ConsumerWidget/HookConsumerWidget
+  ///
+  /// Example:
+  /// ```dart
+  /// context.pushRouteIfAuthenticatedElse(
+  ///   widgetRef: ref,
+  ///   authenticatedRoute: AppRoute.settings,
+  ///   unauthenticatedRoute: AppRoute.login,
+  /// );
+  /// ```
+  void pushRouteIfAuthenticatedElse({
+    required final WidgetRef widgetRef,
+    required final AppRoute authenticatedRoute,
+    required final AppRoute unauthenticatedRoute,
+  }) {
+    final isAuthenticated = widgetRef.read(isAuthenticatedProvider);
+
+    if (isAuthenticated) {
+      push(authenticatedRoute.path);
+    } else {
+      go(unauthenticatedRoute.path);
+    }
+  }
+
+  /// Navigate using [go] based on authentication status.
+  ///
+  /// Similar to [pushRouteIfAuthenticatedElse] but uses [go] for the
+  /// authenticated route (replaces the current route stack).
+  ///
+  /// Example:
+  /// ```dart
+  /// context.goRouteIfAuthenticatedElse(
+  ///   widgetRef: ref,
+  ///   authenticatedRoute: AppRoute.home,
+  ///   unauthenticatedRoute: AppRoute.login,
+  /// );
+  /// ```
+  void goRouteIfAuthenticatedElse({
+    required final WidgetRef widgetRef,
+    required final AppRoute authenticatedRoute,
+    required final AppRoute unauthenticatedRoute,
+  }) {
+    final isAuthenticated = widgetRef.read(isAuthenticatedProvider);
+
+    if (isAuthenticated) {
+      go(authenticatedRoute.path);
+    } else {
+      go(unauthenticatedRoute.path);
+    }
+  }
+
+  /// Execute an action only if the user is authenticated.
+  ///
+  /// If authenticated, executes [action]. Otherwise, navigates to login.
+  /// Useful for protecting actions that require authentication.
+  ///
+  /// **Requires [widgetRef]** - Pass the WidgetRef from your ConsumerWidget/HookConsumerWidget
+  ///
+  /// Example:
+  /// ```dart
+  /// context.executeIfAuthenticatedElse(
+  ///   widgetRef: ref,
+  ///   action: () => sendNotification(),
+  ///   unauthenticatedRoute: AppRoute.login,
+  /// );
+  /// ```
+  void executeIfAuthenticatedElse({
+    required final WidgetRef widgetRef,
+    required final VoidCallback action,
+    required final AppRoute unauthenticatedRoute,
+  }) {
+    final isAuthenticated = widgetRef.read(isAuthenticatedProvider);
+
+    if (isAuthenticated) {
+      action();
+    } else {
+      go(unauthenticatedRoute.path);
+    }
   }
 }

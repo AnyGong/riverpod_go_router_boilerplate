@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,12 +23,13 @@ class AppBootstrap extends StatelessWidget {
   /// Call this before runApp().
   static Future<void> initialize({
     final Environment environment = Environment.dev,
+    final bool? useMocks,
   }) async {
     // Ensure Flutter bindings are initialized
     WidgetsFlutterBinding.ensureInitialized();
 
     // Initialize environment configuration
-    EnvConfig.initialize(environment: environment);
+    EnvConfig.initialize(environment: environment, useMocks: useMocks);
     AppLogger.instance.i('Environment initialized: ${environment.name}');
 
     // Set preferred orientations
@@ -51,11 +53,16 @@ class AppBootstrap extends StatelessWidget {
     // ─────────────────────────────────────────────────────────────────────────────
     // Firebase Services Initialization
     // ─────────────────────────────────────────────────────────────────────────────
+    // Note: Crashlytics must be initialized first for error handling.
     // TODO: Uncomment after running `flutterfire configure`
-    // await CrashlyticsService.initialize();
-    // await AnalyticsService(null as dynamic).initialize(); // Use container ref
-    // await PerformanceService(null as dynamic).initialize();
-    // await RemoteConfigService(null as dynamic).initialize();
+    // await CrashlyticsService.initialize(
+    //   environment: environment,
+    //   enableInDebug: false,
+    // );
+
+    // Note: Analytics, Performance, and RemoteConfig services are lazily initialized
+    // when first accessed through their Riverpod providers. They don't require
+    // explicit initialization here since they handle Firebase setup internally.
 
     // Set up error handling (falls back to local logging if Crashlytics not initialized)
     _setupErrorHandling();
@@ -100,18 +107,17 @@ class AppBootstrap extends StatelessWidget {
     final Object error,
     final StackTrace? stack,
   ) async {
-    // TODO: Once Firebase is configured, uncomment the following:
-    // try {
-    //   await FirebaseCrashlytics.instance.recordError(
-    //     error,
-    //     stack,
-    //     reason: 'Uncaught error',
-    //     fatal: true,
-    //   );
-    //   return;
-    // } catch (_) {
-    //   // Crashlytics not available, fall through to local logging
-    // }
+    try {
+      await FirebaseCrashlytics.instance.recordError(
+        error,
+        stack,
+        reason: 'Uncaught error',
+        fatal: true,
+      );
+      return;
+    } catch (_) {
+      // Crashlytics not available, fall through to local logging
+    }
 
     // Fallback: Log locally until Firebase is configured
     AppLogger.instance.w('Error would be sent to crash reporting: $error');
@@ -137,6 +143,7 @@ class AppBootstrap extends StatelessWidget {
 /// void main() {
 ///   runGuardedApp(
 ///     environment: Environment.prod,
+///     useMocks: false,  // Use real API instead of mocks
 ///     appBuilder: (sharedPrefs, connectivity) => ProviderScope(
 ///       overrides: [
 ///         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
@@ -154,11 +161,15 @@ Future<void> runGuardedApp({
   )
   appBuilder,
   final Environment environment = Environment.dev,
+  final bool? useMocks,
 }) async {
   await runZonedGuarded(
     () async {
       // Initialize bootstrap (bindings, error handling, etc.)
-      await AppBootstrap.initialize(environment: environment);
+      await AppBootstrap.initialize(
+        environment: environment,
+        useMocks: useMocks,
+      );
 
       // Initialize services that need to be ready before UI
       final sharedPreferences = await SharedPreferences.getInstance();
