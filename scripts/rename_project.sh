@@ -28,15 +28,39 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Default values
-OLD_PACKAGE_NAME="riverpod_go_router_boilerplate"
-OLD_ORG="com.example"
-OLD_DISPLAY_NAME="Riverpod Go Router Boilerplate"
-
 # Get new values from arguments
 NEW_PACKAGE_NAME="${1:-}"
 NEW_ORG="${2:-}"
 NEW_DISPLAY_NAME="${3:-}"
+
+# Read current values from project files
+if [ -f "pubspec.yaml" ]; then
+    OLD_PACKAGE_NAME=$(grep "^name:" pubspec.yaml | awk '{print $2}')
+else
+    echo -e "${RED}Error: pubspec.yaml not found${NC}"
+    exit 1
+fi
+
+# Try to detect current organization from Android config
+if [ -f "android/app/build.gradle.kts" ]; then
+    # Extract applicationId in format: "com.example.package_name"
+    OLD_ANDROID_PACKAGE=$(grep "applicationId" android/app/build.gradle.kts | head -1 | sed 's/.*"\(.*\)".*/\1/')
+    # Extract org by removing the package name suffix
+    OLD_ORG=$(echo "$OLD_ANDROID_PACKAGE" | sed "s/\.${OLD_PACKAGE_NAME}$//")
+else
+    # Fallback to boilerplate default
+    OLD_ORG="com.example"
+fi
+
+# Try to detect display name from pubspec.yaml
+if grep -q "^description:" pubspec.yaml; then
+    OLD_DISPLAY_NAME=$(grep "^description:" pubspec.yaml | sed 's/description: //; s/"//g' | head -c 50)
+fi
+
+# If display name is still empty, derive it from package name
+if [ -z "$OLD_DISPLAY_NAME" ]; then
+    OLD_DISPLAY_NAME=$(echo "$OLD_PACKAGE_NAME" | sed 's/_/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+fi
 
 # Validate arguments
 if [ -z "$NEW_PACKAGE_NAME" ] || [ -z "$NEW_ORG" ]; then
