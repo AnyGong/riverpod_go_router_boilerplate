@@ -29,7 +29,7 @@ class NotificationsEnabled extends _$NotificationsEnabled {
 ///
 /// Demonstrates:
 /// - Using Riverpod Notifier with code generation
-/// - Proper widget structure following copilot-instructions
+/// - Proper widget structure following clean architecture principles
 /// - Using context extensions for theme access
 class NotificationSettings extends ConsumerWidget {
   /// Creates a [NotificationSettings] instance.
@@ -46,9 +46,7 @@ class NotificationSettings extends ConsumerWidget {
         SwitchListTile(
           secondary: Icon(
             isEnabled ? Icons.notifications_active : Icons.notifications_off,
-            color: isEnabled
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurfaceVariant,
+            color: isEnabled ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
           ),
           title: Text(l10n.notificationsEnabled),
           subtitle: Text(
@@ -59,9 +57,7 @@ class NotificationSettings extends ConsumerWidget {
           ),
           value: isEnabled,
           onChanged: (final value) {
-            ref
-                .read(notificationsEnabledProvider.notifier)
-                .setEnabled(enabled: value);
+            ref.read(notificationsEnabledProvider.notifier).setEnabled(enabled: value);
             final message = value
                 ? l10n.notificationsEnabledFeedback
                 : l10n.notificationsDisabledFeedback;

@@ -85,7 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md with full setup instructions
 - DEVELOPER_GUIDE.md with component documentation
-- AI instructions (`.github/copilot-instructions.md`)
 
 ### Security
 

@@ -2750,7 +2750,7 @@ A: Impeller pre-compiles shaders eliminating that source of jank. Frame drops no
 A: Yes! Impeller handles complex gradients, shadows, blur, and staggered animations smoothly. Don't worry about rendering performance unless you're doing particle systems or real-time physics.
 
 **Q: How do I cancel timers properly?**
-A: Store timer in `useRef<Timer?>()` in hooks, cancel before creating new one with `timerRef.value?.cancel()`, and always cancel in `useEffect` cleanup or `dispose()`. See copilot-instructions.md anti-patterns section for zombie timer bug example.
+A: Store timer in `useRef<Timer?>()` in hooks, cancel before creating new one with `timerRef.value?.cancel()`, and always cancel in `useEffect` cleanup or `dispose()`.
 
 **Q: Should all text use localization?**
 A: Yes! **All user-facing text must use localization keys.** Never hardcode strings like button labels, dialog messages, or placeholders. Use `AppLocalizations.of(context).key`.

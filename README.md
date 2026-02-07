@@ -89,8 +89,6 @@ This boilerplate is built on **2026 best practices** for maximum productivity:
 | **Dot Shorthand Syntax**       | `variant: .primary` instead of `AppButtonVariant.primary` | Cleaner, more readable code                    |
 | **Pattern Matching**           | `if (data case Success(:final value))`                    | Type-safe destructuring                        |
 
-See **[Copilot Instructions](.github/copilot-instructions.md)** for comprehensive implementation guides.
-
 ---
 
 ## ✨ Features
