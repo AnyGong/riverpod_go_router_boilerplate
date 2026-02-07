@@ -855,35 +855,101 @@ GoRoute(
 2. Install Firebase CLI: `npm install -g firebase-tools`
 3. Install FlutterFire CLI: `dart pub global activate flutterfire_cli`
 
-### Configuration Steps
+### Step 1: Configure FlutterFire
+
+Run this command in your project root:
 
 ```bash
-# 1. Login to Firebase
-firebase login
-
-# 2. Configure FlutterFire (run in project root)
 flutterfire configure
 ```
 
-This generates `lib/firebase_options.dart` automatically.
+This will:
 
-### Enable Services
+- Ask you to select your Firebase project
+- Generate `lib/firebase_options.dart` automatically
+- Update your pubspec.yaml with required Firebase packages
 
-In Firebase Console, enable:
+**This file is essential** — without it, Firebase initialization will fail with "DefaultFirebaseOptions not found".
 
-- **Analytics**: Automatically enabled
+### Step 2: Enable Firebase Services in Console
+
+In your Firebase Console, enable the services you need:
+
+- **Analytics**: Usually enabled by default
 - **Crashlytics**: Dashboard → Crashlytics → Enable
 - **Performance**: Dashboard → Performance → Get Started
 - **Remote Config**: Dashboard → Remote Config → Create configuration
 
-### Uncomment Initialization
+### Step 3: Uncomment Firebase Initialization
 
-In `lib/app/bootstrap.dart`, uncomment the Firebase initialization:
+After `flutterfire configure` generates the file, uncomment the initialization code.
+
+#### 3a. Uncomment import in `lib/core/crashlytics/crashlytics_service.dart`
+
+Find the commented section and uncomment the import:
 
 ```dart
-// Uncomment this line:
-await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+// Add this import at the top of the file:
+import 'package:riverpod_go_router_boilerplate/firebase_options.dart';
 ```
+
+#### 3b. Uncomment Firebase init in `lib/core/crashlytics/crashlytics_service.dart`
+
+Find the `initialize()` method and uncomment:
+
+```dart
+if (Firebase.apps.isEmpty) {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+```
+
+#### 3c. Uncomment Crashlytics in `lib/app/bootstrap.dart`
+
+In the `AppBootstrap.initialize()` method, uncomment:
+
+```dart
+await CrashlyticsService.initialize(
+  environment: environment,
+  enableInDebug: false,
+);
+```
+
+### Step 4: Regenerate and Test
+
+```bash
+# Regenerate code to apply changes
+make gen
+
+# Run the app
+flutter run
+```
+
+### Troubleshooting Firebase
+
+<details>
+<summary><strong>Error: "DefaultFirebaseOptions" cannot be found</strong></summary>
+
+**Solution:**
+
+1. Ensure `firebase_options.dart` exists in `lib/`
+2. Uncomment the import in `crashlytics_service.dart`
+3. Run `make gen` to regenerate code
+4. Clean and rebuild: `flutter clean && flutter pub get`
+
+</details>
+
+<details>
+<summary><strong>Error: "FirebaseCore platform not initialized"</strong></summary>
+
+**Solution:**
+
+1. Ensure Firebase is initialized in `CrashlyticsService.initialize()`
+2. Call this method early in `AppBootstrap.initialize()` before any Firebase services are used
+3. Make sure the Crashlytics initialization is uncommented in `bootstrap.dart`
+
+</details>
 
 ---
 

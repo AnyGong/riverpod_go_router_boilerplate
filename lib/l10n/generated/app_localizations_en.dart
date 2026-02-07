@@ -334,7 +334,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goToSettings => 'Go to Settings';
 
   @override
-  String get notificationsEnabled => 'Notifications enabled';
+  String get notificationsEnabled => 'Notifications Enabled';
 
   @override
   String get notificationsEnabledDescription =>
@@ -429,5 +429,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingGetStarted => 'Get Started';
 
   @override
-  String get notificationsDisabled => 'Notifications disabled';
+  String get notificationsEnabledFeedback => 'Notifications enabled';
+
+  @override
+  String get notificationsDisabledFeedback => 'Notifications disabled';
 }

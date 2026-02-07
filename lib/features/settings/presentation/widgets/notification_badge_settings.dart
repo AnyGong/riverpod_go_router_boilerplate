@@ -63,8 +63,8 @@ class NotificationSettings extends ConsumerWidget {
                 .read(notificationsEnabledProvider.notifier)
                 .setEnabled(enabled: value);
             final message = value
-                ? l10n.notificationsEnabled
-                : l10n.notificationsDisabled;
+                ? l10n.notificationsEnabledFeedback
+                : l10n.notificationsDisabledFeedback;
             ref.read(feedbackServiceProvider).showInfo(message);
           },
         ),

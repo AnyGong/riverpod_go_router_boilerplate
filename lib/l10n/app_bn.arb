@@ -121,6 +121,6 @@
   "onboardingBack": "পূর্ববর্তী",
   "onboardingNext": "পরবর্তী",
   "onboardingGetStarted": "শুরু করুন",
-  "notificationsEnabled": "নোটিফিকেশন সক্রিয় করা হয়েছে",
-  "notificationsDisabled": "নোটিফিকেশন নিষ্ক্রিয় করা হয়েছে"
+  "notificationsEnabledFeedback": "নোটিফিকেশন সক্রিয় করা হয়েছে",
+  "notificationsDisabledFeedback": "নোটিফিকেশন নিষ্ক্রিয় করা হয়েছে"
 }

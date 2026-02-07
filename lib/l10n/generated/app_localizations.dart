@@ -638,10 +638,10 @@ abstract class AppLocalizations {
   /// **'Go to Settings'**
   String get goToSettings;
 
-  /// Feedback message when notifications are enabled
+  /// Notifications toggle label
   ///
   /// In en, this message translates to:
-  /// **'Notifications enabled'**
+  /// **'Notifications Enabled'**
   String get notificationsEnabled;
 
   /// Notifications settings description
@@ -812,11 +812,17 @@ abstract class AppLocalizations {
   /// **'Get Started'**
   String get onboardingGetStarted;
 
+  /// Feedback message when notifications are enabled
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications enabled'**
+  String get notificationsEnabledFeedback;
+
   /// Feedback message when notifications are disabled
   ///
   /// In en, this message translates to:
   /// **'Notifications disabled'**
-  String get notificationsDisabled;
+  String get notificationsDisabledFeedback;
 }
 
 class _AppLocalizationsDelegate

@@ -336,7 +336,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get goToSettings => 'সেটিংসে যান';
 
   @override
-  String get notificationsEnabled => 'নোটিফিকেশন সক্রিয় করা হয়েছে';
+  String get notificationsEnabled => 'নোটিফিকেশন সক্রিয়';
 
   @override
   String get notificationsEnabledDescription =>
@@ -430,5 +430,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get onboardingGetStarted => 'শুরু করুন';
 
   @override
-  String get notificationsDisabled => 'নোটিফিকেশন নিষ্ক্রিয় করা হয়েছে';
+  String get notificationsEnabledFeedback => 'নোটিফিকেশন সক্রিয় করা হয়েছে';
+
+  @override
+  String get notificationsDisabledFeedback =>
+      'নোটিফিকেশন নিষ্ক্রিয় করা হয়েছে';
 }

@@ -644,13 +644,13 @@
     "description": "Get started button text (final onboarding page)"
   },
 
-  "notificationsEnabled": "Notifications enabled",
-  "@notificationsEnabled": {
+  "notificationsEnabledFeedback": "Notifications enabled",
+  "@notificationsEnabledFeedback": {
     "description": "Feedback message when notifications are enabled"
   },
 
-  "notificationsDisabled": "Notifications disabled",
-  "@notificationsDisabled": {
+  "notificationsDisabledFeedback": "Notifications disabled",
+  "@notificationsDisabledFeedback": {
     "description": "Feedback message when notifications are disabled"
   }
 }

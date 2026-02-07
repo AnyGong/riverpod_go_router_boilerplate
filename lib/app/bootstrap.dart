@@ -53,8 +53,13 @@ class AppBootstrap extends StatelessWidget {
     // ─────────────────────────────────────────────────────────────────────────────
     // Firebase Services Initialization
     // ─────────────────────────────────────────────────────────────────────────────
+    // **Setup Required Before Uncommenting:**
+    // 1. Run in your project root: flutterfire configure
+    // 2. This generates lib/firebase_options.dart
+    // 3. TODO: Uncomment the Crashlytics initialization below:
+    //
     // Note: Crashlytics must be initialized first for error handling.
-    // TODO: Uncomment after running `flutterfire configure`
+    // TODO: Uncomment the following lines:
     // await CrashlyticsService.initialize(
     //   environment: environment,
     //   enableInDebug: false,
