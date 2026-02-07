@@ -2,7 +2,36 @@
 
 You are an expert Flutter developer working on a production-grade boilerplate project. Your goal is to maintain the highest standards of code quality, architecture, and maintainability.
 
+**This guide is optimized for Flutter 3.x and Dart 3.10+ with 2026 best practices.**
+
 **Reference**: For detailed documentation of all reusable components, see `DEVELOPER_GUIDE.md`.
+
+---
+
+## 🎯 2026 Modern Patterns Quick Reference
+
+**Key technologies and patterns you MUST use:**
+
+| Category              | 2026 Standard                                         | Why                                                         |
+| :-------------------- | :---------------------------------------------------- | :---------------------------------------------------------- |
+| **State Management**  | Riverpod 3.0 with code generation                     | Compile-time safety, offline persistence, mutations API     |
+| **Rendering Engine**  | Impeller (default)                                    | Eliminates shader jank, 120fps support, precompiled shaders |
+| **Language Features** | Dart 3.10+ (extension types, dot shorthand, patterns) | Zero-cost abstractions, cleaner code, type safety           |
+| **Persistence**       | Riverpod offline with `@JsonPersist()`                | Automatic stale-while-revalidate caching                    |
+| **Side Effects**      | Mutations API                                         | Declarative loading/error states for write operations       |
+| **Testing**           | Unit + Widget + Golden + Integration                  | 80%+ coverage with visual regression testing                |
+| **Architecture**      | Feature-first clean architecture                      | Modular, testable, scalable                                 |
+
+**Critical 2026 changes from earlier versions:**
+
+- ✅ Use `@JsonPersist()` for offline persistence (Riverpod 3.0)
+- ✅ Use Mutations API for form submissions and button actions
+- ✅ Use extension types for domain-specific type safety (zero-cost)
+- ✅ Use dot shorthand syntax: `variant: .primary` not `AppButtonVariant.primary`
+- ✅ Use pattern matching: `if (data case Success(:final value))` over traditional conditionals
+- ✅ Impeller eliminates need for render optimization - focus on logic performance
+- ✅ Multiple `_` wildcards allowed in same scope (Dart 3.7+)
+- ✅ Golden tests for visual regression (catch UI changes)
 
 ---
 
@@ -87,33 +116,86 @@ When making significant changes (new features, bug fixes, breaking changes), upd
 
 ### File Size & Organization
 
-You must strictly adhere to the following file size limits to ensure maintainability. If a file exceeds these limits, you **MUST** refactor it immediately by extracting widgets, configuration, or logic into separate files.
+**These are guidelines, not hard constraints for pages with private widgets.**
 
-| File Type            | Max Lines     | Action if Exceeded                              |
-| -------------------- | ------------- | ----------------------------------------------- |
-| **Services / Logic** | **200 lines** | Extract configs, enums, or sub-services.        |
-| **UI Widgets**       | **250 lines** | Extract private widgets or separate components. |
-| **Test Files**       | ~300 lines    | Split by test group if possible (flexible).     |
+#### For Services / Logic Files
 
-**Never** bypass these limits. If you write code that exceeds them, stop and refactor.
+**Strict limit: 200 lines maximum**
 
-### One Class Per File
+- Extract configs, enums, or sub-services if exceeded
+- These files should be focused and modular
+
+#### For Pages with Private Widgets
+
+**No hard limit** - Keep pages together if all private widgets serve that page
+
+- Example: `login_page.dart` (421 lines), `otp_verification_page.dart` (508 lines) ✅
+- **Reason**: Better discoverability and understanding the complete page structure at a glance
+- **Condition**: All private widgets must be tightly scoped to serve the parent page widget
+- **Organization**: Page widget first, then private helper widgets in reading order
+
+#### For Reusable Component Files
+
+**Guideline: 250 lines**
+
+- If a reusable widget file exceeds this, extract independent widgets to separate files
+- Multiple independent widgets → Each gets its own file
+- Related widgets that serve together → Can stay together
+
+#### For Test Files
+
+**Flexible: ~300 lines**
+
+- Split by test group if possible
+- Keep related tests together for readability
+
+### One Class Per File Principle
 
 - **Rule**: One public class/widget per file (one responsibility per file)
 - **Benefits**: Easier to navigate, maintain, test, and reason about code
 - **Exception**: Private helper classes/widgets are acceptable if they only serve one specific parent class
-- **When to extract**: If you have multiple independent classes/widgets, give each their own file
 
 ```dart
-// ✅ Good - one widget per file
-// button.dart
+// ✅ CORRECT - Page with private helper widgets (same file)
+// login_page.dart (421 lines)
+class LoginPage extends HookConsumerWidget { ... }
+class _HeroSection extends HookConsumerWidget { ... }
+class _BottomSection extends HookConsumerWidget { ... }
+class _PhoneInput extends StatelessWidget { ... }
+// All private widgets only serve LoginPage → Good design!
+
+// ✅ CORRECT - Single reusable widget per file
+// my_button.dart
 class MyButton extends StatelessWidget { ... }
 
-// ❌ Avoid - multiple unrelated classes in one file
-// button.dart
+// ❌ AVOID - Multiple independent widgets in one file
+// buttons.dart (BAD - widgets don't serve each other)
 class MyButton extends StatelessWidget { ... }
 class MyCard extends StatelessWidget { ... }
 class MyDialog extends StatelessWidget { ... }
+// These should each have their own file
+
+// ❌ AVOID - Private widgets that don't serve the parent
+// page.dart (BAD STRUCTURE)
+class MyPage extends StatelessWidget { ... }
+class UnrelatedWidget extends StatelessWidget { ... }  // Doesn't serve MyPage
+// UnrelatedWidget should be in its own file
+```
+
+### Structure Recommendation for Large Pages
+
+When building complex pages (400+ lines), use this structure:
+
+```
+Page file (1 public widget + N private widgets)
+├── 1. Main Page Widget (HookConsumerWidget) - top level
+├── 2. Hero/Header Section (private) - visual segment
+├── 3. Middle/Content Section (private) - main content
+├── 4. Bottom/Actions Section (private) - buttons/actions
+├── 5. Smaller helpers (private) - headers, inputs, etc.
+└── All serve the same page → Cohesive and discoverable!
+
+Result: One file, great structure, easy to understand page flow
 ```
 
 ---
@@ -182,7 +264,7 @@ features/<feature_name>/
 
 ---
 
-## 🔄 State Management (Riverpod)
+## 🔄 State Management (Riverpod 3.0)
 
 ### Widget Class Selection
 
@@ -200,8 +282,8 @@ Choose the appropriate widget class based on your needs:
 
 ### Rules
 
-- **Mandatory**: Use **Riverpod** for all state management.
-- **Code Generation**: Use `@riverpod` / `@Riverpod(keepAlive: true)`.
+- **Mandatory**: Use **Riverpod 3.0** for all state management.
+- **Code Generation**: Use `@riverpod` / `@Riverpod(keepAlive: true)` with `riverpod_generator`.
 - **Logic Location**: Business logic resides in **Notifiers** (Presentation) or **Services** (Domain/Data).
 - **UI Role**: Widgets only `watch` state and `read` methods. No complex logic in `build()`.
 - **Avoid**: `StatefulWidget` for logic (use only for animation/input controllers).
@@ -215,6 +297,74 @@ Use `@Riverpod(keepAlive: true)` **ONLY** for:
 - State that must survive navigation (audio player, download manager)
 
 **Default to autoDispose** for page-specific providers.
+
+### Offline Persistence with Riverpod 3.0
+
+**Critical 2026 Pattern**: Use Riverpod's native offline persistence for stale-while-revalidate caching:
+
+```dart
+@freezed
+class Todo with _$Todo {
+  const factory Todo({required String task}) = _Todo;
+  factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
+}
+
+@riverpod
+Future<JsonSqFliteStorage> storage(Ref ref) async {
+  return JsonSqFliteStorage.open(
+    join(await getDatabasesPath(), 'app.db'),
+  );
+}
+
+@riverpod
+@JsonPersist()  // ✅ Auto-handles JSON serialization with Freezed
+class TodoList extends _$TodoList {
+  @override
+  Future<List<Todo>> build() async {
+    persist(
+      ref.watch(storageProvider.future),
+      // No encode/decode needed with @JsonPersist!
+    );
+
+    // Shows cached data instantly, then updates from network
+    return fetchTodosFromServer();
+  }
+
+  Future<void> add(Todo todo) async {
+    // Automatically persisted to DB
+    state = AsyncData([...await future, todo]);
+  }
+}
+```
+
+### Mutations API for Side-Effects (Riverpod 3.0)
+
+**Use Mutations for write operations** (form submissions, button actions):
+
+```dart
+// Define mutation
+final addTodoMutation = Mutation<void>();
+
+// In notifier
+Future<void> addTodo(String task) async {
+  await addTodoMutation.execute(ref, () async {
+    await repository.addTodo(task);
+    ref.invalidate(todoListProvider);
+  });
+}
+
+// In UI - mutations expose state (Idle, Pending, Success, Error)
+Widget build(BuildContext context, WidgetRef ref) {
+  final mutation = ref.watch(addTodoMutation);
+
+  return mutation.when(
+    idle: () => ElevatedButton(onPressed: () => addTodo('..'), child: Text('Add')),
+    pending: () => CircularProgressIndicator(),
+    success: (_) => Text('Added!'),
+    error: (e, retry) => ErrorWidget(error: e, onRetry: retry),
+  );
+}
+```
 
 ### Example Provider
 
@@ -370,10 +520,16 @@ context.showErrorSnackBar() // error snackbar
 'hello'.capitalized         // string utilities
 DateTime.now().timeAgo      // date formatting
 
-// Auth-Aware Navigation (requires WidgetRef from ConsumerWidget/HookConsumerWidget)
-context.pushRouteIfAuthenticatedElse(widgetRef: ref, authenticatedRoute: AppRoute.settings, unauthenticatedRoute: AppRoute.login)
-context.goRouteIfAuthenticatedElse(widgetRef: ref, authenticatedRoute: AppRoute.home, unauthenticatedRoute: AppRoute.login)
-context.executeIfAuthenticatedElse(widgetRef: ref, action: () => doAction(), unauthenticatedRoute: AppRoute.login)
+// Authentication-aware navigation
+context.pushRouteIfAuthenticatedElse(
+  authenticatedRoute: AppRoute.settings,
+  unauthenticatedRoute: AppRoute.login,
+)
+
+context.executeIfAuthenticatedElse(
+  action: () => sendNotification(),
+  unauthenticatedRoute: AppRoute.login,
+)
 ```
 
 ### Hooks (`lib/core/hooks/`)
@@ -454,6 +610,77 @@ ref.read(firebaseRemoteConfigServiceProvider).isMaintenanceMode;
 
 ## 📝 Coding Standards & Style
 
+### Code Review Baseline Checklist
+
+**BEFORE submitting any code for review, verify ALL of the following:**
+
+#### Testing Requirements (MANDATORY)
+
+- ✅ **Unit tests created** for all business logic (repositories, services, notifiers)
+  - Use mocktail for mocking external dependencies
+  - Follow Arrange-Act-Assert (AAA) pattern
+  - Test both success and failure paths
+- ✅ **Provider tests created** for Riverpod notifiers
+  - Override dependencies in ProviderContainer
+  - Mock analytics, network, and external services
+  - Test state changes and side effects
+- ✅ **Widget tests created** for critical UI components
+  - Use `testWidgets()` for Flutter widget testing
+  - Test user interactions and state rendering
+  - Override providers with mock implementations
+- ✅ **All tests pass locally**
+  - Run: `flutter test` or `make test`
+  - Zero failing tests before submission
+  - All mocks properly configured and returning correct types
+
+- ✅ **Test methods return correct types**
+  - Mock methods returning `Future<void>` must use `.thenAnswer((_) async {})`
+  - Mock methods returning values must use `.thenReturn()` or `.thenAnswer()`
+  - Use `registerFallbackValue()` for complex types in mocktail matchers
+
+#### Code Quality Requirements
+
+- ✅ **No magic numbers** - All numeric values use constants from `AppConstants`, `AppSpacing`, etc.
+- ✅ **No hardcoded strings** - All user-facing text uses localization (l10n)
+- ✅ **No hardcoded API paths** - Use `ApiEndpoints` constants
+- ✅ **Proper dependency injection** - Services injected via Riverpod, never instantiated directly
+- ✅ **Exception handling correct** - Use `Result<T>` monad pattern, use fold for error handling
+- ✅ **Code compiles** - Run `flutter pub get` and verify no compilation errors
+- ✅ **Code is formatted** - Run `make format` to apply formatting and fixes
+- ✅ **No linting violations** - Run `make lint` and fix all issues
+
+#### Testing Examples
+
+**Example: Repository Test with Mocks**
+
+```dart
+test('login stores tokens on success', () async {
+  const testUser = User(id: '123', email: 'test@example.com', name: 'Test');
+  when(() => mockApiClient.post<Map>(ApiEndpoints.login, data: any(named: 'data')))
+      .thenAnswer((_) async => {'tokens': {'access': 'abc123'}, 'user': {...}});
+
+  final result = await repository.login('test@example.com', 'password');
+
+  expect(result, isA<Success>());
+  verify(() => mockSecureStorage.write(key: StorageKeys.accessToken, value: any())).called(1);
+});
+```
+
+**Example: Notifier Test with Overrides**
+
+```dart
+test('loginWithGoogle distinguishes cancellation from errors', () async {
+  when(() => mockRepository.loginWithGoogle(googleSignInService: any(named: 'googleSignInService')))
+      .thenAnswer((_) async => Failure(AuthException.googleAuth(message: 'User cancelled', isCancelled: true)));
+
+  await container.read(authProvider.notifier).loginWithGoogle();
+
+  final state = container.read(authProvider);
+  expect(state.value, isNull); // Cancellation is AsyncData(null), not error
+  expect(state, isA<AsyncData>());
+});
+```
+
 ### Hard Constraints
 
 - **No Magic Numbers**: CRITICAL - Every numeric value must use a pre-defined constant (see detailed rules below)
@@ -462,7 +689,9 @@ ref.read(firebaseRemoteConfigServiceProvider).isMaintenanceMode;
 - **No Custom Loading Widgets**: Use `LoadingWidget`.
 - **No Custom Error Widgets**: Use `AppErrorWidget`.
 - **No Hardcoded Strings**: ALL user-facing text must be localized (see section below).
-- **Enum Shorthand**: Use Dart 3 enum shorthand syntax (e.g., `variant: .primary` instead of `variant: AppButtonVariant.primary`).
+- **Dot Shorthand Syntax**: Use Dart 3.10+ dot shorthand (e.g., `variant: .primary`, `alignment: .center`, `mainAxisSize: .min`).
+- **Wildcard Variables**: Use `_` for unused parameters (Dart 3.7+ allows multiple `_` in same scope).
+- **Pattern Matching**: Prefer pattern matching over traditional conditionals for destructuring and type checks.
 
 ### No Magic Numbers - Detailed Rules
 
@@ -533,16 +762,145 @@ padding: const EdgeInsets.all(AppSpacing.md)
 4. **Replace all raw numbers** with the corresponding constant
 5. **Never add a magic number thinking "it's just this once"** - the boilerplate is a template that will be reused across projects
 
+### Modern Dart Language Features (2026)
+
+**Use these Dart 3.3+ features to write cleaner, safer code:**
+
+#### Extension Types (Dart 3.3+)
+
+Create zero-cost type-safe abstractions:
+
+```dart
+// ✅ Type-safe ID wrapper with no runtime overhead
+extension type UserId(int _id) {
+  bool get isValid => _id > 0;
+}
+
+// Compiler prevents passing wrong int types
+void fetchUser(UserId id) { ... }
+fetchUser(UserId(123)); // ✅ OK
+fetchUser(123); // ❌ Compile error
+```
+
+#### Dot Shorthand Syntax (Dart 3.10+)
+
+Omit type names when context is clear:
+
+```dart
+// ❌ Verbose
+Column(mainAxisAlignment: MainAxisAlignment.center)
+FloatingActionButton(child: Icon(Icons.add))
+
+// ✅ Clean with dot shorthand
+Column(mainAxisAlignment: .center)
+FloatingActionButton(child: Icon(.add))
+```
+
+#### Wildcard Variables (Dart 3.7+)
+
+Use `_` for all unused parameters:
+
+```dart
+// ✅ Multiple underscores allowed
+button.onPressed = (_, __, ___) => doSomething();
+```
+
+#### Pattern Matching
+
+Destructure and match data declaratively:
+
+```dart
+// ✅ Pattern matching with records
+final (lat, lng) = await getCoordinates();
+
+// ✅ Switch expressions with patterns
+final message = switch (result) {
+  Success(value: final v) => 'Got: $v',
+  Failure(error: final e) => 'Error: $e',
+};
+
+// ✅ If-case for single pattern match
+if (user case User(:final email, isVerified: true)) {
+  sendEmail(email);
+}
+```
+
 ### Naming Conventions
 
-| Type            | Convention  | Example                |
-| :-------------- | :---------- | :--------------------- |
-| Files           | snake_case  | `user_repository.dart` |
-| Classes         | PascalCase  | `UserRepository`       |
-| Variables       | camelCase   | `userData`             |
-| Private Members | \_camelCase | `_privateField`        |
-| Constants       | camelCase   | `maxRetryAttempts`     |
-| JSON Fields     | snake_case  | `user_name`            |
+| Type            | Convention  | Example                  |
+| :-------------- | :---------- | :----------------------- |
+| Files           | snake_case  | `user_repository.dart`   |
+| Classes         | PascalCase  | `UserRepository`         |
+| Variables       | camelCase   | `userData`               |
+| Private Members | \_camelCase | `_privateField`          |
+| Constants       | camelCase   | `maxRetryAttempts`       |
+| JSON Fields     | snake_case  | `user_name`              |
+| Extension Types | PascalCase  | `UserId`, `EmailAddress` |
+
+### API Endpoint Constants
+
+**CRITICAL: NEVER hardcode API paths in code. ALWAYS use `ApiEndpoints` constants.**
+
+All API endpoints must be defined in `lib/core/constants/api_endpoints.dart` and used throughout repositories:
+
+```dart
+// ❌ WRONG - Hardcoded API path
+final response = await apiClient.post('/auth/login', data: {...});
+
+// ✅ CORRECT - Use ApiEndpoints constant
+final response = await apiClient.post(ApiEndpoints.login, data: {...});
+```
+
+**Why this matters:**
+
+- Single source of truth for all API paths
+- Easy to find/update endpoints when API changes
+- Prevents typos and inconsistencies
+- Enables environment-specific URL configuration
+
+**Common Authentication Endpoints:**
+
+| Constant                          | Path                | Use For                    |
+| :-------------------------------- | :------------------ | :------------------------- |
+| `ApiEndpoints.login`              | `/auth/login`       | Email/password login       |
+| `ApiEndpoints.loginPhone`         | `/auth/login/phone` | Phone number login request |
+| `ApiEndpoints.verifyOtp`          | `/auth/verify-otp`  | OTP verification           |
+| `ApiEndpoints.resendOtp`          | `/auth/resend-otp`  | Resend OTP code            |
+| `ApiEndpoints.currentUserProfile` | `/auth/me`          | Get current user profile   |
+| `ApiEndpoints.logout`             | `/auth/logout`      | Logout/invalidate session  |
+| `ApiEndpoints.refreshToken`       | `/auth/refresh`     | Refresh auth token         |
+
+**Pattern in Repositories:**
+
+```dart
+import 'package:petzy_app/core/constants/api_endpoints.dart';
+
+class AuthRepositoryRemote implements AuthRepository {
+  @override
+  Future<Result<User>> login(String email, String password) async {
+    final result = await _apiClient.post<Map<String, dynamic>>(
+      ApiEndpoints.login,  // ✅ Use constant
+      data: {'email': email, 'password': password},
+      fromJson: (json) => json as Map<String, dynamic>,
+    );
+
+    return result.fold(
+      onSuccess: _handleAuthResponse,
+      onFailure: Failure.new,
+    );
+  }
+
+  @override
+  Future<Result<void>> logout() async {
+    try {
+      await _apiClient.post<void>(ApiEndpoints.logout);  // ✅ Use constant
+    } catch (_) {
+      // Ignore logout errors
+    }
+    return _clearTokens();
+  }
+}
+```
 
 ### Error Handling
 
@@ -552,7 +910,9 @@ Always use the `Result<T>` monad for operations that can fail:
 // Repository
 Future<Result<User>> fetchUser(String id) async {
   try {
-    final response = await apiClient.get<Map<String, dynamic>>('/users/$id');
+    final response = await apiClient.get<Map<String, dynamic>>(
+      ApiEndpoints.userById + '/$id',  // ✅ Use constant for base path
+    );
     return response.map((data) => User.fromJson(data));
   } catch (e) {
     return Failure(UnexpectedException(message: e.toString()));
@@ -683,12 +1043,277 @@ dart run flutter_native_splash:create
 
 ### Testing Guidelines
 
-- **Unit Tests**: For Logic/Repositories
-- **Widget Tests**: For UI Components
-- **Pattern**: Arrange-Act-Assert
+#### Test Organization
+
+- **Unit Tests**: For business logic, repositories, and services (no UI)
+- **Widget Tests**: For UI components and pages (uses `testWidgets()`)
+- **Integration Tests**: End-to-end flows on real devices (critical user journeys)
+- **Golden Tests**: Visual regression testing for UI components
+- **Pattern**: Arrange-Act-Assert (AAA) for all tests
 - **Shared Mocks**: Place in `test/helpers/mocks.dart`
-- **Library**: Use `mocktail` for all mocking
-- **Result<void>**: Return `const Success(null)` when mocking
+- **Mocking Library**: Use `mocktail` for all mocking
+- **Test Structure**: 1 test file per domain/service, feature pages get their own test file
+- **Coverage Goal**: 80%+ code coverage minimum
+
+#### Golden Tests (Visual Regression)
+
+**Use golden tests to catch unintended UI changes:**
+
+```dart
+testWidgets('MyButton matches golden file', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: AppButton(
+          label: 'Click Me',
+          onPressed: () {},
+          variant: .primary,
+        ),
+      ),
+    ),
+  );
+
+  // Compare against golden file
+  await expectLater(
+    find.byType(AppButton),
+    matchesGoldenFile('goldens/app_button_primary.png'),
+  );
+});
+```
+
+**Run golden tests:**
+
+```bash
+# Generate/update golden files
+flutter test --update-goldens
+
+# Run golden tests
+flutter test
+```
+
+#### Integration Tests
+
+**Test critical user flows end-to-end:**
+
+```dart
+// test_driver/app_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Complete login flow', (tester) async {
+    await tester.pumpWidget(MyApp());
+
+    // Navigate to login
+    await tester.tap(find.text('Login'));
+    await tester.pumpAndSettle();
+
+    // Enter credentials
+    await tester.enterText(find.byType(TextField).first, 'user@test.com');
+    await tester.enterText(find.byType(TextField).last, 'password');
+
+    // Submit and verify navigation to home
+    await tester.tap(find.text('Sign In'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Welcome'), findsOneWidget);
+  });
+}
+```
+
+#### Unit Tests (Repositories & Services)
+
+```dart
+void main() {
+  group('AuthRepository', () {
+    late MockApiClient mockApiClient;
+    late AuthRepositoryRemote repository;
+
+    setUp(() {
+      mockApiClient = MockApiClient();
+      repository = AuthRepositoryRemote(apiClient: mockApiClient);
+    });
+
+    test('loginWithPhone returns Success with user data', () async {
+      // Arrange
+      const phoneNumber = '+821234567890';
+      final mockResponse = {'id': '1', 'name': 'John'};
+      when(() => mockApiClient.post<Map>('/login', data: any(named: 'data')))
+          .thenAnswer((_) async => mockResponse);
+
+      // Act
+      final result = await repository.loginWithPhone(phoneNumber);
+
+      // Assert
+      expect(result, isA<Success>());
+      expect(result.fold(onSuccess: (data) => data.id, onFailure: (_) => ''), '1');
+      verify(() => mockApiClient.post<Map>('/login', data: any(named: 'data')))
+          .called(1);
+    });
+
+    test('loginWithPhone returns Failure on network error', () async {
+      // Arrange
+      const phoneNumber = '+821234567890';
+      when(() => mockApiClient.post<Map>('/login', data: any(named: 'data')))
+          .thenThrow(Exception('Network error'));
+
+      // Act
+      final result = await repository.loginWithPhone(phoneNumber);
+
+      // Assert
+      expect(result, isA<Failure>());
+      expect(result.fold(onSuccess: (_) => false, onFailure: (e) => true), true);
+    });
+  });
+}
+```
+
+#### Widget/Page Tests (UI Components)
+
+```dart
+void main() {
+  group('LoginPage', () {
+    late ProviderContainer providerContainer;
+
+    setUp(() {
+      // Create a test provider container with overrides
+      providerContainer = ProviderContainer(
+        overrides: [
+          analyticsServiceProvider.overrideWithValue(MockAnalyticsService()),
+          authProvider.overrideWithValue(MockAuthNotifier()),
+        ],
+      );
+    });
+
+    testWidgets('displays phone input and login button', (WidgetTester tester) async {
+      // Arrange & Act
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: providerContainer,
+          child: const MaterialApp(home: LoginPage()),
+        ),
+      );
+
+      // Assert
+      expect(find.byType(InternationalPhoneNumberInput), findsOneWidget);
+      expect(find.byType(AppButton), findsOneWidget);
+      expect(find.text('Login'), findsOneWidget);
+    });
+
+    testWidgets('shows error snackbar on invalid phone number', (WidgetTester tester) async {
+      // Arrange
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: providerContainer,
+          child: const MaterialApp(home: LoginPage()),
+        ),
+      );
+
+      // Act - Try to login without entering phone number
+      await tester.tap(find.byType(AppButton));
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.byType(SnackBar), findsOneWidget);
+    });
+
+    testWidgets('calls login when button pressed with valid phone', (WidgetTester tester) async {
+      // Arrange
+      final mockAuthNotifier = MockAuthNotifier();
+      providerContainer = ProviderContainer(
+        overrides: [
+          authProvider.overrideWithValue(mockAuthNotifier),
+        ],
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: providerContainer,
+          child: const MaterialApp(home: LoginPage()),
+        ),
+      );
+
+      // Act - Enter phone number
+      await tester.enterText(find.byType(TextField), '+821234567890');
+      await tester.tap(find.byType(AppButton));
+      await tester.pumpAndSettle();
+
+      // Assert
+      verify(() => mockAuthNotifier.loginWithPhone('+821234567890')).called(1);
+    });
+  });
+}
+```
+
+#### Riverpod Provider Tests
+
+```dart
+void main() {
+  group('AuthNotifier', () {
+    late ProviderContainer container;
+
+    setUp(() {
+      container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(MockAuthRepository()),
+        ],
+      );
+    });
+
+    test('loginWithPhone updates state correctly', () async {
+      // Arrange
+      final mockRepo = MockAuthRepository();
+      when(() => mockRepo.loginWithPhone(any()))
+          .thenAnswer((_) async => Success(testUser));
+
+      container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(mockRepo),
+        ],
+      );
+
+      // Act
+      await container.read(authProvider.notifier).loginWithPhone('+821234567890');
+
+      // Assert
+      final state = container.read(authProvider);
+      expect(state.maybeWhen(
+        data: (user) => user?.id == testUser.id,
+        orElse: () => false,
+      ), true);
+    });
+  });
+}
+```
+
+#### Mocking Results
+
+```dart
+// ✅ Correct - mock Result success
+when(() => repo.getData())
+    .thenAnswer((_) async => Success(testData));
+
+// ✅ Correct - mock Result failure
+when(() => repo.getData())
+    .thenAnswer((_) async => Failure(NetworkException()));
+
+// ✅ Correct - mock void success
+when(() => repo.logout())
+    .thenAnswer((_) async => const Success(null));
+```
+
+#### Best Practices
+
+- **Always use setUp()**: Initialize mocks and providers before each test
+- **Test one thing per test**: Each test should verify one behavior
+- **Use descriptive names**: Test names should describe what they test
+- **Mock external dependencies**: Never make real network/storage calls in tests
+- **Use `pumpAndSettle()`**: After tapping buttons to wait for animations
+- **Test error cases**: Not just happy paths
+- **Clean up resources**: Dispose controllers and providers in tearDown()
+- **Test analytics tracking**: Verify `logScreenView` and events are called
 
 ---
 
@@ -699,6 +1324,213 @@ dart run flutter_native_splash:create
 - **ThemeData**: Centralized in `lib/core/theme/`.
 - **ColorScheme**: Uses `ColorScheme.light()` and `ColorScheme.dark()`.
 - **Dark Mode**: Support `ThemeMode.system`, `light`, and `dark`.
+
+### Impeller Rendering Engine (2026 Standard)
+
+**Impeller is now the default rendering engine** - eliminates shader compilation jank:
+
+- **Smooth animations**: Precompiled shaders = no first-frame stutters
+- **120fps support**: Consistent frame times on high-refresh displays
+- **Performance expectations**: Complex UI effects run smoothly without optimization
+- **Debugging**: Use Flutter DevTools Impeller view to inspect draw calls
+
+**Impact on development:**
+
+```dart
+// ✅ Safe to use complex effects now
+Container(
+  decoration: BoxDecoration(
+    gradient: LinearGradient(...),
+    boxShadow: [...],  // Multiple shadows OK
+    borderRadius: BorderRadius.circular(AppConstants.borderRadiusMD),
+  ),
+  child: BackdropFilter(
+    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+    child: ...,
+  ),
+)
+```
+
+**When frame drops occur with Impeller, it's logic issues, not rendering issues.**
+
+### Responsive Layout Guidelines
+
+#### Critical Rules for Overflow Prevention
+
+**NEVER allow layout overflow errors.** These indicate a broken UI that won't work on all devices.
+
+##### Row Widgets - ALWAYS Use Flexible/Expanded
+
+```dart
+// ❌ WRONG - Will overflow on small screens
+Row(
+  children: [
+    Text('Very long text that might overflow'),
+    Icon(Icons.check),
+  ],
+)
+
+// ✅ CORRECT - Text will truncate gracefully
+Row(
+  children: [
+    Flexible(
+      child: Text(
+        'Very long text that might overflow',
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+    Icon(Icons.check),
+  ],
+)
+
+// ✅ CORRECT - Text will wrap or scale
+Row(
+  children: [
+    Expanded(
+      child: Text(
+        'Very long text',
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      ),
+    ),
+    const HorizontalSpace.sm(),
+    Icon(Icons.check),
+  ],
+)
+```
+
+##### When to Use Flexible vs Expanded
+
+| Widget      | Use When                                         |
+| :---------- | :----------------------------------------------- |
+| `Flexible`  | Child can be smaller than available space        |
+| `Expanded`  | Child should fill all remaining space            |
+| `FittedBox` | Scale down content to fit (icons, images)        |
+| `Wrap`      | Items should wrap to next line when space is low |
+
+##### Button Content - Always Constrain Text
+
+```dart
+// ❌ WRONG - Button text can overflow
+OutlinedButton(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(Icons.google),
+      SizedBox(width: 8),
+      Text('Sign in with Google'), // Can overflow!
+    ],
+  ),
+)
+
+// ✅ CORRECT - Text is constrained
+OutlinedButton(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.google),
+      const HorizontalSpace.sm(),
+      Flexible(
+        child: Text(
+          'Sign in with Google',
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    ],
+  ),
+)
+```
+
+##### Headers with Icons - Space Between Pattern
+
+```dart
+// ❌ WRONG - No flex handling
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text('Phone Number'),
+    Row(children: [Icon(Icons.pets), Icon(Icons.pets)]),
+  ],
+)
+
+// ✅ CORRECT - Text can shrink, icons stay fixed
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Flexible(
+      child: Text(
+        'Phone Number',
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+    Row(
+      mainAxisSize: MainAxisSize.min, // Don't expand!
+      children: [Icon(Icons.pets), Icon(Icons.pets)],
+    ),
+  ],
+)
+```
+
+#### Screen Size Breakpoints
+
+Use these breakpoints for responsive design:
+
+| Breakpoint | Width     | Device Type      |
+| :--------- | :-------- | :--------------- |
+| Mobile     | < 600dp   | Phones           |
+| Tablet     | 600-900dp | Small tablets    |
+| Desktop    | > 900dp   | Large tablets/PC |
+
+```dart
+// Check screen size
+if (context.screenWidth < 600) {
+  // Mobile layout
+} else if (context.screenWidth < 900) {
+  // Tablet layout
+} else {
+  // Desktop layout
+}
+
+// Or use ResponsiveBuilder
+ResponsiveBuilder(
+  mobile: (context) => MobileLayout(),
+  tablet: (context) => TabletLayout(),
+  desktop: (context) => DesktopLayout(),
+)
+```
+
+#### Testing Responsive Layouts
+
+Always test layouts at multiple sizes:
+
+```dart
+testWidgets('layout works on small screens', (tester) async {
+  // Set small screen size (320dp is minimum supported)
+  tester.view.physicalSize = const Size(320, 568);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
+  await tester.pumpWidget(MyWidget());
+  await tester.pumpAndSettle();
+
+  // Should not throw overflow errors
+  expect(tester.takeException(), isNull);
+});
+```
+
+#### Anti-Patterns for Layouts
+
+1. **🔴 Don't** use `Row` without `Flexible`/`Expanded` for text content
+2. **🔴 Don't** assume fixed widths for text (fonts can vary)
+3. **🔴 Don't** ignore overflow errors in tests - they're real bugs
+4. **🔴 Don't** use `mainAxisSize: MainAxisSize.max` for nested Rows
+5. **✅ Do** always add `overflow: TextOverflow.ellipsis` to constrained text
+6. **✅ Do** test on 320dp width minimum
+7. **✅ Do** use `mainAxisSize: MainAxisSize.min` for icon rows
 
 ### Layout Best Practices
 
@@ -757,17 +1589,411 @@ padding: EdgeInsets.all(
 
 ---
 
+## 🔐 Authentication & Google Sign-In
+
+### Google Sign-In Integration (google_sign_in v7.x)
+
+**Location**: `lib/core/google_signin/`
+
+The Google Sign-In service is platform-aware and uses modern APIs:
+
+| Component                     | Purpose                                         |
+| :---------------------------- | :---------------------------------------------- |
+| `GoogleSignInService`         | Orchestrates Google auth & Firebase integration |
+| `GoogleSignInException`       | Custom exception with cancellation detection    |
+| `googleSignInServiceProvider` | Riverpod provider for dependency injection      |
+
+**Key Features**:
+
+- **iOS**: Uses native `ASWebAuthenticationSession` (Keychain integration)
+- **Android 7.0+**: Uses Credential Manager when `serverClientId` is provided
+- **Error Classification**: Properly distinguishes user cancellation from errors
+- **FirebaseID Token**: Returns Firebase token safe for backend API calls
+
+**Setup Location**: `lib/config/google_signin_config.dart`
+
+**Configuration**:
+
+```dart
+class GoogleSignInConfig {
+  static const String iosClientId = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+  static const String androidServerClientId = 'YOUR_SERVER_CLIENT_ID.apps.googleusercontent.com';
+}
+```
+
+**Usage Pattern**:
+
+```dart
+// In AuthNotifier
+Future<void> loginWithGoogle() async {
+  state = const AsyncLoading();
+  final googleSignInService = ref.read(googleSignInServiceProvider);
+  final result = await _repo.loginWithGoogle(
+    googleSignInService: googleSignInService,
+  );
+
+  state = result.fold(
+    onSuccess: (user) {
+      ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.login);
+      return AsyncData<User?>(user);
+    },
+    onFailure: (error) {
+      // Cancellation is NOT an error - return AsyncData(null)
+      if (error is AuthException && error.isGoogleSignInCancelled) {
+        return AsyncData<User?>(null);
+      }
+      return AsyncError<User?>(error, StackTrace.current);
+    },
+  );
+}
+```
+
+**Error Handling**:
+
+```dart
+// In AuthRepositoryRemote.loginWithGoogle()
+try {
+  final firebaseIdToken = await googleSignInService.signIn();
+  // Exchange token with backend API
+  final result = await _apiClient.post(ApiEndpoints.loginGoogle, ...);
+  return result.fold(onSuccess: _handleAuthResponse, onFailure: Failure.new);
+} on GoogleSignInException catch (e) {
+  // User cancellation vs. error - properly classified
+  return Failure(
+    AuthException.googleAuth(
+      message: e.message,
+      isCancelled: e.isCancelled,
+    ),
+  );
+}
+```
+
+### Authentication Error Messages
+
+All authentication error messages are **localized** and defined in `lib/l10n/app_en.arb` and `app_bn.arb`:
+
+| Error Key                        | Use When                               |
+| :------------------------------- | :------------------------------------- |
+| `authErrorInvalidCredentials`    | Invalid email/password                 |
+| `authErrorSessionExpired`        | Session timeout or 401 Unauthorized    |
+| `authErrorGoogleSignInFailed`    | Google auth failure (not cancellation) |
+| `authErrorGoogleSignInCancelled` | User dismisses Google Sign-In UI       |
+| `authErrorNetworkError`          | Network connectivity issues            |
+| `authErrorOTPInvalid`            | Invalid OTP code                       |
+| `authErrorOTPExpired`            | OTP code expired                       |
+
+**Never hardcode error messages** - always use localization keys:
+
+```dart
+// ❌ WRONG
+context.showErrorSnackBar('Invalid OTP code');
+
+// ✅ CORRECT
+context.showErrorSnackBar(l10n.authErrorOTPInvalid);
+```
+
+### Token Management
+
+**Secure Token Storage**: All tokens stored in `FlutterSecureStorage`
+
+```dart
+// Store tokens
+await secureStorage.write(
+  key: StorageKeys.accessToken,
+  value: token,
+);
+
+// Retrieve token (auth interceptor does this automatically)
+final token = await secureStorage.read(key: StorageKeys.accessToken);
+
+// Clear on logout
+await secureStorage.delete(key: StorageKeys.accessToken);
+```
+
+**Token Refresh**: Automatic via `AuthInterceptor` in `ApiClient`
+
+- 401 Unauthorized responses trigger token refresh
+- Uses `Completer` to coordinate concurrent refresh requests
+- Failed refresh logs out user
+
+See `lib/core/network/auth_interceptor.dart` for implementation.
+
+---
+
 ## 📱 Platform Considerations
 
 ### iOS
 
 - Keychain accessibility: `first_unlock_this_device`.
 - Handle fresh install scenarios (clear stale keychain data).
+- Google Sign-In uses native `ASWebAuthenticationSession` with Keychain integration
 
 ### Android
 
 - Encrypted SharedPreferences for secure storage.
 - Native Cronet adapter for HTTP/3 support (release mode).
+- Google Sign-In uses Credential Manager on Android 7.0+ when `serverClientId` is configured
+
+---
+
+## 🛠️ Modern Architecture Patterns (2026)
+
+### Design System First
+
+**Token-driven theming** ensures consistency across platforms:
+
+```dart
+// Define design tokens
+class DesignTokens {
+  static const spacing = SpacingTokens();
+  static const colors = ColorTokens();
+  static const typography = TypographyTokens();
+}
+
+// Use tokens everywhere
+padding: EdgeInsets.all(DesignTokens.spacing.md),
+color: DesignTokens.colors.primary,
+style: DesignTokens.typography.headlineSmall,
+```
+
+**Test design system with golden tests** to catch unintended visual changes.
+
+### Modular Feature Architecture
+
+**Features should be independent modules** with clear boundaries:
+
+```
+features/
+├── auth/          # Self-contained - doesn't import from other features
+│   ├── data/
+│   ├── domain/
+│   └── presentation/
+├── home/          # Communicates via dependency injection only
+│   ├── data/
+│   ├── domain/
+│   └── presentation/
+```
+
+**Benefits:**
+
+- Teams work on features in parallel without conflicts
+- Features testable in isolation
+- Clear ownership and responsibility
+- Easy to extract features into packages if needed
+
+### Adaptive UI for Multi-Platform
+
+**Build once, adapt everywhere:**
+
+```dart
+// Adaptive layouts
+class MyPage extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ResponsiveBuilder(
+      mobile: (context) => SingleColumnLayout(),
+      tablet: (context) => TwoColumnLayout(),
+      desktop: (context) => ThreeColumnLayout(),
+    );
+  }
+}
+
+// Foldable device support
+if (context.isFoldable) {
+  // Adapt around hinge line
+  return FoldableLayout(hingePosition: context.hingePosition);
+}
+```
+
+### Stale-While-Revalidate Pattern
+
+**Always show data immediately, refresh in background:**
+
+```dart
+@riverpod
+@JsonPersist()  // Automatic cache management
+class UserProfile extends _$UserProfile {
+  @override
+  Future<User> build(String userId) async {
+    persist(ref.watch(storageProvider.future));
+
+    // 1. Cached data shows instantly (if exists)
+    // 2. Network fetch happens in background
+    // 3. UI updates when fresh data arrives
+    // 4. On error, cached data remains visible
+    return fetchUserFromApi(userId);
+  }
+}
+```
+
+---
+
+## 🎨 Figma Integration & Design Asset Management
+
+### Overview
+
+This project uses the **Figma MCP Server** to seamlessly integrate designs into the Flutter application. The MCP server provides tools to fetch Figma file data, download images, and maintain design-code consistency.
+
+### Available MCP Tools
+
+| Tool                                      | Purpose                                             |
+| :---------------------------------------- | :-------------------------------------------------- |
+| `mcp_figma-context_get_figma_data`        | Fetch design metadata, layout, and component info   |
+| `mcp_figma-context_download_figma_images` | Export and download PNG/SVG assets from Figma nodes |
+
+### Prerequisites
+
+**Before using Figma MCP tools:**
+
+1. **Figma File Key**: Extract from Figma URL: `figma.com/file/{fileKey}/...`
+2. **Node IDs**: Right-click elements in Figma → Copy/Copy as → Copy link → Extract node ID from URL (`node-id=1234:5678`)
+3. **Figma Access Token**: Configure in MCP settings (server handles authentication)
+4. **Asset Directory**: Use `assets/images/` or `assets/icons/` for downloaded files
+
+### Workflow: Fetching Design Data
+
+**Use `get_figma_data` to inspect design structure before exporting assets:**
+
+```typescript
+// Example: Get all components in a Figma file
+mcp_figma -
+  context_get_figma_data({
+    fileKey: "abc123def456", // From Figma URL
+    nodeId: "1234:5678", // Optional: specific node/frame
+    depth: 2, // Optional: traversal depth (default: all)
+  });
+
+// Returns: Layout, colors, typography, component hierarchy
+// Use this data to:
+// - Identify which assets to export
+// - Extract design tokens (colors, spacing, typography)
+// - Validate dimensions before implementation
+```
+
+**When to use:**
+
+- ✅ Starting implementation of a new screen/component
+- ✅ Verifying design specifications (spacing, colors, sizes)
+- ✅ Finding node IDs for image export
+- ✅ Understanding component structure before coding
+
+### Workflow: Downloading Images
+
+**Use `download_figma_images` to export assets:**
+
+```typescript
+// Example: Export app logo and icon assets
+mcp_figma -
+  context_download_figma_images({
+    fileKey: "abc123def456", // Figma file key
+    localPath: "/absolute/path/to/assets/images", // MUST be absolute path
+    pngScale: 3, // @3x for Retina displays (default: 2)
+    nodes: [
+      {
+        nodeId: "1234:5678", // Figma node ID
+        fileName: "app_logo.png", // Output filename with extension
+        requiresImageDimensions: false, // Set true if need CSS vars
+      },
+      {
+        nodeId: "5678:9012",
+        fileName: "icon_home.svg", // SVG format
+        needsCropping: false, // Set true if transform matrix exists
+      },
+      {
+        nodeId: "9012:3456",
+        fileName: "product_image.png",
+        imageRef: "imageHash123", // Required for image fills
+      },
+    ],
+  });
+```
+
+**Critical Rules:**
+
+1. **Absolute Paths Only**: `localPath` must be full system path (e.g., `/Users/username/project/assets/images`)
+2. **File Extensions**: Always include `.png` or `.svg` in `fileName`
+3. **Image Fills**: If node has image fill (not vector), provide `imageRef` from `get_figma_data`
+4. **Cropping**: Set `needsCropping: true` if Figma node has transform matrix (rotated/scaled images)
+5. **PNG Scale**: Use `pngScale: 2` for @2x (default), `3` for @3x (iOS Retina)
+
+### Integration Pattern: New Feature with Figma Assets
+
+**Step-by-step workflow when implementing a feature with design assets:**
+
+```dart
+// 1. Fetch design data to understand structure
+mcp_figma-context_get_figma_data({
+  fileKey: "designFileKey",
+  nodeId: "screenNodeId"
+})
+// Review: colors, spacing, component hierarchy, asset nodes
+
+// 2. Download required assets
+mcp_figma-context_download_figma_images({
+  fileKey: "designFileKey",
+  localPath: "/full/path/to/assets/images/feature_name",
+  nodes: [
+    { nodeId: "icon1", fileName: "icon_feature.svg" },
+    { nodeId: "hero1", fileName: "hero_image.png" }
+  ]
+})
+
+// 3. Add assets to constants
+// lib/core/constants/assets.dart
+class Assets {
+  static const featureIcon = 'assets/images/feature_name/icon_feature.svg';
+  static const featureHero = 'assets/images/feature_name/hero_image.png';
+}
+
+// 4. Use in Flutter code
+CachedImage(
+  imageUrl: Assets.featureHero,  // ✅ Use constant
+  width: AppConstants.heroImageWidth,
+  height: AppConstants.heroImageHeight,
+)
+```
+
+### Asset Organization
+
+**Follow this structure for Figma-exported assets:**
+
+```
+assets/
+├── images/
+│   ├── onboarding/          # Onboarding screens
+│   │   ├── onboarding_1.png
+│   │   └── onboarding_2.png
+│   ├── auth/                # Auth feature
+│   │   ├── login_hero.png
+│   │   └── otp_illustration.png
+│   └── home/                # Home feature
+│       └── dashboard_header.png
+├── icons/
+│   ├── navigation/          # Navigation icons
+│   │   ├── home.svg
+│   │   └── settings.svg
+│   └── actions/             # Action icons
+│       ├── edit.svg
+│       └── delete.svg
+```
+
+**Rules:**
+
+- ✅ Organize by feature/category
+- ✅ Use descriptive, lowercase names with underscores
+- ✅ Add all assets to `Assets` constants class
+- ✅ Always use constants, never hardcode asset paths
+
+### Anti-Patterns
+
+1. **🔴 Don't** hardcode Figma URLs in code — extract fileKey and nodeId
+2. **🔴 Don't** use relative paths for `localPath` — always absolute paths
+3. **🔴 Don't** commit Figma access tokens — use MCP server configuration
+4. **🔴 Don't** skip asset constants — always add to `Assets` class
+5. **🔴 Don't** export all Figma nodes — only export what's needed
+6. **✅ Do** organize assets by feature/category
+7. **✅ Do** use SVG for icons (scalable), PNG for photos/illustrations
+8. **✅ Do** extract design tokens (colors, spacing) for consistency
 
 ---
 
@@ -776,7 +2002,13 @@ padding: EdgeInsets.all(
 1. **Don't** use `StatefulWidget` for business logic
 2. **Don't** call `ref.read` in `build()` — use `ref.watch`
 3. **Don't** create custom loading/error widgets
-4. **🔴 CRITICAL: Don't** use magic numbers for spacing/dimensions/durations/opacity. **ALWAYS** use constants from `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`. This includes:
+4. **🔴 CRITICAL: Don't** hardcode API paths. **ALWAYS** use `ApiEndpoints` constants:
+   - ❌ `await apiClient.post('/auth/login', ...)`
+   - ✅ `await apiClient.post(ApiEndpoints.login, ...)`
+   - Check `lib/core/constants/api_endpoints.dart` for available endpoints
+   - If endpoint doesn't exist, ADD IT to the constants file
+   - **Rule**: Every API call must use an `ApiEndpoints` constant
+5. **🔴 CRITICAL: Don't** use magic numbers for spacing/dimensions/durations/opacity. **ALWAYS** use constants from `AppConstants`, `AppSpacing`, `ApiEndpoints`, `StorageKeys`, or `Assets`. This includes:
    - Durations: Use `AppConstants.animationNormal` instead of `Duration(milliseconds: 300)`
    - Stagger delays: Use `AppConstants.staggerDelay * N` instead of `Duration(milliseconds: N * 50)`
    - Icon sizes: Use `AppConstants.iconSizeMD` (24px), `iconSizeXL` (48px), `iconSizeXXL` (80px)
@@ -785,16 +2017,48 @@ padding: EdgeInsets.all(
    - Border radius: Use `AppConstants.borderRadiusSM` instead of `4`
    - Spacing: Use `AppSpacing.md` instead of `16`
    - **Rule**: Before submitting, search your code for numeric literals and replace with constants
-5. **Don't** store tokens in plain SharedPreferences
-6. **Don't** ignore `Result` failures
-7. **Don't** use `!` bang operator without checking null first
-8. **🔴 CRITICAL: Don't** hardcode ANY user-facing strings in code. **ALL** text must use localization keys from `app_en.arb` and `app_bn.arb`. This includes:
+6. **Don't** store tokens in plain SharedPreferences
+7. **Don't** ignore `Result` failures
+8. **Don't** use `!` bang operator without checking null first
+9. **🔴 CRITICAL: Don't** hardcode ANY user-facing strings in code. **ALL** text must use localization keys from `app_en.arb` and `app_bn.arb`. This includes:
    - Button labels, titles, descriptions
    - Dialog/snackbar messages
    - Placeholder texts, error messages
    - ANY text displayed to users
    - **Rule**: Before submitting code, search for quoted strings and ensure they use `l10n.<key>` instead
-9. **🔴 CRITICAL: Don't** track analytics in `build()` methods - use `useOnMount()` hook for `HookConsumerWidget` or `initState()` with `addPostFrameCallback` for `ConsumerStatefulWidget`. Analytics in build() will fire on every rebuild!
-10. **Don't** bypass file size limits — refactor immediately if exceeded
-11. **Don't** forget try-catch blocks for operations that can fail (especially async operations)
-12. **Do** use `.staggered()` factories for list animations instead of manually calculating delays
+10. **🔴 CRITICAL: Don't** track analytics in `build()` methods - use `useOnMount()` hook for `HookConsumerWidget` or `initState()` with `addPostFrameCallback` for `ConsumerStatefulWidget`. Analytics in build() will fire on every rebuild!
+11. **Don't** bypass file size limits — refactor immediately if exceeded
+12. **Don't** forget try-catch blocks for operations that can fail (especially async operations)
+13. **🔴 CRITICAL: Don't** let timers run indefinitely. **ALWAYS** cancel timers when they're no longer needed:
+    - Store timer in `useRef<Timer?>` (not useState) to persist across rebuilds without triggering them
+    - Cancel existing timer before starting a new one: `timerRef.value?.cancel()`
+    - **Zombie Timer Bug**: If a timer keeps running after hitting 0, it will cause infinite rebuilds every second
+    - **Pattern**: Use `useEffect` with cleanup function to cancel timer on unmount
+    - **Example**: See `_ResendCodeSection` in `otp_verification_page.dart` for correct implementation
+14. **Don't** duplicate authentication logic. **ALWAYS** extract shared token handling:
+    - Use `_handleAuthResponse()` helper for both login and OTP verification
+    - Centralizes token storage, user parsing, and error handling
+    - Reduces duplication and ensures consistency across auth methods
+    - **Example**: See `auth_repository_remote.dart` for correct DRY pattern
+15. **Don't** use inconsistent JSON field naming. **ALWAYS** ensure JSON serialization matches backend:
+    - Backend uses snake_case (e.g., `is_email_verified`, `created_at`)
+    - Freezed automatically converts with proper `@JsonKey` annotations
+    - Apply `fieldRename` at class level for consistency (or manually tag each field)
+    - Test with backend to ensure JSON keys match: `json['field_name']` ↔ `fieldName` property
+    - **Example**: See `user.dart` for correct Freezed JSON configuration
+16. **Do** use `.staggered()` factories for list animations instead of manually calculating delays
+17. **Don't** use deprecated Flutter APIs - always migrate to latest stable APIs:
+    - Example: Use `color.withValues(alpha: 0.5)` instead of deprecated `.withOpacity()`
+18. **Don't** ignore Impeller rendering - complex effects are now performant by default
+19. **Don't** manually manage cache invalidation - use Riverpod 3.0 offline persistence with automatic stale-while-revalidate
+20. **Don't** create manual loading states for mutations - use Riverpod 3.0 Mutations API that exposes state (Idle, Pending, Success, Error)
+21. **Don't** use old pattern matching syntax - leverage Dart 3.0+ patterns, records, and switch expressions:
+    - Use `if (data case Success(:final value))` over traditional type checks
+    - Use switch expressions over switch statements when returning values
+    - Use records for multiple return values: `(String, int) getData() => ('name', 42);`
+22. **Don't** create extension methods when extension types are more appropriate:
+    - Extension types provide compile-time type safety with zero runtime cost
+    - Perfect for wrapping primitives (UserId, EmailAddress, PositiveInt)
+    - Use extension methods for adding behavior to existing types
+23. **Don't** allow layout overflows - always test responsive designs on 320dp minimum screens
+24. **Don't** use manual loop calculations for staggered animations - use `.staggered()` factory with `AppConstants.staggerDelay`

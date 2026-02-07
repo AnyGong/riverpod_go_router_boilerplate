@@ -75,6 +75,24 @@
 
 ---
 
+## 🎯 2026 Modern Patterns
+
+This boilerplate is built on **2026 best practices** for maximum productivity:
+
+| Pattern                        | What It Means                                             | Your Benefit                                   |
+| :----------------------------- | :-------------------------------------------------------- | :--------------------------------------------- |
+| **Riverpod 3.0 Offline-First** | `@JsonPersist()` with auto stale-while-revalidate caching | Instant data loading, seamless offline support |
+| **Mutations API**              | Declarative loading/error states for writes               | No more manual loading spinners                |
+| **Extension Types**            | Zero-cost type-safe wrappers (e.g., `UserId`)             | Compile-time safety without runtime overhead   |
+| **Impeller Rendering**         | Precompiled shader engine (default)                       | Smooth 120fps animations, no jank              |
+| **Golden Tests**               | Visual regression testing                                 | Catch UI changes automatically                 |
+| **Dot Shorthand Syntax**       | `variant: .primary` instead of `AppButtonVariant.primary` | Cleaner, more readable code                    |
+| **Pattern Matching**           | `if (data case Success(:final value))`                    | Type-safe destructuring                        |
+
+See **[Copilot Instructions](.github/copilot-instructions.md)** for comprehensive implementation guides.
+
+---
+
 ## ✨ Features
 
 <table>
@@ -105,10 +123,11 @@
 </td>
 <td width="33%">
 
-### 🌐 Networking
+### 🌐 Networking & Caching
 
 - ✅ Dio with Interceptors
-- ✅ Offline-First Caching (Drift)
+- ✅ **Offline-First Caching (Drift)** ✨2026
+- ✅ **Stale-While-Revalidate** ✨2026
 - ✅ Auto Token Refresh & Retry
 - ✅ HTTP/3 & Brotli Support
 - ✅ ETag Caching
@@ -144,6 +163,7 @@
 
 - ✅ Material 3 Theming
 - ✅ Light/Dark/System Modes
+- ✅ **Impeller Engine** ✨2026
 - ✅ 25+ Animation Widgets
 - ✅ Shimmer Loading States
 - ✅ Localized (en/bn)
@@ -164,22 +184,24 @@
 </td>
 <td width="33%">
 
-### 🔔 Notifications
+### 🔔 Notifications & UX
 
 - ✅ Local Notifications
 - ✅ Scheduled Notifications
 - ✅ In-App Review Prompts
+- ✅ **Figma Integration** ✨2026
 - ✅ Badge Management
 
 </td>
 <td width="33%">
 
-### 🛡️ Permissions
+### 🛡️ Testing & Quality
 
-- ✅ Runtime Permissions
-- ✅ Permission Rationale
-- ✅ Settings Deep Links
-- ✅ Platform-Specific Handling
+- ✅ **Golden Tests** ✨2026
+- ✅ Unit + Widget + Integration
+- ✅ **80%+ Code Coverage**
+- ✅ Mocktail for Mocking
+- ✅ **Riverpod 3.0 Mutations** ✨2026
 
 </td>
 </tr>
@@ -189,23 +211,23 @@
 
 ## 🛠️ Tech Stack
 
-| Category          | Technology                      | Description                      |
-| :---------------- | :------------------------------ | :------------------------------- |
-| **Framework**     | `Flutter 3.10+`                 | Cross-platform UI toolkit        |
-| **Language**      | `Dart 3.x`                      | Modern, null-safe language       |
-| **State**         | `riverpod_generator`            | Compile-safe state management    |
-| **Hooks**         | `flutter_hooks`                 | React-like hooks for Flutter     |
-| **Routing**       | `go_router`                     | Declarative routing with guards  |
-| **Network**       | `dio` + `native_dio_adapter`    | HTTP client with HTTP/3 support  |
-| **Database**      | `drift`                         | Reactive SQLite ORM              |
-| **Forms**         | `reactive_forms`                | Model-driven form validation     |
-| **Auth**          | `local_auth`                    | Biometric authentication         |
-| **Firebase**      | `firebase_*`                    | Analytics, Crashlytics, Perf, RC |
-| **I18n**          | `flutter_localizations`         | Intl with ARB files              |
-| **Animations**    | `flutter_animate` + `lottie`    | Declarative & Lottie animations  |
-| **Code Style**    | `very_good_analysis`            | Strict lint rules (500+ rules)   |
-| **Testing**       | `mocktail` + `flutter_test`     | Unit & Widget tests              |
-| **Serialization** | `freezed` + `json_serializable` | Immutable models with codegen    |
+| Category          | Technology                      | Description                                  |
+| :---------------- | :------------------------------ | :------------------------------------------- |
+| **Framework**     | `Flutter 3.10+`                 | Cross-platform UI toolkit                    |
+| **Language**      | `Dart 3.x`                      | Modern, null-safe language                   |
+| **State**         | `riverpod_generator` (3.0)      | **Compile-safe state + offline persistence** |
+| **Hooks**         | `flutter_hooks`                 | React-like hooks for Flutter                 |
+| **Routing**       | `go_router`                     | Declarative routing with guards              |
+| **Network**       | `dio` + `native_dio_adapter`    | HTTP client with HTTP/3 support              |
+| **Persistence**   | `drift` + `@JsonPersist()`      | **Stale-while-revalidate caching**           |
+| **Forms**         | `reactive_forms`                | Model-driven form validation                 |
+| **Auth**          | `local_auth`                    | Biometric authentication                     |
+| **Firebase**      | `firebase_*`                    | Analytics, Crashlytics, Perf, RC             |
+| **I18n**          | `flutter_localizations`         | Intl with ARB files                          |
+| **Animations**    | `flutter_animate` + `lottie`    | Declarative & Lottie animations              |
+| **Code Style**    | `very_good_analysis`            | Strict lint rules (500+ rules)               |
+| **Testing**       | `mocktail` + `flutter_test`     | **Golden + Unit + Widget tests**             |
+| **Serialization** | `freezed` + `json_serializable` | Immutable models with codegen                |
 
 ---
 
